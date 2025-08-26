@@ -1,165 +1,150 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escape Game : Académie des Arcanes</title>
-<style>
-  body {
-    font-family: 'Garamond', serif;
-    background: #FFF8E1 url('https://i.ibb.co/z7VhFJR/parchment-texture.jpg') repeat;
-    background-size: cover;
-    color: #4E342E;
-    padding: 20px;
-    max-width: 900px;
-    margin: auto;
-    animation: subtleBackground 15s ease-in-out infinite alternate;
-  }
+  <meta charset="UTF-8">
+  <title>Escape Game : Académie des Arcanes</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Quicksand:wght@400;600&display=swap');
 
-  @keyframes subtleBackground {
-    0% {background-position:0 0;}
-    100% {background-position:50px 50px;}
-  }
+    body {
+      margin: 0;
+      font-family: 'Quicksand', sans-serif;
+      background: linear-gradient(135deg, #1a1f36, #3e1f47, #2c5364);
+      color: #fff;
+      text-align: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
 
-  h1 {
-    text-align: center;
-    font-size: 36px;
-    text-shadow: 1px 1px 2px #FFF8E1;
-  }
-  h2 {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 10px;
-  }
-  p {font-size: 16px; text-align: center;}
+    h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5em;
+      margin-bottom: 0.2em;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-  }
-  th, td {
-    border: 2px solid #795548;
-    padding: 10px;
-    text-align: left;
-    font-size: 16px;
-  }
-  th {
-    background-color: #D7CCC8;
-  }
-  td input {
-    width: 90%;
-    padding: 5px;
-    font-size: 14px;
-  }
-  .indice {
-    color: #FFF8E1; /* caché initialement */
-    font-weight: bold;
-    transition: color 1s ease, transform 0.5s ease;
-  }
-  .revele {
-    color: #4E342E !important;
-    transform: scale(1.1);
-  }
+    h2 {
+      font-weight: normal;
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #d4b5ff;
+    }
 
-  button {
-    margin-top: 20px;
-    padding: 12px 25px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #4E342E;
-    color: #FFF8E1;
-    border: none;
-    border-radius: 8px;
-    box-shadow: 2px 2px 6px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
-  }
-  button:hover {
-    background-color: #6D4C41;
-    transform: scale(1.05);
-  }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 85%;
+      background: rgba(255,255,255,0.08);
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
 
-  /* Emojis flottants */
-  .emoji {
-    position: fixed;
-    font-size: 24px;
-    animation: float 6s infinite ease-in-out;
-  }
-  @keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-    100% { transform: translateY(0px); }
-  }
-</style>
+    th, td {
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 15px;
+    }
+
+    th {
+      background: rgba(255,255,255,0.15);
+      font-weight: bold;
+      color: #ffd369;
+      text-transform: uppercase;
+    }
+
+    input {
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      width: 90%;
+      text-align: center;
+      font-size: 1em;
+    }
+
+    .hidden {
+      display: none;
+      font-weight: bold;
+      color: #90ee90;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      font-size: 1.2em;
+      background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad390);
+      color: #222;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.5);
+    }
+  </style>
 </head>
 <body>
+  <h1>🔮 Escape Game : Académie des Arcanes 🔮</h1>
+  <h2>Durée : 1h | Joueurs : 2 à 6 | Thème : Magie</h2>
+  <p>Bienvenue à l’Académie des Arcanes ! Le Grimoire des Sortilèges Anciens a disparu.  
+  Votre mission : le retrouver avant que le sablier ne s’écoule ⏳</p>
 
-<h1>🪄 Escape Game : Académie des Arcanes 🪄</h1>
-<h2>Durée : 1h | Joueurs : 2 à 6 | Thème : Magie</h2>
-<p>Bienvenue à l’Académie des Arcanes ! Le Grimoire des Sortilèges Anciens a disparu. Votre mission : le retrouver avant que le sablier ne s’écoule.</p>
+  <table>
+    <tr>
+      <th>Énigme</th>
+      <th>Question</th>
+      <th>Réponse</th>
+      <th>Indice</th>
+    </tr>
+    <tr>
+      <td>🟣 Potion de Couleurs</td>
+      <td>Mélange rouge et bleu, la couleur du secret ?</td>
+      <td><input type="text" id="q1"></td>
+      <td><span id="i1" class="hidden">✨ Violet ouvre la boîte suivante</span></td>
+    </tr>
+    <tr>
+      <td>📜 Parchemin Codé</td>
+      <td>Décale chaque lettre de 3 : Krodfr</td>
+      <td><input type="text" id="q2"></td>
+      <td><span id="i2" class="hidden">🔑 Le mot magique révèle le tiroir</span></td>
+    </tr>
+    <tr>
+      <td>📖 Formule Oubliée</td>
+      <td>Réorganise les lettres : G,I,M,E,S</td>
+      <td><input type="text" id="q3"></td>
+      <td><span id="i3" class="hidden">📚 Formule ouvre la bibliothèque secrète</span></td>
+    </tr>
+    <tr>
+      <td>⏳ Sablier Mystérieux</td>
+      <td>Le sablier compte 7+5+3 minutes. Combien ?</td>
+      <td><input type="text" id="q4"></td>
+      <td><span id="i4" class="hidden">🔢 15 est le code pour le coffre final</span></td>
+    </tr>
+    <tr>
+      <td>🔑 Coffre Final</td>
+      <td>Seul le nombre du sablier ouvrira le coffre ?</td>
+      <td><input type="text" id="q5"></td>
+      <td><span id="i5" class="hidden">🏆 Récupérez le Grimoire et sauvez l’Académie !</span></td>
+    </tr>
+  </table>
 
-<table>
-<thead>
-<tr>
-  <th>Énigme</th><th>Question</th><th>Réponse</th><th>Indice</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-  <td>🟣 Potion de Couleurs</td>
-  <td>Mélange rouge et bleu, la couleur du secret ?</td>
-  <td><input type="text" id="rep0"></td>
-  <td class="indice" id="ind0">Violet ouvre la boîte suivante</td>
-</tr>
-<tr>
-  <td>🔮 Parchemin Codé</td>
-  <td>Décale chaque lettre de 3 : Krodfr</td>
-  <td><input type="text" id="rep1"></td>
-  <td class="indice" id="ind1">Le mot magique révèle le tiroir</td>
-</tr>
-<tr>
-  <td>📜 Formule Oubliée</td>
-  <td>Réorganise les lettres : R,O,G,I,M,E,S</td>
-  <td><input type="text" id="rep2"></td>
-  <td class="indice" id="ind2">Formule ouvre la bibliothèque secrète</td>
-</tr>
-<tr>
-  <td>⏳ Sablier Mystérieux</td>
-  <td>Le sablier compte 7+5+3 minutes. Combien ?</td>
-  <td><input type="text" id="rep3"></td>
-  <td class="indice" id="ind3">15 est le code pour le coffre final</td>
-</tr>
-<tr>
-  <td>🗝️ Coffre Final</td>
-  <td>Seul le nombre du sablier ouvrira le coffre ?</td>
-  <td><input type="text" id="rep4"></td>
-  <td class="indice" id="ind4">Récupérez le Grimoire et sauvez l’académie</td>
-</tr>
-</tbody>
-</table>
+  <button onclick="verifier()">✨ Vérifier les réponses ✨</button>
 
-<button onclick="verifier()">✨ Vérifier les réponses ✨</button>
-
-<!-- Emojis flottants -->
-<div class="emoji" style="top:10%; left:20%;">🔮</div>
-<div class="emoji" style="top:30%; left:70%;">🪄</div>
-<div class="emoji" style="top:60%; left:40%;">📜</div>
-<div class="emoji" style="top:80%; left:80%;">🗝️</div>
-
-<script>
-const solutions = ['violet','sortilège','grimoire','15','15'];
-
-function verifier() {
-  for (let i = 0; i < solutions.length; i++) {
-    let reponse = document.getElementById('rep' + i).value.trim().toLowerCase();
-    let indice = document.getElementById('ind' + i);
-    if (reponse === solutions[i]) {
-      indice.classList.add('revele'); // animation magique
+  <script>
+    function verifier(){
+      // Réponses attendues
+      const reponses = ["violet", "mot", "signe", "15", "15"];
+      
+      for(let i=1; i<=5; i++){
+        let r = document.getElementById("q"+i).value.toLowerCase().trim();
+        if(r === reponses[i-1]){
+          document.getElementById("i"+i).style.display = "inline";
+        }
+      }
     }
-  }
-}
-</script>
-
+  </script>
 </body>
 </html>
