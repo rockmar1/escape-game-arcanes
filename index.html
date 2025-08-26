@@ -29,6 +29,13 @@
       color: #d4b5ff;
     }
 
+    #timer {
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      color: #ffd369;
+      font-weight: bold;
+    }
+
     table {
       margin: 0 auto;
       border-collapse: collapse;
@@ -89,8 +96,17 @@
 <body>
   <h1>🔮 Escape Game : Académie des Arcanes 🔮</h1>
   <h2>Durée : 1h | Joueurs : 2 à 6 | Thème : Magie</h2>
+
+  <div id="timer">⏳ Temps restant : 60:00</div>
+
   <p>Bienvenue à l’Académie des Arcanes ! Le Grimoire des Sortilèges Anciens a disparu.  
   Votre mission : le retrouver avant que le sablier ne s’écoule ⏳</p>
+
+  <!-- Musique d'ambiance -->
+  <audio id="music" autoplay loop>
+    <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Cinematic_Themes/Scott_Holmes_Music_-_01_-_Epic_Cinematic.mp3" type="audio/mpeg">
+    Votre navigateur ne supporte pas l'audio.
+  </audio>
 
   <table>
     <tr>
@@ -100,32 +116,33 @@
       <th>Indice</th>
     </tr>
     <tr>
-      <td>🟣 Potion de Couleurs</td>
-      <td>Mélange rouge et bleu, la couleur du secret ?</td>
+      <td>🧪 Élixir Chromatique</td>
+      <td>Associe les couleurs du feu (rouge) et de l’eau (bleu). Quel est le résultat magique ?</td>
       <td><input type="text" id="q1"></td>
       <td><span id="i1" class="hidden">✨ Violet ouvre la boîte suivante</span></td>
     </tr>
     <tr>
-      <td>📜 Parchemin Codé</td>
-      <td>Décale chaque lettre de 3 : Krodfr</td>
+      <td>📜 Parchemin Chiffré</td>
+      <td>Message codé par César (+3) : “Krodfr”. Trouve le mot.</td>
       <td><input type="text" id="q2"></td>
       <td><span id="i2" class="hidden">🔑 Le mot magique révèle le tiroir</span></td>
     </tr>
     <tr>
-      <td>📖 Formule Oubliée</td>
-      <td>Réorganise les lettres : G,I,M,E,S</td>
+      <td>🔤 Formule Cachée</td>
+      <td>Réorganise les lettres : G, I, M, E, S</td>
       <td><input type="text" id="q3"></td>
       <td><span id="i3" class="hidden">📚 Formule ouvre la bibliothèque secrète</span></td>
     </tr>
     <tr>
       <td>⏳ Sablier Mystérieux</td>
-      <td>Le sablier compte 7+5+3 minutes. Combien ?</td>
+      <td>Un sablier dure 7 min, un autre 5 min, un dernier 3 min.  
+      En les utilisant ensemble, combien de minutes au total ?</td>
       <td><input type="text" id="q4"></td>
       <td><span id="i4" class="hidden">🔢 15 est le code pour le coffre final</span></td>
     </tr>
     <tr>
       <td>🔑 Coffre Final</td>
-      <td>Seul le nombre du sablier ouvrira le coffre ?</td>
+      <td>Quel nombre ouvre le coffre scellé ?</td>
       <td><input type="text" id="q5"></td>
       <td><span id="i5" class="hidden">🏆 Récupérez le Grimoire et sauvez l’Académie !</span></td>
     </tr>
@@ -134,10 +151,10 @@
   <button onclick="verifier()">✨ Vérifier les réponses ✨</button>
 
   <script>
+    // Réponses attendues
+    const reponses = ["violet", "mot", "signe", "15", "15"];
+
     function verifier(){
-      // Réponses attendues
-      const reponses = ["violet", "mot", "signe", "15", "15"];
-      
       for(let i=1; i<=5; i++){
         let r = document.getElementById("q"+i).value.toLowerCase().trim();
         if(r === reponses[i-1]){
@@ -145,6 +162,34 @@
         }
       }
     }
+
+    // --- TIMER ---
+    let temps = 60 * 60; // 1h en secondes
+    const timerElement = document.getElementById("timer");
+    const interval = setInterval(()=>{
+      let minutes = Math.floor(temps / 60);
+      let secondes = temps % 60;
+      timerElement.textContent = `⏳ Temps restant : ${minutes}:${secondes.toString().padStart(2,'0')}`;
+      temps--;
+
+      if(temps < 0){
+        clearInterval(interval);
+        alert("⏳ Temps écoulé ! L'Académie est perdue...");
+      }
+    },1000);
+
+    // --- INDICES ALÉATOIRES ---
+    function indiceAleatoire(){
+      if(confirm("💡 Voulez-vous recevoir un indice supplémentaire ?")){
+        alert("Indice bonus : Pensez comme un mage, les couleurs et les chiffres cachent la vérité !");
+      }
+    }
+
+    // toutes les 5 à 10 minutes, propose un indice
+    setInterval(()=>{
+      let chance = Math.random();
+      if(chance > 0.5){ indiceAleatoire(); }
+    }, (Math.floor(Math.random()*5)+5) * 60000); // 5 à 10 min
   </script>
 </body>
 </html>
