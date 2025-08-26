@@ -2,174 +2,237 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Game : Académie des Arcanes</title>
+  <title>Escape Game Magique</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Uncial+Antiqua&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Quicksand:wght@400;600&display=swap');
-    body { margin:0; background:#0b0c10; color:white; font-family:'Quicksand', sans-serif; text-align:center; }
-    #intro, #game, #overlay { display:none; }
-    #intro {
-      position:fixed; top:0; left:0; width:100%; height:100%;
-      background:black; display:flex; justify-content:center; align-items:center; flex-direction:column;
-      font-family:'Cinzel', serif; font-size:1.5em; color:#ffd369; padding:30px;
+    body {
+      font-family: 'Uncial Antiqua', cursive;
+      background: url('https://www.transparenttextures.com/patterns/parchment.png');
+      color: #f5f5dc;
+      text-shadow: 1px 1px 3px #000;
+      margin: 0;
+      padding: 0;
     }
-    #intro p { opacity:0; animation: fadeIn 4s forwards; margin-bottom:20px;}
-    @keyframes fadeIn { to {opacity:1;} }
-    #decor { margin-top:20px; font-size:1.8em; }
-    .hiddenIndice { display:none; color:#90ee90; margin-top:10px; font-style:italic; }
-    .clickable { cursor:pointer; transition:0.2s; }
-    .clickable:hover { transform:scale(1.3); }
-    table { border-collapse:collapse; margin:auto; margin-top:20px; width:90%; }
-    th, td { border:1px solid #444; padding:10px; }
-    #overlay { font-size:2em; }
+    #intro, #game, #overlay {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px;
+    }
+    #intro {
+      background: rgba(0,0,0,0.8);
+      margin-top: 60px;
+      border-radius: 15px;
+      box-shadow: 0 0 30px #6f42c1;
+      text-align: center;
+    }
+    #game {
+      display: none;
+      background: rgba(0,0,0,0.7);
+      border-radius: 20px;
+      box-shadow: 0 0 30px #d4af37;
+    }
+    .card {
+      border: 2px solid #b8860b;
+      padding: 20px;
+      margin: 15px 0;
+      background: rgba(30,30,30,0.9);
+      border-radius: 12px;
+      box-shadow: 0 0 15px #d4af37;
+    }
+    #overlay {
+      display: none;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      margin-top: 15px;
+      background: #6f42c1;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 1.1em;
+      box-shadow: 0 0 10px #000;
+    }
+    button:hover {
+      background: #d4af37;
+      color: black;
+    }
+    #timer {
+      font-size: 1.4em;
+      text-align: right;
+      margin-bottom: 20px;
+      color: #ffd700;
+    }
   </style>
 </head>
 <body>
 
-  <!-- INTRO DRAMATIQUE -->
-  <div id="intro">
-    <p style="animation-delay:0s">🌑 Dans les profondeurs de l’Académie…</p>
-    <p style="animation-delay:4s">Une ombre grandit, corrompant les arcanes…</p>
-    <p style="animation-delay:8s">Le Grimoire des Sortilèges Anciens a été dérobé.</p>
-    <p style="animation-delay:12s">Si vous échouez, la magie noire régnera éternellement.</p>
-    <button style="margin-top:40px; display:none;" id="startBtn" onclick="startGame()">⚔️ Commencer la quête</button>
+<div id="intro">
+  <h1>✨ L’Académie des Arcanes ✨</h1>
+  <p>Une ombre plane sur l’Académie… La magie noire menace d’engloutir le monde.</p>
+  <p>Votre mission : résoudre les énigmes des Anciens avant que le sablier ne s’écoule.</p>
+  <p>Si vous échouez, l’Académie sera perdue à jamais...</p>
+  <button onclick="startGame()">Commencer l’aventure</button>
+</div>
+
+<div id="game">
+  <div id="timer">Temps restant : 10:00</div>
+
+  <div class="card">
+    <h2>Énigme 1 : Suite Arcanique</h2>
+    <p>2, 4, 8, 16, … ?</p>
+    <input id="q1"><button onclick="checkAnswer(1)">Valider</button>
   </div>
 
-  <!-- JEU -->
-  <div id="game">
-    <h1>🔮 Académie des Arcanes 🔮</h1>
-    <div id="timer">⏳ Temps restant : 60:00</div>
-
-    <!-- Décor interactif -->
-    <div id="decor">
-      ✨
-      <span class="clickable" onclick="revealHiddenIndice(1)">🕯️</span>
-      🔥
-      <span class="clickable" onclick="revealHiddenIndice(2)">⚡</span>
-      🌑
-      <span class="clickable" onclick="revealHiddenIndice(3)">🐍</span>
-    </div>
-    <div id="hidden1" class="hiddenIndice">💡 L’ombre cache parfois la lumière...</div>
-    <div id="hidden2" class="hiddenIndice">💡 Les nombres parlent plus que les mots...</div>
-    <div id="hidden3" class="hiddenIndice">💡 Parfois, ce qui est inversé cache la vérité...</div>
-
-    <!-- Tableau énigmes -->
-    <table>
-      <tr><th>Énigme</th><th>Question</th><th>Réponse</th></tr>
-      <tr><td>Suite Arcanique</td><td>Complète : 2, 4, 8, 16, ... ?</td><td><input type="text" id="q1"></td></tr>
-      <tr><td>Crypte Chiffrée</td><td>ROT13 : “Cebtenzz”</td><td><input type="text" id="q2"></td></tr>
-      <tr><td>Piège de Logique</td><td>A dit : "Je mens toujours"<br>B : "A ment"<br>C : "B dit vrai"<br>Qui ment ? (A/B/C)</td><td><input type="text" id="q3"></td></tr>
-      <tr><td>Énigme des Runes</td><td>Mot caché : "SRROOH"</td><td><input type="text" id="q4"></td></tr>
-      <tr><td>Étoiles Arcanes</td><td>Combien de branches a un pentagramme ?</td><td><input type="text" id="q5"></td></tr>
-      <tr><td>Potion Temporelle</td><td>Si hier était demain, aujourd’hui serait ?</td><td><input type="text" id="q6"></td></tr>
-      <tr><td>Cadenas des Ombres</td><td>Code : somme de 13 + 27 + 45</td><td><input type="text" id="q7"></td></tr>
-      <tr><td>Sphinx Final</td><td>Je parle sans bouche et j’entends sans oreilles. Qui suis-je ?</td><td><input type="text" id="q8"></td></tr>
-    </table>
-
-    <button onclick="verifier()">🔑 Vérifier les réponses</button>
+  <div class="card">
+    <h2>Énigme 2 : Crypte Chiffrée</h2>
+    <p>ROT13 → “Cebtenzz”</p>
+    <input id="q2"><button onclick="checkAnswer(2)">Valider</button>
   </div>
 
-  <!-- ÉCRAN DE FIN -->
-  <div id="overlay"></div>
+  <div class="card">
+    <h2>Énigme 3 : Piège de Logique</h2>
+    <p>A : "Je mens toujours"<br>B : "A ment"<br>C : "B dit vrai"<br>Qui dit vrai ?</p>
+    <input id="q3"><button onclick="checkAnswer(3)">Valider</button>
+  </div>
 
-  <audio id="bgm" loop>
-    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0a2e4c2375.mp3?filename=dark-ambient-110624.mp3" type="audio/mpeg">
-  </audio>
+  <div class="card">
+    <h2>Énigme 4 : Les Runes</h2>
+    <p>Le mot caché est “URYYB” (ROT13). Quel est-il ?</p>
+    <input id="q4"><button onclick="checkAnswer(4)">Valider</button>
+  </div>
 
-  <script>
-    let temps=60*60, timerInterval;
-    let reponses = ["32","program","c","spool","5","lundi","85","echo"];
-    let scores = [];
-    let indicesUtilises = 0;
+  <div class="card">
+    <h2>Énigme 5 : Étoiles Arcanes</h2>
+    <p>Combien de branches a un pentagramme ?</p>
+    <input id="q5"><button onclick="checkAnswer(5)">Valider</button>
+  </div>
 
-    // Intro
-    setTimeout(()=>{ document.getElementById("startBtn").style.display="block"; },15000);
+  <div class="card">
+    <h2>Énigme 6 : Potion Temporelle</h2>
+    <p>Si hier était demain, aujourd’hui serait… ?</p>
+    <input id="q6"><button onclick="checkAnswer(6)">Valider</button>
+  </div>
 
-    function startGame(){
-      document.getElementById("intro").style.display="none";
-      document.getElementById("game").style.display="block";
-      document.getElementById("bgm").play();
-      startTimer();
-      setInterval(popRandomIndice, 300000); // toutes les 5min
+  <div class="card">
+    <h2>Énigme 7 : Cadenas des Ombres</h2>
+    <p>13 + 27 + 45 = ?</p>
+    <input id="q7"><button onclick="checkAnswer(7)">Valider</button>
+  </div>
+
+  <div class="card">
+    <h2>Énigme 8 : Le Sphinx</h2>
+    <p>Je parle sans bouche et j’entends sans oreilles. Qui suis-je ?</p>
+    <input id="q8"><button onclick="checkAnswer(8)">Valider</button>
+  </div>
+
+</div>
+
+<div id="overlay"></div>
+
+<script>
+let timerInterval;
+let indiceInterval;
+let tempsRestant = 600; // 10 minutes
+let score = 0;
+let solved = 0;
+const total = 8;
+
+// réponses
+const answers = {
+  1:"32", 2:"program", 3:"C", 4:"hello", 
+  5:"5", 6:"lundi", 7:"85", 8:"echo"
+};
+
+function startGame(){
+  document.getElementById("intro").style.display="none";
+  document.getElementById("game").style.display="block";
+  startTimer();
+}
+
+function startTimer(){
+  timerInterval = setInterval(()=>{
+    tempsRestant--;
+    document.getElementById("timer").innerText="Temps restant : " + formatTime(tempsRestant);
+    if(tempsRestant <= 0){
+      gameOver(false);
     }
+  },1000);
 
-    function startTimer(){
-      timerInterval=setInterval(()=>{
-        let min=Math.floor(temps/60), sec=temps%60;
-        document.getElementById("timer").innerText=`⏳ Temps restant : ${min}:${sec.toString().padStart(2,"0")}`;
-        temps--;
-        if(temps<0){ clearInterval(timerInterval); gameOver(false); }
-      },1000);
+  // indices aléatoires toutes 90-150s
+  indiceInterval = setInterval(()=>{
+    proposerIndiceAleatoire();
+  }, Math.floor(Math.random()*60000)+90000);
+}
+
+function formatTime(s){
+  let m=Math.floor(s/60), sec=s%60;
+  return m+":"+(sec<10?"0":"")+sec;
+}
+
+function stopGame(){
+  clearInterval(timerInterval);
+  clearInterval(indiceInterval);
+}
+
+function checkAnswer(n){
+  let val = document.getElementById("q"+n).value.trim().toLowerCase();
+  if(val === answers[n].toLowerCase()){
+    alert("✅ Bonne réponse !");
+    score += 10;
+    solved++;
+    if(solved===total){ gameOver(true); }
+  } else {
+    alert("❌ Mauvaise réponse !");
+    score -= 2;
+  }
+}
+
+function proposerIndiceAleatoire(){
+  if(Math.random() < 0.6){
+    if(confirm("⚡ Un ancien esprit veut vous souffler un indice... Acceptez-vous ?")){
+      afficherIndiceAleatoire();
+      score -= 5;
     }
+  }
+}
 
-    function revealHiddenIndice(id){
-      document.getElementById("hidden"+id).style.display="block";
-    }
+function afficherIndiceAleatoire(){
+  const indices = [
+    "Les runes cachent un mot en ROT13...",
+    "La suite double à chaque étape...",
+    "Le sphinx aime les échos...",
+    "Ne compte pas seulement, observe la forme..."
+  ];
+  let indice = indices[Math.floor(Math.random()*indices.length)];
+  alert("💡 Indice magique : " + indice);
+}
 
-    function popRandomIndice(){
-      if(confirm("Voulez-vous un indice mystère ?")){
-        indicesUtilises++;
-        let indices = [
-          "Regardez les lettres à l’envers...",
-          "Les nombres se répètent parfois par 2...",
-          "La réponse est plus simple qu’elle n’y paraît...",
-          "Les runes se lisent à l’envers..."
-        ];
-        alert(indices[Math.floor(Math.random()*indices.length)]);
-      }
-    }
-
-    function verifier(){
-      let all=true;
-      for(let i=1;i<=8;i++){
-        let r=document.getElementById("q"+i).value.toLowerCase().trim();
-        if(r!==reponses[i-1]) all=false;
-      }
-      if(all) gameOver(true);
-      else alert("❌ Certaines réponses sont fausses !");
-    }
-
-    function gameOver(victoire){
-      clearInterval(timerInterval);
-      document.getElementById("game").style.display="none";
-      let o=document.getElementById("overlay");
-      o.style.display="flex"; o.style.flexDirection="column"; o.style.justifyContent="center"; o.style.alignItems="center"; o.style.height="100vh";
-      document.getElementById("bgm").pause();
-
-      if(victoire){
-        o.innerHTML="<h1>🏆 Victoire ! Vous avez sauvé l’Académie.</h1>";
-      } else {
-        o.innerHTML="<h1>☠️ La magie noire a vaincu l’Académie des Arcanes...</h1>";
-      }
-
-      // Ajouter tableau des scores ici uniquement
-      let scoreFinal = Math.max(0, temps - (indicesUtilises*60)); // pénalité 1 min par indice utilisé
-      o.innerHTML += `
-        <div style="margin-top:30px;">
-          <h2>🏆 Tableau des Scores</h2>
-          <input type="text" id="pseudo" placeholder="Votre pseudo">
-          <button onclick="enregistrerScore(${scoreFinal})">Enregistrer</button>
-          <ul id="scoreboard"></ul>
-        </div>
-      `;
-    }
-
-    function enregistrerScore(scoreFinal){
-      let pseudo=document.getElementById("pseudo").value;
-      if(!pseudo) return alert("Entrez un pseudo !");
-      scores.push({nom:pseudo, score:scoreFinal});
-      scores.sort((a,b)=>b.score-a.score);
-      afficherScores();
-    }
-
-    function afficherScores(){
-      let ul=document.getElementById("scoreboard");
-      ul.innerHTML="";
-      scores.forEach(s=>{ 
-        let li=document.createElement("li"); 
-        li.textContent=`${s.nom} - ${s.score} pts`; 
-        ul.appendChild(li); 
-      });
-    }
-  </script>
+function gameOver(victoire){
+  stopGame();
+  document.getElementById("game").style.display="none";
+  let o=document.getElementById("overlay");
+  o.style.display="block";
+  o.innerHTML="";
+  if(victoire){
+    o.innerHTML=`
+      <h1>🌟 Victoire ! 🌟</h1>
+      <p>Les arcanes brillent de mille feux !<br>
+      Vous avez sauvé l’Académie des Arcanes.<br>
+      Votre nom sera gravé dans le Livre des Héros.</p>
+      <p>Score final : ${score}</p>
+    `;
+  } else {
+    o.innerHTML=`
+      <h1>☠️ Défaite…</h1>
+      <p>La magie noire consume l’Académie.<br>
+      Les ombres gagnent, et votre échec restera éternel.</p>
+      <p>Score final : ${score}</p>
+    `;
+  }
+}
+</script>
 </body>
 </html>
