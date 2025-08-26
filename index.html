@@ -5,191 +5,171 @@
   <title>Escape Game : Académie des Arcanes</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Quicksand:wght@400;600&display=swap');
-
-    body {
-      margin: 0;
-      font-family: 'Quicksand', sans-serif;
-      background: linear-gradient(135deg, #1a1f36, #3e1f47, #2c5364);
-      color: #fff;
-      text-align: center;
-      min-height: 100vh;
-      padding: 20px;
+    body { margin:0; background:#0b0c10; color:white; font-family:'Quicksand', sans-serif; text-align:center; }
+    #intro, #game, #overlay { display:none; }
+    #intro {
+      position:fixed; top:0; left:0; width:100%; height:100%;
+      background:black; display:flex; justify-content:center; align-items:center; flex-direction:column;
+      font-family:'Cinzel', serif; font-size:1.5em; color:#ffd369; padding:30px;
     }
-
-    h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 2.5em;
-      margin-bottom: 0.2em;
-    }
-
-    h2 {
-      font-weight: normal;
-      margin-top: 0;
-      margin-bottom: 20px;
-      color: #d4b5ff;
-    }
-
-    #timer {
-      font-size: 1.5em;
-      margin-bottom: 20px;
-      color: #ffd369;
-      font-weight: bold;
-    }
-
-    table {
-      margin: 0 auto;
-      border-collapse: collapse;
-      width: 85%;
-      background: rgba(255,255,255,0.08);
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-    }
-
-    th, td {
-      border: 1px solid rgba(255,255,255,0.15);
-      padding: 15px;
-    }
-
-    th {
-      background: rgba(255,255,255,0.15);
-      font-weight: bold;
-      color: #ffd369;
-      text-transform: uppercase;
-    }
-
-    input {
-      padding: 8px;
-      border: none;
-      border-radius: 8px;
-      width: 90%;
-      text-align: center;
-      font-size: 1em;
-    }
-
-    .hidden {
-      display: none;
-      font-weight: bold;
-      color: #90ee90;
-    }
-
-    button {
-      margin-top: 20px;
-      padding: 12px 30px;
-      border: none;
-      border-radius: 25px;
-      font-size: 1.2em;
-      background: linear-gradient(90deg, #ff9a9e, #fad0c4, #fad390);
-      color: #222;
-      font-weight: bold;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-      transition: 0.3s;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.5);
-    }
+    #intro p { opacity:0; animation: fadeIn 4s forwards; margin-bottom:20px;}
+    @keyframes fadeIn { to {opacity:1;} }
+    #decor { margin-top:20px; font-size:1.8em; }
+    .hiddenIndice { display:none; color:#90ee90; margin-top:10px; font-style:italic; }
+    .clickable { cursor:pointer; transition:0.2s; }
+    .clickable:hover { transform:scale(1.3); }
+    table { border-collapse:collapse; margin:auto; margin-top:20px; width:90%; }
+    th, td { border:1px solid #444; padding:10px; }
+    #overlay { font-size:2em; }
   </style>
 </head>
 <body>
-  <h1>🔮 Escape Game : Académie des Arcanes 🔮</h1>
-  <h2>Durée : 1h | Joueurs : 2 à 6 | Thème : Magie</h2>
 
-  <div id="timer">⏳ Temps restant : 60:00</div>
+  <!-- INTRO DRAMATIQUE -->
+  <div id="intro">
+    <p style="animation-delay:0s">🌑 Dans les profondeurs de l’Académie…</p>
+    <p style="animation-delay:4s">Une ombre grandit, corrompant les arcanes…</p>
+    <p style="animation-delay:8s">Le Grimoire des Sortilèges Anciens a été dérobé.</p>
+    <p style="animation-delay:12s">Si vous échouez, la magie noire régnera éternellement.</p>
+    <button style="margin-top:40px; display:none;" id="startBtn" onclick="startGame()">⚔️ Commencer la quête</button>
+  </div>
 
-  <p>Bienvenue à l’Académie des Arcanes ! Le Grimoire des Sortilèges Anciens a disparu.  
-  Votre mission : le retrouver avant que le sablier ne s’écoule ⏳</p>
+  <!-- JEU -->
+  <div id="game">
+    <h1>🔮 Académie des Arcanes 🔮</h1>
+    <div id="timer">⏳ Temps restant : 60:00</div>
 
-  <!-- Musique d'ambiance -->
-  <audio id="music" autoplay loop>
-    <source src="https://files.freemusicarchive.org/storage-freemusicarchive-org/music/ccCommunity/Scott_Holmes_Music/Cinematic_Themes/Scott_Holmes_Music_-_01_-_Epic_Cinematic.mp3" type="audio/mpeg">
-    Votre navigateur ne supporte pas l'audio.
+    <!-- Décor interactif -->
+    <div id="decor">
+      ✨
+      <span class="clickable" onclick="revealHiddenIndice(1)">🕯️</span>
+      🔥
+      <span class="clickable" onclick="revealHiddenIndice(2)">⚡</span>
+      🌑
+      <span class="clickable" onclick="revealHiddenIndice(3)">🐍</span>
+    </div>
+    <div id="hidden1" class="hiddenIndice">💡 L’ombre cache parfois la lumière...</div>
+    <div id="hidden2" class="hiddenIndice">💡 Les nombres parlent plus que les mots...</div>
+    <div id="hidden3" class="hiddenIndice">💡 Parfois, ce qui est inversé cache la vérité...</div>
+
+    <!-- Tableau énigmes -->
+    <table>
+      <tr><th>Énigme</th><th>Question</th><th>Réponse</th></tr>
+      <tr><td>Suite Arcanique</td><td>Complète : 2, 4, 8, 16, ... ?</td><td><input type="text" id="q1"></td></tr>
+      <tr><td>Crypte Chiffrée</td><td>ROT13 : “Cebtenzz”</td><td><input type="text" id="q2"></td></tr>
+      <tr><td>Piège de Logique</td><td>A dit : "Je mens toujours"<br>B : "A ment"<br>C : "B dit vrai"<br>Qui ment ? (A/B/C)</td><td><input type="text" id="q3"></td></tr>
+      <tr><td>Énigme des Runes</td><td>Mot caché : "SRROOH"</td><td><input type="text" id="q4"></td></tr>
+      <tr><td>Étoiles Arcanes</td><td>Combien de branches a un pentagramme ?</td><td><input type="text" id="q5"></td></tr>
+      <tr><td>Potion Temporelle</td><td>Si hier était demain, aujourd’hui serait ?</td><td><input type="text" id="q6"></td></tr>
+      <tr><td>Cadenas des Ombres</td><td>Code : somme de 13 + 27 + 45</td><td><input type="text" id="q7"></td></tr>
+      <tr><td>Sphinx Final</td><td>Je parle sans bouche et j’entends sans oreilles. Qui suis-je ?</td><td><input type="text" id="q8"></td></tr>
+    </table>
+
+    <button onclick="verifier()">🔑 Vérifier les réponses</button>
+  </div>
+
+  <!-- ÉCRAN DE FIN -->
+  <div id="overlay"></div>
+
+  <audio id="bgm" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_0a2e4c2375.mp3?filename=dark-ambient-110624.mp3" type="audio/mpeg">
   </audio>
 
-  <table>
-    <tr>
-      <th>Énigme</th>
-      <th>Question</th>
-      <th>Réponse</th>
-      <th>Indice</th>
-    </tr>
-    <tr>
-      <td>🧪 Élixir Chromatique</td>
-      <td>Associe les couleurs du feu (rouge) et de l’eau (bleu). Quel est le résultat magique ?</td>
-      <td><input type="text" id="q1"></td>
-      <td><span id="i1" class="hidden">✨ Violet ouvre la boîte suivante</span></td>
-    </tr>
-    <tr>
-      <td>📜 Parchemin Chiffré</td>
-      <td>Message codé par César (+3) : “Krodfr”. Trouve le mot.</td>
-      <td><input type="text" id="q2"></td>
-      <td><span id="i2" class="hidden">🔑 Le mot magique révèle le tiroir</span></td>
-    </tr>
-    <tr>
-      <td>🔤 Formule Cachée</td>
-      <td>Réorganise les lettres : G, I, M, E, S</td>
-      <td><input type="text" id="q3"></td>
-      <td><span id="i3" class="hidden">📚 Formule ouvre la bibliothèque secrète</span></td>
-    </tr>
-    <tr>
-      <td>⏳ Sablier Mystérieux</td>
-      <td>Un sablier dure 7 min, un autre 5 min, un dernier 3 min.  
-      En les utilisant ensemble, combien de minutes au total ?</td>
-      <td><input type="text" id="q4"></td>
-      <td><span id="i4" class="hidden">🔢 15 est le code pour le coffre final</span></td>
-    </tr>
-    <tr>
-      <td>🔑 Coffre Final</td>
-      <td>Quel nombre ouvre le coffre scellé ?</td>
-      <td><input type="text" id="q5"></td>
-      <td><span id="i5" class="hidden">🏆 Récupérez le Grimoire et sauvez l’Académie !</span></td>
-    </tr>
-  </table>
-
-  <button onclick="verifier()">✨ Vérifier les réponses ✨</button>
-
   <script>
-    // Réponses attendues
-    const reponses = ["violet", "mot", "signe", "15", "15"];
+    let temps=60*60, timerInterval;
+    let reponses = ["32","program","c","spool","5","lundi","85","echo"];
+    let scores = [];
+    let indicesUtilises = 0;
+
+    // Intro
+    setTimeout(()=>{ document.getElementById("startBtn").style.display="block"; },15000);
+
+    function startGame(){
+      document.getElementById("intro").style.display="none";
+      document.getElementById("game").style.display="block";
+      document.getElementById("bgm").play();
+      startTimer();
+      setInterval(popRandomIndice, 300000); // toutes les 5min
+    }
+
+    function startTimer(){
+      timerInterval=setInterval(()=>{
+        let min=Math.floor(temps/60), sec=temps%60;
+        document.getElementById("timer").innerText=`⏳ Temps restant : ${min}:${sec.toString().padStart(2,"0")}`;
+        temps--;
+        if(temps<0){ clearInterval(timerInterval); gameOver(false); }
+      },1000);
+    }
+
+    function revealHiddenIndice(id){
+      document.getElementById("hidden"+id).style.display="block";
+    }
+
+    function popRandomIndice(){
+      if(confirm("Voulez-vous un indice mystère ?")){
+        indicesUtilises++;
+        let indices = [
+          "Regardez les lettres à l’envers...",
+          "Les nombres se répètent parfois par 2...",
+          "La réponse est plus simple qu’elle n’y paraît...",
+          "Les runes se lisent à l’envers..."
+        ];
+        alert(indices[Math.floor(Math.random()*indices.length)]);
+      }
+    }
 
     function verifier(){
-      for(let i=1; i<=5; i++){
-        let r = document.getElementById("q"+i).value.toLowerCase().trim();
-        if(r === reponses[i-1]){
-          document.getElementById("i"+i).style.display = "inline";
-        }
+      let all=true;
+      for(let i=1;i<=8;i++){
+        let r=document.getElementById("q"+i).value.toLowerCase().trim();
+        if(r!==reponses[i-1]) all=false;
       }
+      if(all) gameOver(true);
+      else alert("❌ Certaines réponses sont fausses !");
     }
 
-    // --- TIMER ---
-    let temps = 60 * 60; // 1h en secondes
-    const timerElement = document.getElementById("timer");
-    const interval = setInterval(()=>{
-      let minutes = Math.floor(temps / 60);
-      let secondes = temps % 60;
-      timerElement.textContent = `⏳ Temps restant : ${minutes}:${secondes.toString().padStart(2,'0')}`;
-      temps--;
+    function gameOver(victoire){
+      clearInterval(timerInterval);
+      document.getElementById("game").style.display="none";
+      let o=document.getElementById("overlay");
+      o.style.display="flex"; o.style.flexDirection="column"; o.style.justifyContent="center"; o.style.alignItems="center"; o.style.height="100vh";
+      document.getElementById("bgm").pause();
 
-      if(temps < 0){
-        clearInterval(interval);
-        alert("⏳ Temps écoulé ! L'Académie est perdue...");
+      if(victoire){
+        o.innerHTML="<h1>🏆 Victoire ! Vous avez sauvé l’Académie.</h1>";
+      } else {
+        o.innerHTML="<h1>☠️ La magie noire a vaincu l’Académie des Arcanes...</h1>";
       }
-    },1000);
 
-    // --- INDICES ALÉATOIRES ---
-    function indiceAleatoire(){
-      if(confirm("💡 Voulez-vous recevoir un indice supplémentaire ?")){
-        alert("Indice bonus : Pensez comme un mage, les couleurs et les chiffres cachent la vérité !");
-      }
+      // Ajouter tableau des scores ici uniquement
+      let scoreFinal = Math.max(0, temps - (indicesUtilises*60)); // pénalité 1 min par indice utilisé
+      o.innerHTML += `
+        <div style="margin-top:30px;">
+          <h2>🏆 Tableau des Scores</h2>
+          <input type="text" id="pseudo" placeholder="Votre pseudo">
+          <button onclick="enregistrerScore(${scoreFinal})">Enregistrer</button>
+          <ul id="scoreboard"></ul>
+        </div>
+      `;
     }
 
-    // toutes les 5 à 10 minutes, propose un indice
-    setInterval(()=>{
-      let chance = Math.random();
-      if(chance > 0.5){ indiceAleatoire(); }
-    }, (Math.floor(Math.random()*5)+5) * 60000); // 5 à 10 min
+    function enregistrerScore(scoreFinal){
+      let pseudo=document.getElementById("pseudo").value;
+      if(!pseudo) return alert("Entrez un pseudo !");
+      scores.push({nom:pseudo, score:scoreFinal});
+      scores.sort((a,b)=>b.score-a.score);
+      afficherScores();
+    }
+
+    function afficherScores(){
+      let ul=document.getElementById("scoreboard");
+      ul.innerHTML="";
+      scores.forEach(s=>{ 
+        let li=document.createElement("li"); 
+        li.textContent=`${s.nom} - ${s.score} pts`; 
+        ul.appendChild(li); 
+      });
+    }
   </script>
 </body>
 </html>
