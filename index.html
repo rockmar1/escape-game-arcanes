@@ -19,219 +19,241 @@
       padding: 30px;
     }
     #intro {
-      background: rgba(0,0,0,0.8);
+      background: rgba(0,0,0,0.85);
       margin-top: 60px;
       border-radius: 15px;
-      box-shadow: 0 0 30px #6f42c1;
+      box-shadow: 0 0 40px #6f42c1;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
-    #game {
+    #intro h1 {
+      font-family: 'Cinzel', serif;
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      color: #ffd700;
+      text-shadow: 2px 2px 8px black;
+    }
+    #introText {
+      font-size: 1.2em;
+      line-height: 1.6em;
+      text-align: justify;
+      display: inline-block;
+      white-space: pre-wrap;
+      border-left: 3px solid #ffd700;
+      padding-left: 15px;
+    }
+    #startBtn {
       display: none;
-      background: rgba(0,0,0,0.7);
-      border-radius: 20px;
-      box-shadow: 0 0 30px #d4af37;
-    }
-    .card {
-      border: 2px solid #b8860b;
-      padding: 20px;
-      margin: 15px 0;
-      background: rgba(30,30,30,0.9);
-      border-radius: 12px;
-      box-shadow: 0 0 15px #d4af37;
-    }
-    #overlay {
-      display: none;
-      text-align: center;
-    }
-    button {
-      padding: 10px 20px;
-      margin-top: 15px;
+      padding: 12px 25px;
+      margin-top: 25px;
       background: #6f42c1;
       color: white;
       border: none;
       border-radius: 8px;
       cursor: pointer;
       font-family: 'Cinzel', serif;
-      font-size: 1.1em;
-      box-shadow: 0 0 10px #000;
+      font-size: 1.3em;
+      box-shadow: 0 0 15px #000;
+      animation: pulse 1.5s infinite;
     }
-    button:hover {
-      background: #d4af37;
+    #startBtn:hover {
+      background: #ffd700;
       color: black;
     }
-    #timer {
-      font-size: 1.4em;
-      text-align: right;
-      margin-bottom: 20px;
-      color: #ffd700;
+    @keyframes pulse {
+      0% { box-shadow: 0 0 10px #6f42c1; }
+      50% { box-shadow: 0 0 25px #ffd700; }
+      100% { box-shadow: 0 0 10px #6f42c1; }
     }
+    #grimoire {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120%;
+      height: 120%;
+      background: radial-gradient(circle at center, rgba(255,215,0,0.15), rgba(0,0,0,0.9));
+      border-radius: 50%;
+      animation: aura 5s infinite alternate;
+      z-index: -1;
+    }
+    @keyframes aura {
+      from { opacity: 0.6; transform: translateX(-50%) scale(1); }
+      to { opacity: 0.9; transform: translateX(-50%) scale(1.05); }
+    }
+    #timer { font-size: 1.5em; margin: 20px 0; }
+    .enigme { margin: 20px 0; padding: 15px; border: 2px solid #ffd700; border-radius: 10px; }
+    input[type=text] { width: 60%; padding: 8px; margin-top: 10px; }
+    button { margin-top: 10px; padding: 8px 15px; font-family: 'Cinzel', serif; cursor: pointer; }
+    #overlay {
+      display:none;
+      text-align:center;
+      background:rgba(0,0,0,0.85);
+      color:#fff;
+      padding:50px;
+      border-radius:15px;
+      margin-top:60px;
+    }
+    #scores { margin-top:20px; text-align:center; }
+    table { border-collapse: collapse; margin: auto; }
+    td, th { border: 1px solid #ffd700; padding: 10px; }
   </style>
 </head>
 <body>
 
+<!-- Introduction -->
 <div id="intro">
-  <h1>✨ L’Académie des Arcanes ✨</h1>
-  <p>Une ombre plane sur l’Académie… La magie noire menace d’engloutir le monde.</p>
-  <p>Votre mission : résoudre les énigmes des Anciens avant que le sablier ne s’écoule.</p>
-  <p>Si vous échouez, l’Académie sera perdue à jamais...</p>
-  <button onclick="startGame()">Commencer l’aventure</button>
+  <div id="grimoire"></div>
+  <h1>📖 L’Académie des Arcanes 📖</h1>
+  <div id="introText"></div>
+  <br>
+  <button id="startBtn" onclick="startGame()">Commencer l’aventure</button>
 </div>
 
-<div id="game">
-  <div id="timer">Temps restant : 10:00</div>
-
-  <div class="card">
-    <h2>Énigme 1 : Suite Arcanique</h2>
-    <p>2, 4, 8, 16, … ?</p>
-    <input id="q1"><button onclick="checkAnswer(1)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 2 : Crypte Chiffrée</h2>
-    <p>ROT13 → “Cebtenzz”</p>
-    <input id="q2"><button onclick="checkAnswer(2)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 3 : Piège de Logique</h2>
-    <p>A : "Je mens toujours"<br>B : "A ment"<br>C : "B dit vrai"<br>Qui dit vrai ?</p>
-    <input id="q3"><button onclick="checkAnswer(3)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 4 : Les Runes</h2>
-    <p>Le mot caché est “URYYB” (ROT13). Quel est-il ?</p>
-    <input id="q4"><button onclick="checkAnswer(4)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 5 : Étoiles Arcanes</h2>
-    <p>Combien de branches a un pentagramme ?</p>
-    <input id="q5"><button onclick="checkAnswer(5)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 6 : Potion Temporelle</h2>
-    <p>Si hier était demain, aujourd’hui serait… ?</p>
-    <input id="q6"><button onclick="checkAnswer(6)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 7 : Cadenas des Ombres</h2>
-    <p>13 + 27 + 45 = ?</p>
-    <input id="q7"><button onclick="checkAnswer(7)">Valider</button>
-  </div>
-
-  <div class="card">
-    <h2>Énigme 8 : Le Sphinx</h2>
-    <p>Je parle sans bouche et j’entends sans oreilles. Qui suis-je ?</p>
-    <input id="q8"><button onclick="checkAnswer(8)">Valider</button>
-  </div>
-
+<!-- Jeu principal -->
+<div id="game" style="display:none;">
+  <div id="timer">⏳ Temps restant : 60:00</div>
+  <div id="enigmes"></div>
 </div>
 
+<!-- Fin -->
 <div id="overlay"></div>
 
+<audio id="musique" loop>
+  <source src="https://files.catbox.moe/ij9cjq.mp3" type="audio/mpeg">
+</audio>
+
 <script>
-let timerInterval;
-let indiceInterval;
-let tempsRestant = 600; // 10 minutes
+/* --- Narration Intro --- */
+let narration = [
+  "Une ombre obscure grandit au cœur de l’Académie…",
+  "Les Anciens parlent d’un sablier maudit, déversant la magie noire dans nos couloirs.",
+  "Toi, Gardien, tu es le dernier espoir…",
+  "Résous les énigmes sacrées avant que le temps ne s’écoule,",
+  "… ou les ténèbres engloutiront à jamais la lumière."
+];
+let i = 0, j = 0, speed = 50;
+let introText = document.getElementById("introText");
+
+function typeWriter() {
+  if (i < narration.length) {
+    if (j < narration[i].length) {
+      introText.innerHTML += narration[i].charAt(j);
+      j++;
+      setTimeout(typeWriter, speed);
+    } else {
+      introText.innerHTML += "\n\n";
+      i++; j = 0;
+      setTimeout(typeWriter, 800);
+    }
+  } else {
+    document.getElementById("startBtn").style.display = "inline-block";
+  }
+}
+window.onload = () => { typeWriter(); };
+
+/* --- Données du jeu --- */
+let enigmes = [
+  { question:"🔮 Enigme 1 : Dans les flammes se cache la clé. Trouve le mot secret : F?E?", reponse:"feu", indice:"Cherche dans les cendres."},
+  { question:"🕯️ Enigme 2 : Trois bougies brûlent. Le vent en éteint deux. Combien restent allumées ?", reponse:"1", indice:"Ne réfléchis pas trop, imagine les flammes."},
+  { question:"⚖️ Enigme 3 : Je suis toujours devant toi mais jamais visible. Qui suis-je ?", reponse:"avenir", indice:"C’est le contraire du passé."},
+  { question:"📜 Enigme 4 : Déchiffre les runes : URYYB", reponse:"hello", indice:"Essaie ROT13 (chaque lettre décalée de 13)."}
+];
+let current = 0;
 let score = 0;
-let solved = 0;
-const total = 8;
+let timer = 3600; // 1h
+let timerInterval, indiceInterval;
+let scores = JSON.parse(localStorage.getItem("scores")) || [];
 
-// réponses
-const answers = {
-  1:"32", 2:"program", 3:"C", 4:"hello", 
-  5:"5", 6:"lundi", 7:"85", 8:"echo"
-};
-
+/* --- Lancer le jeu --- */
 function startGame(){
   document.getElementById("intro").style.display="none";
   document.getElementById("game").style.display="block";
-  startTimer();
+  document.getElementById("musique").play();
+
+  afficherEnigme();
+  timerInterval = setInterval(updateTimer,1000);
+  indiceInterval = setInterval(proposerIndiceAleatoire, 90000); // toutes les 90s
 }
 
-function startTimer(){
-  timerInterval = setInterval(()=>{
-    tempsRestant--;
-    document.getElementById("timer").innerText="Temps restant : " + formatTime(tempsRestant);
-    if(tempsRestant <= 0){
-      gameOver(false);
+/* --- Timer --- */
+function updateTimer(){
+  if(timer<=0){ gameOver(false); return; }
+  timer--;
+  let m=Math.floor(timer/60), s=timer%60;
+  document.getElementById("timer").innerText=`⏳ Temps restant : ${m}:${s<10?'0'+s:s}`;
+}
+
+/* --- Enigmes --- */
+function afficherEnigme(){
+  if(current>=enigmes.length){ gameOver(true); return; }
+  let e=enigmes[current];
+  document.getElementById("enigmes").innerHTML=`
+    <div class='enigme'>
+      <p>${e.question}</p>
+      <input id='rep' type='text' placeholder='Votre réponse...'>
+      <button onclick='verifier()'>Valider</button>
+      <div id='feedback'></div>
+    </div>`;
+}
+function verifier(){
+  let rep=document.getElementById("rep").value.toLowerCase().trim();
+  if(rep===enigmes[current].reponse){
+    score+=10;
+    current++;
+    afficherEnigme();
+  } else {
+    document.getElementById("feedback").innerText="❌ Mauvaise réponse !";
+  }
+}
+
+/* --- Indices --- */
+function proposerIndiceAleatoire(){
+  if(current<enigmes.length){
+    if(confirm("Voulez-vous un indice pour l'énigme actuelle ?")){
+      alert("💡 Indice : "+enigmes[current].indice);
+      score-=2;
     }
-  },1000);
-
-  // indices aléatoires toutes 90-150s
-  indiceInterval = setInterval(()=>{
-    proposerIndiceAleatoire();
-  }, Math.floor(Math.random()*60000)+90000);
+  }
 }
 
-function formatTime(s){
-  let m=Math.floor(s/60), sec=s%60;
-  return m+":"+(sec<10?"0":"")+sec;
-}
-
-function stopGame(){
+/* --- Fin du jeu --- */
+function gameOver(victoire){
   clearInterval(timerInterval);
   clearInterval(indiceInterval);
-}
-
-function checkAnswer(n){
-  let val = document.getElementById("q"+n).value.trim().toLowerCase();
-  if(val === answers[n].toLowerCase()){
-    alert("✅ Bonne réponse !");
-    score += 10;
-    solved++;
-    if(solved===total){ gameOver(true); }
-  } else {
-    alert("❌ Mauvaise réponse !");
-    score -= 2;
-  }
-}
-
-function proposerIndiceAleatoire(){
-  if(Math.random() < 0.6){
-    if(confirm("⚡ Un ancien esprit veut vous souffler un indice... Acceptez-vous ?")){
-      afficherIndiceAleatoire();
-      score -= 5;
-    }
-  }
-}
-
-function afficherIndiceAleatoire(){
-  const indices = [
-    "Les runes cachent un mot en ROT13...",
-    "La suite double à chaque étape...",
-    "Le sphinx aime les échos...",
-    "Ne compte pas seulement, observe la forme..."
-  ];
-  let indice = indices[Math.floor(Math.random()*indices.length)];
-  alert("💡 Indice magique : " + indice);
-}
-
-function gameOver(victoire){
-  stopGame();
   document.getElementById("game").style.display="none";
   let o=document.getElementById("overlay");
   o.style.display="block";
-  o.innerHTML="";
+
   if(victoire){
-    o.innerHTML=`
-      <h1>🌟 Victoire ! 🌟</h1>
-      <p>Les arcanes brillent de mille feux !<br>
-      Vous avez sauvé l’Académie des Arcanes.<br>
-      Votre nom sera gravé dans le Livre des Héros.</p>
-      <p>Score final : ${score}</p>
-    `;
+    o.innerHTML=`<h1>🌟 Victoire ! 🌟</h1>
+    <p>Les arcanes brillent de mille feux ! Vous avez sauvé l’Académie.<br>
+    Les maîtres mages inscrivent votre nom dans le Livre des Héros.</p>
+    <button onclick="sauverScore()">Voir le tableau des scores</button>`;
   } else {
-    o.innerHTML=`
-      <h1>☠️ Défaite…</h1>
-      <p>La magie noire consume l’Académie.<br>
-      Les ombres gagnent, et votre échec restera éternel.</p>
-      <p>Score final : ${score}</p>
-    `;
+    o.innerHTML=`<h1>☠️ Défaite…</h1>
+    <p>La magie noire s’est répandue. Les flammes engloutissent l’Académie.<br>
+    Votre échec restera gravé comme le dernier chapitre de ce monde…</p>
+    <button onclick="sauverScore()">Voir le tableau des scores</button>`;
   }
+}
+
+/* --- Scores --- */
+function sauverScore(){
+  let pseudo=prompt("Entrez votre pseudo :");
+  if(pseudo){
+    scores.push({pseudo:pseudo, score:score});
+    localStorage.setItem("scores",JSON.stringify(scores));
+  }
+  afficherScores();
+}
+function afficherScores(){
+  let o=document.getElementById("overlay");
+  scores.sort((a,b)=>b.score-a.score);
+  let rows=scores.map(s=>`<tr><td>${s.pseudo}</td><td>${s.score}</td></tr>`).join("");
+  o.innerHTML=`<h2>🏆 Tableau des scores 🏆</h2>
+    <table><tr><th>Joueur</th><th>Score</th></tr>${rows}</table>`;
 }
 </script>
 </body>
