@@ -1,420 +1,279 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8" />
-<title>Escape Game – Académie des Arcanes</title>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Uncial+Antiqua&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --gold:#ffd166;
-    --ink:#0b1020;
-    --violet:#6c43ff;
-    --parch:#f5e6d3;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:"Uncial Antiqua", system-ui, serif;
-    color:var(--parch);
-    background:#03060f url("assets/background.jpg") center/cover fixed no-repeat;
-    text-shadow:1px 1px 3px #000;
-  }
-  a{color:var(--gold)}
-  .wrap{max-width:1100px;margin:0 auto;padding:24px}
-  h1,h2{font-family:"Cinzel", serif;letter-spacing:.5px}
-  /* Intro */
-  #intro{
-    margin:48px auto;
-    background:linear-gradient(180deg, rgba(10,8,25,.9), rgba(5,5,12,.92));
-    border:2px solid var(--gold);
-    border-radius:18px; padding:28px; box-shadow:0 0 30px #000, 0 0 40px rgba(255,209,102,.2) inset;
-    text-align:center;
-  }
-  #intro h1{font-size:2.4rem;color:var(--gold);text-shadow:0 0 12px #000, 0 0 26px var(--violet)}
-  #introText{white-space:pre-wrap; line-height:1.6; font-size:1.15rem; text-align:justify}
-  .btn{
-    display:inline-block; padding:12px 22px; margin-top:18px; border:none; border-radius:10px; cursor:pointer;
-    background:linear-gradient(90deg, #5b3df6, #a687ff); color:#fff; font-family:"Cinzel",serif; font-weight:700;
-    box-shadow:0 0 16px #2b1fa0; transition:.2s transform;
-  }
-  .btn:hover{transform:translateY(-1px); background:linear-gradient(90deg,#a687ff,#5b3df6)}
-  /* Zone de jeu */
-  #hud{display:flex; gap:16px; align-items:center; justify-content:space-between; margin:10px 0}
-  #timer{font-size:1.4rem; color:var(--gold)}
-  #game{display:none}
-  .enigme{
-    background:rgba(0,0,0,.72); border:2px solid var(--gold); border-radius:14px; padding:18px; margin:18px 0;
-    box-shadow:0 0 18px rgba(0,0,0,.6);
-  }
-  .enigme h3{margin:0 0 10px; color:#ffecc0}
-  .enigme p{margin:0 0 10px; font-size:1.1rem}
-  .enigme input{
-    width:min(520px,90%); padding:10px; border-radius:8px; border:1px solid var(--gold);
-    background:#131629; color:var(--gold); font-size:1rem;
-  }
-  .enigme .act{margin-top:10px}
-  /* Popup indice (centre) */
-  #indicePopup{
-    position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:1000;
-    background:rgba(0,0,0,.65);
-  }
-  #indiceCard{
-    background:linear-gradient(180deg, rgba(18,12,40,.98), rgba(10,8,25,.98));
-    border:2px solid var(--gold); border-radius:14px; padding:22px; width:min(480px,92%);
-    box-shadow:0 0 28px rgba(108,67,255,.6);
-    text-align:center;
-  }
-  #indiceCard p{font-size:1.1rem}
-  #indiceCard .btn{margin:6px}
-  /* Décor cliquable (image oiseau + hotspots) */
-  .decor{
-    position:relative; margin:26px auto; max-width:980px; border:2px solid var(--gold); border-radius:16px;
-    overflow:hidden; box-shadow:0 0 22px rgba(0,0,0,.6);
-    background:#000;
-  }
-  .decor img{width:100%; display:block; opacity:.96}
-  .hot{position:absolute; width:46px; height:46px; cursor:pointer; background:url("assets/spark.png") center/contain no-repeat; filter:drop-shadow(0 0 8px rgba(255,210,120,.9))}
-  .hot:hover{transform:scale(1.1)}
-  /* Overlay de fin */
-  #overlay{
-    display:none; position:fixed; inset:0; z-index:1200;
-    background:radial-gradient( circle at 50% 45%, rgba(10,8,25,.94), rgba(0,0,0,.96));
-    padding:28px; text-align:center;
-  }
-  #overlay h2{font-size:2.2rem; color:var(--gold)}
-  #scores{margin-top:14px}
-  table{border-collapse:collapse; margin:12px auto; min-width:300px}
-  td,th{border:1px solid var(--gold); padding:8px 12px}
-  .note{opacity:.8; font-size:.95rem}
-</style>
+  <meta charset="UTF-8">
+  <title>Escape Game : Académie des Arcanes</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Cinzel", serif;
+      background: url('decor-magique.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #f5f5f5;
+      text-align: center;
+      overflow-x: hidden;
+    }
+    #intro, #game, #end {
+      display: none;
+      padding: 20px;
+    }
+    .enigme {
+      margin: 20px auto;
+      padding: 15px;
+      width: 60%;
+      background: rgba(0,0,0,0.6);
+      border: 2px solid gold;
+      border-radius: 10px;
+      text-align: left;
+    }
+    input {
+      margin-top: 5px;
+      padding: 5px;
+    }
+    #popupIndice, #popupBonus {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(20, 20, 20, 0.95);
+      padding: 20px;
+      border: 3px solid gold;
+      border-radius: 10px;
+      z-index: 1000;
+      width: 50%;
+      text-align: center;
+    }
+    #popupIndice button, #popupBonus button {
+      margin: 10px;
+      padding: 8px 15px;
+      cursor: pointer;
+    }
+
+    /* BONUS CACHÉS */
+    .bonus {
+      position: absolute;
+      width: 40px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .bonus:hover {
+      transform: scale(1.2);
+    }
+
+    /* INVENTAIRE */
+    #inventaire {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.7);
+      border: 2px solid gold;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+      padding: 10px;
+      width: 250px;
+      text-align: center;
+      cursor: pointer;
+      z-index: 2000;
+    }
+    #contenuInventaire {
+      display: none;
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+    #contenuInventaire img {
+      width: 35px;
+    }
+  </style>
 </head>
 <body>
-<div class="wrap">
-
-  <!-- AUDIO -->
-  <audio id="musicIntro"   src="assets/intro.mp3"></audio>
-  <audio id="musicAmbient" src="assets/ambient.mp3" loop></audio>
-  <audio id="musicVictory" src="assets/victory.mp3"></audio>
-  <audio id="musicDefeat"  src="assets/defeat.mp3"></audio>
-  <audio id="soundIndice"  src="assets/twinkle.mp3"></audio>
-  <audio id="soundMagic"   src="assets/mystical-chime.mp3"></audio>
-  <audio id="soundSpark"   src="assets/sparkle.mp3"></audio>
-  <audio id="soundCrackle" src="assets/fire-crackle.mp3"></audio>
 
   <!-- INTRO -->
-  <section id="intro">
-    <h1>Académie des Arcanes</h1>
-    <div id="introText"></div>
-    <button id="startBtn" class="btn">Commencer l’aventure</button>
-    <div class="note">Astuce : clique sur les capes rouges cachées dans le décor…</div>
-  </section>
-
-  <!-- JEU -->
-  <section id="game">
-    <div id="hud">
-      <div id="timer">⏳ Temps restant : 60:00</div>
-      <div>Énigmes résolues : <span id="progress">0</span>/6</div>
-    </div>
-
-    <!-- Décor interactif (ton image) -->
-    <div class="decor" id="decor">
-      <img src="assets/oiseau.png" alt="Décor magique">
-      <!-- Positionne les hotspots sur les capes rouges de ton image -->
-      <div class="hot" style="top:82%; left:12%;" data-id="cape-bas"></div>
-      <div class="hot" style="top:22%; left:82%;" data-id="cape-haut"></div>
-    </div>
-
-    <div id="enigmes"></div>
-  </section>
-
-  <!-- POPUP INDICE -->
-  <div id="indicePopup" aria-hidden="true">
-    <div id="indiceCard">
-      <h3>💡 Indice</h3>
-      <p id="indiceText"></p>
-      <div>
-        <button class="btn" id="acceptHint">Accepter (-2 pts)</button>
-        <button class="btn" id="declineHint">Refuser</button>
-      </div>
-    </div>
+  <div id="intro">
+    <h1>🌑 Académie des Arcanes 🌑</h1>
+    <p>Une ombre maléfique plane sur l'académie... Le grimoire ancien a disparu !</p>
+    <button onclick="startGame()">🎵 Commencer l’aventure 🎵</button>
   </div>
 
-  <!-- OVERLAY FIN -->
-  <section id="overlay">
-    <h2 id="endTitle"></h2>
-    <p id="endMsg"></p>
-    <div id="scores"></div>
-  </section>
+  <!-- JEU -->
+  <div id="game">
+    <h2>Résolvez les énigmes avant la fin du sablier ⏳</h2>
+    <div id="timer">Temps restant : 60:00</div>
 
-</div>
+    <div class="enigme" data-indice="La couleur est VIOLET">
+      <h3>Énigme 1 : Potion de Couleurs</h3>
+      <p>Mélange rouge et bleu, quelle couleur apparaît ?</p>
+      <input type="text" id="rep1">
+    </div>
 
-<script>
-/* ========= Intro ========= */
-const introLines = [
-  "Une ombre rampante s’étend dans les couloirs de l’Académie…",
-  "Le Sablier Noir s’est fissuré. À son dernier grain, la magie s’éteindra.",
-  "Gardien, rassemble ton courage. Résous les épreuves, déjoue les sortilèges,",
-  "et rends au grimoire sa lumière avant que les ténèbres n’emportent tout."
-];
-const introTextEl = document.getElementById('introText');
-(function typeIntro(i=0,j=0){
-  if(i>=introLines.length){ document.getElementById('startBtn').style.display='inline-block'; return; }
-  if(j<introLines[i].length){ introTextEl.textContent += introLines[i][j++]; setTimeout(()=>typeIntro(i,j), 28); }
-  else { introTextEl.textContent += "\n\n"; setTimeout(()=>typeIntro(i+1,0), 450);}
-})();
+    <div class="enigme" data-indice="Le mot magique est SORT">
+      <h3>Énigme 2 : Parchemin codé</h3>
+      <p>Décale chaque lettre de 3 : KRODFR</p>
+      <input type="text" id="rep2">
+    </div>
 
-/* ========= Données du jeu ========= */
-const enigmes = [
-  {
-    titre:"Enigme I — L’Atelier des Flammes",
-    text:"Dans les flammes se cache la clé : F?E?. Reconstitue le mot.",
-    answer:"feu",
-    hint:"Regarde les cendres… le mot n’attend qu’une lettre.",
-  },
-  {
-    titre:"Enigme II — Les Bougies du Vent",
-    text:"Trois bougies brûlent. Le vent en éteint deux. Combien restent allumées ?",
-    answer:"1",
-    hint:"Ne compte que les flammes qui subsistent.",
-  },
-  {
-    titre:"Enigme III — L’Horloge des Ombres",
-    text:"Je suis toujours devant toi mais jamais visible. Qui suis-je ?",
-    answer:"avenir",
-    hint:"Le contraire du passé.",
-  },
-  {
-    titre:"Enigme IV — Runes de la Crypte",
-    text:"Déchiffre : URYYB (indice : code rot13).",
-    answer:"hello",
-    hint:"Chaque lettre est décalée de 13.",
-  },
-  {
-    titre:"Enigme V — Arithmomancie",
-    text:"Quelle est la 9ᵉ valeur de la suite 2,4,8,16… ?",
-    answer:"512",
-    hint:"Double à chaque pas à partir de 1 : 2^9 ?",
-  },
-  {
-    titre:"Enigme VI — Sceau Final",
-    text:"Je parle sans bouche, j’entends sans oreilles. Qui suis-je ?",
-    answer:"echo",
-    hint:"On t’entend dans les cavernes.",
-  }
-];
+    <button onclick="verifier()">Vérifier les réponses</button>
+  </div>
 
-// score “officiel” (affiché fin) et bonus fun (non comptés)
-let boardScore = 0;
-let solved = 0;
-let time = 60*60; // 60 min
-let timerInterval = null;
-let gameEnded = false;
+  <!-- FIN -->
+  <div id="end"></div>
 
-// gestion des indices aléatoires (1 seul pop par énigme)
-const hintState = enigmes.map(()=>({scheduled:false, shown:false, accepted:false, timeoutId:null}));
+  <!-- POPUP INDICE -->
+  <div id="popupIndice">
+    <p id="popupMessage"></p>
+    <button onclick="revealIndice()">Oui</button>
+    <button onclick="closePopup()">Non</button>
+  </div>
 
-/* ========= UI helpers ========= */
-const $ = s => document.querySelector(s);
-const enigmesEl = $('#enigmes');
+  <!-- POPUP BONUS -->
+  <div id="popupBonus">
+    <p id="bonusMessage"></p>
+    <button onclick="closeBonus()">Fermer</button>
+  </div>
 
-function mmss(sec){
-  const m = Math.floor(sec/60), s = sec%60;
-  return `${m}:${s<10?'0'+s:s}`;
-}
+  <!-- BONUS CACHÉS -->
+  <img src="bonus-fiole.png" class="bonus" style="top:80%; left:15%;" onclick="trouverBonus(this, 'fiole')">
+  <img src="bonus-etoile.png" class="bonus" style="top:40%; left:70%;" onclick="trouverBonus(this, 'etoile')">
+  <img src="bonus-grimoire.png" class="bonus" style="top:60%; left:40%;" onclick="trouverBonus(this, 'grimoire')">
 
-/* ========= Lancement ========= */
-$('#startBtn').onclick = () => {
-  document.getElementById('musicIntro').pause(); // au cas où
-  document.getElementById('intro').style.display='none';
-  document.getElementById('game').style.display='block';
-  document.getElementById('musicAmbient').play();
-  $('#timer').textContent = `⏳ Temps restant : ${mmss(time)}`;
-  renderEnigmes();
-  startTimer();
-  initDecor();
-};
+  <!-- INVENTAIRE -->
+  <div id="inventaire" onclick="toggleInventaire()">
+    📦 Inventaire magique
+    <div id="contenuInventaire"></div>
+  </div>
 
-/* ========= Timer ========= */
-function startTimer(){
-  timerInterval = setInterval(()=>{
-    if(gameEnded) return;
-    time--;
-    $('#timer').textContent = `⏳ Temps restant : ${mmss(time)}`;
-    if(time<=0){ endGame(false); }
-  },1000);
-}
-function stopAllTimers(){
-  clearInterval(timerInterval);
-  // annule les popups planifiés restants
-  hintState.forEach(h => { if(h.timeoutId) clearTimeout(h.timeoutId); });
-}
+  <!-- MUSIQUES -->
+  <audio id="musiqueIntro" src="sons/intro.mp3"></audio>
+  <audio id="musiqueAmbiance" src="sons/ambiance.mp3" loop></audio>
+  <audio id="musiqueVictoire" src="sons/victoire.mp3"></audio>
+  <audio id="musiqueDefaite" src="sons/defaite.mp3"></audio>
+  <audio id="sonIndice" src="sons/indice.mp3"></audio>
+  <audio id="sonBonus" src="sons/bonus.mp3"></audio>
 
-/* ========= Rendu énigmes + planification des indices ========= */
-function renderEnigmes(){
-  enigmesEl.innerHTML = '';
-  enigmes.forEach((e,idx)=>{
-    const card = document.createElement('div');
-    card.className = 'enigme';
-    card.id = `enigme-${idx}`;
-    card.innerHTML = `
-      <h3>${e.titre}</h3>
-      <p>${e.text}</p>
-      <div class="act">
-        <input type="text" id="rep-${idx}" placeholder="Votre réponse...">
-        <button class="btn" onclick="checkAnswer(${idx})">Valider</button>
-      </div>
-      <div class="note" id="status-${idx}"></div>
-    `;
-    enigmesEl.appendChild(card);
-    scheduleHint(idx); // planifie l’indice aléatoire pour cette énigme
-  });
-}
+  <script>
+    let tempsRestant = 3600; // 1h
+    let timerInterval;
+    let indiceActuel = null;
+    let inventaire = [];
 
-/* ========= Indices aléatoires (1 par énigme) ========= */
-function scheduleHint(i){
-  if(hintState[i].scheduled) return;
-  hintState[i].scheduled = true;
-  // délai aléatoire entre 35s et 150s après rendu
-  const delay = 35000 + Math.floor(Math.random()*115000);
-  hintState[i].timeoutId = setTimeout(()=>{
-    if(gameEnded) return;
-    const card = document.getElementById(`enigme-${i}`);
-    // si déjà résolue, pas d’indice
-    if(card && card.style.display !== 'none' && !hintState[i].shown){
-      showHintPopup(i);
+    document.getElementById("intro").style.display = "block";
+
+    function startGame() {
+      document.getElementById("intro").style.display = "none";
+      document.getElementById("game").style.display = "block";
+      
+      document.getElementById("musiqueIntro").play();
+      setTimeout(() => {
+        document.getElementById("musiqueIntro").pause();
+        document.getElementById("musiqueAmbiance").play();
+      }, 5000);
+
+      timerInterval = setInterval(updateTimer, 1000);
+      setTimeout(popupIndiceAleatoire, Math.random()*20000 + 10000); // premier indice
     }
-  }, delay);
-}
 
-function showHintPopup(i){
-  hintState[i].shown = true; // ne repopera plus
-  document.getElementById('soundIndice').play();
-  $('#indiceText').textContent = enigmes[i].hint;
-  $('#indicePopup').style.display = 'flex';
+    function updateTimer() {
+      tempsRestant--;
+      let minutes = Math.floor(tempsRestant/60);
+      let secondes = tempsRestant%60;
+      document.getElementById("timer").innerText = 
+        `Temps restant : ${minutes}:${secondes.toString().padStart(2,'0')}`;
+      
+      if (tempsRestant <= 0) {
+        clearInterval(timerInterval);
+        finPerdue();
+      }
+    }
 
-  $('#acceptHint').onclick = ()=>{
-    hintState[i].accepted = true;
-    boardScore = Math.max(0, boardScore-2); // pénalité –2 (affichée en fin)
-    $('#indicePopup').style.display = 'none';
-    // marque l’énigme comme ayant utilisé un indice
-    const sEl = document.getElementById(`status-${i}`);
-    if(sEl) sEl.textContent = "Indice utilisé (-2 pts).";
-  };
-  $('#declineHint').onclick = ()=>{
-    $('#indicePopup').style.display = 'none';
-    const sEl = document.getElementById(`status-${i}`);
-    if(sEl) sEl.textContent = "Indice refusé.";
-  };
-}
+    function verifier() {
+      let r1 = document.getElementById("rep1").value.toLowerCase();
+      let r2 = document.getElementById("rep2").value.toLowerCase();
 
-/* ========= Vérification réponses ========= */
-window.checkAnswer = (i)=>{
-  if(gameEnded) return;
-  const val = (document.getElementById(`rep-${i}`).value || '').trim().toLowerCase();
-  if(!val) return;
-  if(val === enigmes[i].answer.toLowerCase()){
-    document.getElementById('soundMagic').play();
-    // score : +10 si bon, -2 si indice accepté
-    boardScore += 10;
-    if(hintState[i].accepted) boardScore -= 2;
-    // masque la carte
-    document.getElementById(`enigme-${i}`).style.display='none';
-    solved++;
-    $('#progress').textContent = `${solved}/${enigmes.length}`;
-    if(solved >= enigmes.length){ endGame(true); }
-  } else {
-    // petite info d’échec
-    const sEl = document.getElementById(`status-${i}`);
-    if(sEl) sEl.textContent = "❌ Mauvaise réponse.";
-  }
-};
+      if (r1 === "violet" && r2 === "sort") {
+        finGagnee();
+      } else {
+        alert("Ce n’est pas encore la bonne réponse...");
+      }
+    }
 
-/* ========= Décor interactif (bonus fun, non comptés) ========= */
-function initDecor(){
-  const used = new Set();
-  document.querySelectorAll('.hot').forEach(h=>{
-    h.addEventListener('click', ()=>{
-      const id = h.dataset.id;
-      if(used.has(id)) return;
-      used.add(id);
-      document.getElementById('soundSpark').currentTime = 0;
-      document.getElementById('soundSpark').play();
-      // bonus aléatoire qui n’affecte PAS le score final (boardScore)
-      const effects = [
-        ()=>{ time += 30; toast("⏳ +30 secondes ajoutées au sablier !"); },
-        ()=>{ // révèle première lettre de la prochaine énigme visible
-          const idx = Array.from(document.querySelectorAll('.enigme'))
-            .findIndex(el => el.style.display !== 'none');
-          if(idx>=0){
-            const input = document.querySelector(`#rep-${idx}`);
-            const letter = enigmes[idx].answer[0];
-            if(input && !input.value) input.value = letter;
-            toast(`🔠 Une lettre se révèle : « ${letter.toUpperCase()} »`);
-          } else { toast("💫 Une chaleur bienfaisante vous entoure…"); }
-        },
-        ()=>{ toast("🛡️ Aegis Arcanum : protection éthérée… (bonus cosmétique)"); }
-      ];
-      effects[Math.floor(Math.random()*effects.length)]();
-      h.style.opacity = .2; // visuel = consommé
-      setTimeout(()=>{ h.style.display='none'; }, 600);
-    });
-  });
-}
-function toast(msg){
-  // petit faux-toast via popup indice style simple
-  const pad = document.createElement('div');
-  pad.style.position='fixed'; pad.style.bottom='24px'; pad.style.left='50%';
-  pad.style.transform='translateX(-50%)'; pad.style.background='rgba(20,20,40,.95)';
-  pad.style.border='2px solid var(--gold)'; pad.style.borderRadius='10px';
-  pad.style.padding='10px 14px'; pad.style.zIndex='1300'; pad.style.boxShadow='0 0 18px rgba(255,209,102,.35)';
-  pad.textContent = msg;
-  document.body.appendChild(pad);
-  setTimeout(()=>pad.remove(), 2600);
-}
+    // POPUP INDICE
+    function popupIndiceAleatoire() {
+      let enigmes = document.querySelectorAll(".enigme");
+      let randomEnigme = enigmes[Math.floor(Math.random()*enigmes.length)];
+      indiceActuel = randomEnigme.getAttribute("data-indice");
 
-/* ========= Fin de partie ========= */
-function endGame(victory){
-  if(gameEnded) return;
-  gameEnded = true;
-  stopAllTimers();
-  document.getElementById('game').style.display='none';
-  document.getElementById('indicePopup').style.display='none';
-  document.getElementById('musicAmbient').pause();
+      document.getElementById("popupMessage").innerText = "Voulez-vous un indice ?";
+      document.getElementById("popupIndice").style.display = "block";
+    }
 
-  const title = document.getElementById('endTitle');
-  const msg   = document.getElementById('endMsg');
-  const scores = document.getElementById('scores');
+    function revealIndice() {
+      document.getElementById("popupMessage").innerText = indiceActuel;
+      document.getElementById("sonIndice").play();
+    }
 
-  if(victory){
-    title.textContent = "🌟 Victoire !";
-    msg.textContent   = "Les Arcanes brillent de nouveau : tu as sauvé l’Académie !";
-    document.getElementById('musicVictory').play();
-  } else {
-    title.textContent = "☠️ Défaite…";
-    msg.textContent   = "Le Sablier Noir s’est vidé : la magie s’éteint et l’Académie sombre.";
-    document.getElementById('musicDefeat').play();
-    document.getElementById('soundCrackle').play();
-  }
+    function closePopup() {
+      document.getElementById("popupIndice").style.display = "none";
+    }
 
-  // Tableau des scores (visible seulement à la fin)
-  const pseudo = prompt("Entre ton pseudo pour le tableau des scores :") || "Anonyme";
-  const saved = JSON.parse(localStorage.getItem('arcane_scores')||'[]');
-  saved.push({ pseudo, score: Math.max(0, boardScore), date: new Date().toLocaleString() });
-  saved.sort((a,b)=>b.score-a.score);
-  localStorage.setItem('arcane_scores', JSON.stringify(saved));
+    // BONUS CACHÉS + INVENTAIRE
+    function trouverBonus(element, type) {
+      document.getElementById("sonBonus").play();
 
-  const rows = saved.map(s=>`<tr><td>${s.pseudo}</td><td>${s.score}</td><td class="note">${s.date}</td></tr>`).join('');
-  scores.innerHTML = `
-    <h3>🏆 Tableau des scores</h3>
-    <table>
-      <tr><th>Joueur</th><th>Score</th><th>Date</th></tr>
-      ${rows}
-    </table>
-    <div class="note">Note : les bonus du décor ne sont <u>pas</u> comptés dans le score final.</div>
-  `;
+      let message = "";
+      if (type === "fiole") {
+        tempsRestant += 120; // +2 min
+        message = "⏳ Vous avez gagné 2 minutes supplémentaires !";
+      } else if (type === "etoile") {
+        message = "✨ Un indice secret vous est murmuré : 'Cherchez à la lumière...'";
+      } else if (type === "grimoire") {
+        message = "📖 Vous trouvez un grimoire ancien rempli de formules !";
+      }
 
-  document.getElementById('overlay').style.display='block';
-}
-</script>
+      // Ajout dans inventaire
+      inventaire.push(type);
+      let invDiv = document.getElementById("contenuInventaire");
+      let img = document.createElement("img");
+      img.src = "bonus-" + type + ".png";
+      invDiv.appendChild(img);
+
+      // Retire le bonus du décor
+      element.style.display = "none";
+
+      // Affiche le popup
+      document.getElementById("bonusMessage").innerText = message;
+      document.getElementById("popupBonus").style.display = "block";
+    }
+
+    function closeBonus() {
+      document.getElementById("popupBonus").style.display = "none";
+    }
+
+    // INVENTAIRE
+    function toggleInventaire() {
+      let contenu = document.getElementById("contenuInventaire");
+      contenu.style.display = contenu.style.display === "none" ? "flex" : "none";
+    }
+
+    // FINS
+    function finGagnee() {
+      clearInterval(timerInterval);
+      document.getElementById("game").style.display = "none";
+      document.getElementById("end").style.display = "block";
+      document.getElementById("end").innerHTML = "<h1>✨ Victoire ! ✨</h1><p>Vous avez sauvé l'académie !</p>";
+      document.getElementById("musiqueAmbiance").pause();
+      document.getElementById("musiqueVictoire").play();
+    }
+
+    function finPerdue() {
+      document.getElementById("game").style.display = "none";
+      document.getElementById("end").style.display = "block";
+      document.getElementById("end").innerHTML = "<h1>☠ Défaite... ☠</h1><p>La magie noire a englouti l'académie.</p>";
+      document.getElementById("musiqueAmbiance").pause();
+      document.getElementById("musiqueDefaite").play();
+    }
+  </script>
 </body>
 </html>
