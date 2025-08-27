@@ -3,228 +3,341 @@
 <head>
 <meta charset="UTF-8">
 <title>Escape Game : Académie des Arcanes</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
 <style>
-body {margin:0;font-family:"Cinzel",serif;background:url('images/decor-magique.jpg') no-repeat center center fixed;background-size:cover;color:#f5f5f5;text-align:center;overflow-x:hidden;padding-top:50px;}
-#interface {position:fixed;top:0;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);color:gold;font-size:18px;padding:8px 15px;border:2px solid gold;border-radius:0 0 10px 10px;z-index:3000;width:fit-content;}
-#interface.animate {animation:scintiller 0.8s ease 0s 2;}
-@keyframes scintiller {0%,100%{text-shadow:0 0 5px gold;}50%{text-shadow:0 0 15px gold;}}
-@keyframes flotter {0%{transform:translateY(0px) scale(1);}50%{transform:translateY(-10px) scale(1.05);}100%{transform:translateY(0px) scale(1);}}
-@keyframes apparition {0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
-@keyframes tremble {0%{transform:translateX(0);}25%{transform:translateX(-5px);}50%{transform:translateX(5px);}75%{transform:translateX(-5px);}100%{transform:translateX(5px);}}
-@keyframes ouvrirGrimoire {0%{transform:scale(0) rotateY(90deg);opacity:0;}100%{transform:scale(1) rotateY(0deg);opacity:1;}}
-#intro {display:flex;justify-content:center;align-items:center;height:100vh;background:black;overflow:hidden;position:relative;}
-#grimoire {width:500px;height:300px;background:url('images/grimoire.png') no-repeat center/cover;transform:scale(0);animation:ouvrirGrimoire 2s forwards;}
-.introText {position:absolute;top:20%;color:gold;font-size:24px;opacity:0;animation:apparition 3s forwards;text-align:center;width:80%;}
-#game,#end {display:none;padding:20px;}
-.enigme {margin:20px auto;padding:15px;width:60%;background:rgba(0,0,0,0.6);border:2px solid gold;border-radius:10px;text-align:left;position:relative;transition:box-shadow 0.3s ease;}
-.enigme.resolue {animation:glow 1s ease-in-out 2;}
-@keyframes glow {0%{box-shadow:0 0 5px gold;}50%{box-shadow:0 0 25px gold;}100%{box-shadow:0 0 5px gold;}}
-.indiceTexte {margin-top:10px;color:#ffd700;font-style:italic;display:none;opacity:0;transform:translateY(-10px);transition:opacity 0.6s ease, transform 0.6s ease;}
-.indiceTexte.show {display:block;opacity:1;transform:translateY(0);animation:scintiller 1s infinite alternate;}
-input {margin-top:5px;padding:5px;}
-.etincelle-enigme {position:absolute;width:8px;height:8px;background:gold;border-radius:50%;pointer-events:none;animation:flotter 1.5s ease-out forwards;}
-.bonus {position:absolute;width:40px;cursor:pointer;transition:transform 0.2s, filter 0.3s;display:none;}
-.bonus:hover {transform:scale(1.3) rotate(10deg);filter:drop-shadow(0 0 15px gold);}
-.bonus.scintille {animation:flotter 2s infinite alternate;}
-#inventaire {position:fixed;bottom:0;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);border:2px solid gold;border-top-left-radius:10px;border-top-right-radius:10px;padding:10px;width:250px;text-align:center;cursor:pointer;z-index:2000;}
-#contenuInventaire {display:none;margin-top:10px;display:flex;justify-content:center;gap:10px;}
-#contenuInventaire img {width:35px;cursor:default;}
-#popupIndice {display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(20,20,20,0.95);padding:20px;border:3px solid gold;border-radius:10px;z-index:1000;width:50%;text-align:center;}
-#scoreTable {margin-top:20px;display:none;}
-#scoreTable table {margin:auto;background:rgba(0,0,0,0.7);color:gold;border-collapse:collapse;}
-#endVictory {color:gold;font-size:48px;animation:pulse 1s infinite alternate;}
-@keyframes pulse {0%{transform:scale(1);}100%{transform:scale(1.2);}}
-#endDefeat {color:crimson;font-size:48px;animation:tremble 0.5s infinite;}
-#ecranBrise {position:fixed;top:0;left:0;width:100%;height:100%;background:url('images/ecran_brise.png') center/cover no-repeat;pointer-events:none;opacity:0;animation:ecranFissure 1s forwards;}
-@keyframes ecranFissure {0%{opacity:0;}100%{opacity:1;}}
-.particuleBonus {position:absolute;width:6px;height:6px;background:gold;border-radius:50%;pointer-events:none;z-index:4000;}
-#compteurBonus.animate {animation:pop 0.4s ease-in-out;}
-@keyframes pop {0%{transform:scale(1);}50%{transform:scale(1.5);}100%{transform:scale(1);}}
+/* ---------------------- BASE ---------------------- */
+body {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  background: black;
+  color: #f5f5f5;
+  text-align: center;
+  overflow-x: hidden;
+}
+h1,h2,h3 { margin: 10px 0; }
+
+/* ---------------------- INTRO ---------------------- */
+#intro {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: url('images/decor-magique.jpg') no-repeat center center fixed;
+  background-size: cover;
+  position: relative;
+  overflow: hidden;
+  color: gold;
+  font-size: 1.2em;
+}
+#introContent {
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+  border: 2px solid gold;
+  border-radius: 15px;
+  max-width: 600px;
+  z-index: 10;
+}
+.grimoirePage {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.1);
+  animation: pageTurn 5s ease forwards;
+  pointer-events: none;
+}
+@keyframes pageTurn {
+  0% { transform: rotateY(90deg); opacity: 0; }
+  50% { transform: rotateY(0deg); opacity: 1; }
+  100% { transform: rotateY(-90deg); opacity: 0; }
+}
+
+/* ---------------------- JEU ---------------------- */
+#game { display: none; padding: 20px; position: relative; }
+#decor {
+  position: absolute; top:0; left:0;
+  width:100%; height:100%;
+  background: url('images/decor-magique.jpg') no-repeat center center;
+  background-size: cover;
+  z-index: -1;
+  display: none;
+}
+.enigme {
+  margin: 20px auto;
+  padding: 15px;
+  width: 60%;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid gold;
+  border-radius: 10px;
+  text-align: left;
+  display: none;
+}
+input { margin-top: 5px; padding: 5px; }
+
+/* ---------------------- BONUS ---------------------- */
+.bonus {
+  position: absolute;
+  width: 50px;
+  cursor: pointer;
+  display: none;
+  transition: transform 0.2s;
+}
+.bonus:hover { transform: scale(1.2); }
+#bonusCounter {
+  position: fixed;
+  top: 10px; right: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border: 2px solid gold;
+  border-radius: 10px;
+  z-index: 2000;
+}
+
+/* ---------------------- POPUPS ---------------------- */
+.popup {
+  display: none;
+  position: fixed;
+  top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  background: rgba(20,20,20,0.95);
+  padding: 20px;
+  border: 3px solid gold;
+  border-radius: 10px;
+  z-index: 1000;
+  width: 50%;
+  text-align: center;
+}
+.popup button { margin: 10px; padding: 8px 15px; cursor: pointer; }
+
+/* ---------------------- INVENTAIRE ---------------------- */
+#inventaire {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.7);
+  border: 2px solid gold;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  padding: 10px;
+  width: 250px;
+  text-align: center;
+  cursor: pointer;
+  z-index: 2000;
+}
+#contenuInventaire {
+  display: none;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+#contenuInventaire img { width: 35px; }
+
+/* ---------------------- FIN ---------------------- */
+#end {
+  display: none;
+  height: 100vh;
+  padding: 20px;
+  color: gold;
+}
+.victory { animation: victoryAnim 2s forwards; }
+.defeat { animation: defeatAnim 2s forwards; }
+@keyframes victoryAnim { 0% {transform: scale(0);} 100% {transform: scale(1);}}
+@keyframes defeatAnim { 0% {transform: rotate(0deg);} 50% {transform: rotate(10deg);} 100% {transform: rotate(-5deg);}}
+
+table {
+  margin: 20px auto;
+  border-collapse: collapse;
+  width: 80%;
+  color: gold;
+}
+th, td { border: 1px solid gold; padding: 5px; }
 </style>
 </head>
 <body>
-<div id="interface">⏳ Temps : <span id="timerTop">1:00:00</span> | 📦 Bonus : <span id="bonusTop">0</span> | 🧩 Énigmes résolues : <span id="enigmesTop">0</span></div>
 
-<div id="intro"></div>
-
-<div id="game">
-  <h2>Résolvez les énigmes avant la fin du sablier ⏳</h2>
-
-  <div class="enigme" data-indice="La couleur est VIOLET" data-indice-affiche="false">
-    <h3>Énigme 1 : Potion de Couleurs <span class="etat-enigme">❌</span></h3>
-    <p>Mélange rouge et bleu, quelle couleur apparaît ?</p>
-    <input type="text" class="repInput">
-    <button class="validerBtn">Valider</button>
-    <div class="indiceTexte"></div>
+<!-- ---------------------- INTRO ---------------------- -->
+<div id="intro">
+  <div id="introContent">
+    <h1>🌑 Académie des Arcanes 🌑</h1>
+    <p>L’académie, sanctuaire de savoir magique, est plongée dans l’ombre. Le grimoire ancestral a disparu et la magie est en péril.</p>
+    <p>Seuls les plus braves pourront résoudre les énigmes et restaurer l’équilibre.</p>
+    <button onclick="startGame()">Commencer l’aventure</button>
   </div>
-
-  <img src="images/cle.png" id="cleMagique" class="bonus" style="top:50%; left:50%;" onclick="trouverObjet(this,'cle')">
-
-  <div class="enigme" data-indice="Le mot magique est SORT" data-indice-affiche="false" data-bloquee="true" style="display:none;">
-    <h3>Énigme 2 : Parchemin codé <span class="etat-enigme">❌</span></h3>
-    <p>Décale chaque lettre de 3 : KRODFR</p>
-    <input type="text" class="repInput">
-    <button class="validerBtn">Valider</button>
-    <div class="indiceTexte"></div>
-  </div>
-
-  <img src="images/bonus-fiole.png" class="bonus" onclick="trouverObjet(this,'fiole')">
-  <img src="images/bonus-etoile.png" class="bonus" onclick="trouverObjet(this,'etoile')">
-  <img src="images/bonus-grimoire.png" class="bonus" onclick="trouverObjet(this,'grimoire')">
+  <div class="grimoirePage"></div>
 </div>
 
+<!-- ---------------------- JEU ---------------------- -->
+<div id="game">
+  <div id="decor"></div>
+  <h2>Résolvez les énigmes avant la fin du sablier ⏳</h2>
+  <div id="timer">Temps restant : 60:00</div>
+
+  <!-- ÉNIGMES AVEC BOUTON INDICE -->
+  <div class="enigme" id="enigme1" data-indice="La couleur est VIOLET">
+    <h3>Énigme 1 : Potion de Couleurs</h3>
+    <p>Mélange rouge et bleu, quelle couleur apparaît ?</p>
+    <input type="text" id="rep1">
+    <button onclick="verifier(1)">Valider</button>
+    <button onclick="demanderIndice(1)">💡 Indice</button>
+    <p id="afficheIndice1" style="color:lightblue; display:none;"></p>
+  </div>
+
+  <div class="enigme" id="enigme2" data-indice="Le mot magique est SORT">
+    <h3>Énigme 2 : Parchemin codé</h3>
+    <p>Décale chaque lettre de 3 : KRODFR</p>
+    <input type="text" id="rep2">
+    <button onclick="verifier(2)">Valider</button>
+    <button onclick="demanderIndice(2)">💡 Indice</button>
+    <p id="afficheIndice2" style="color:lightblue; display:none;"></p>
+  </div>
+
+  <!-- BONUS -->
+  <img src="images/bonus-fiole.png" class="bonus" id="bonusFiole" style="top:80%; left:15%;" onclick="trouverBonus('fiole')">
+  <img src="images/bonus-etoile.png" class="bonus" id="bonusEtoile" style="top:40%; left:70%;" onclick="trouverBonus('etoile')">
+  <img src="images/bonus-grimoire.png" class="bonus" id="bonusGrimoire" style="top:60%; left:40%;" onclick="trouverBonus('grimoire')">
+
+  <div id="bonusCounter">Bonus collectés : 0</div>
+
+  <!-- INVENTAIRE -->
+  <div id="inventaire" onclick="toggleInventaire()">📦 Inventaire magique
+    <div id="contenuInventaire"></div>
+  </div>
+</div>
+
+<!-- ---------------------- FIN ---------------------- -->
 <div id="end"></div>
 
-<div id="scoreTable">
-  <h2>🏆 Tableau des scores</h2>
-  <table border="1" cellpadding="8">
-    <thead>
-      <tr><th>Participant</th><th>Résultat</th><th>Temps écoulé</th><th>Indices utilisés</th><th>Bonus collectés</th></tr>
-    </thead>
-    <tbody id="scoreBody"></tbody>
-  </table>
+<!-- ---------------------- POPUP POUVOIR ---------------------- -->
+<div class="popup" id="popupPouvoir">
+  <p id="messagePouvoir"></p>
+  <button onclick="closePouvoir()">Fermer</button>
 </div>
 
-<div id="inventaire" onclick="toggleInventaire()">📦 Inventaire magique (<span id="compteurBonus">0</span> collectés)<div id="contenuInventaire"></div></div>
-
-<div id="popupIndice"><p id="popupMessage">Voulez-vous un indice ?</p><button id="btnOui">Oui</button><button id="btnNon">Non</button></div>
-
+<!-- ---------------------- SONS ---------------------- -->
 <audio id="musiqueIntro" src="sons/intro.mp3"></audio>
 <audio id="musiqueAmbiance" src="sons/ambiance.mp3" loop></audio>
 <audio id="musiqueVictoire" src="sons/victoire.mp3"></audio>
 <audio id="musiqueDefaite" src="sons/defaite.mp3"></audio>
+<audio id="sonIndice" src="sons/indice.mp3"></audio>
 <audio id="sonBonus" src="sons/bonus.mp3"></audio>
-<audio id="sonFiole" src="sons/fiole.mp3"></audio>
-<audio id="sonEtoile" src="sons/etoile.mp3"></audio>
-<audio id="sonGrimoire" src="sons/grimoire.mp3"></audio>
 
 <script>
-// Variables
-let tempsRestant=3600, timerInterval, inventaire=[], indiceActuelEnigme=null, nbIndicesUtilises=0, startTime=null;
+/* ---------------------- VARIABLES ---------------------- */
+let tempsRestant = 3600;
+let timerInterval;
+let inventaire = [];
+let bonusCollectes = 0;
+let startTime;
+let indicesUtilises = {1:false,2:false};
 
-// Intro et start
-function startGame(){
-  document.getElementById("intro").innerHTML=`
-    <div id="grimoire"></div>
-    <p class="introText" style="animation-delay:2s;">🌑 Académie des Arcanes 🌑</p>
-    <p class="introText" style="animation-delay:4s;">Une force mystérieuse a volé le grimoire ancestral...</p>
-    <p class="introText" style="animation-delay:6s;">Vous êtes le dernier espoir pour sauver l’académie !</p>`;
+/* ---------------------- INTRO ---------------------- */
+function startGame() {
+  document.getElementById("intro").style.display = "none";
+  document.getElementById("game").style.display = "block";
+  startTime = new Date().getTime();
+
   document.getElementById("musiqueIntro").play();
   setTimeout(()=>{
-    document.getElementById("intro").style.transition="opacity 2s";
-    document.getElementById("intro").style.opacity=0;
-    setTimeout(()=>{
-      document.getElementById("intro").style.display="none";
-      document.getElementById("game").style.display="block";
-      document.getElementById("musiqueIntro").pause();
-      document.getElementById("musiqueAmbiance").play();
-      startTime=Date.now();
-      timerInterval=setInterval(updateTimer,1000);
-      apparitionBonus();
-    },2000);
-  },9000);
+    document.getElementById("musiqueIntro").pause();
+    document.getElementById("musiqueAmbiance").play();
+    document.getElementById("decor").style.display="block";
+    document.querySelectorAll(".bonus").forEach(b=>b.style.display="block");
+    document.getElementById("enigme1").style.display="block";
+  },7000);
+
+  timerInterval = setInterval(updateTimer,1000);
 }
 
-// Timer
+/* ---------------------- TIMER ---------------------- */
 function updateTimer(){
   tempsRestant--;
-  let h=Math.floor(tempsRestant/3600), m=Math.floor((tempsRestant%3600)/60), s=tempsRestant%60;
-  document.getElementById("timerTop").innerText=`${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-  if(tempsRestant<=0){clearInterval(timerInterval);finPerdue();}
+  let minutes = Math.floor(tempsRestant/60);
+  let secondes = tempsRestant%60;
+  document.getElementById("timer").innerText = `Temps restant : ${minutes}:${secondes.toString().padStart(2,'0')}`;
+  if(tempsRestant<=0){ clearInterval(timerInterval); finPerdue();}
 }
 
-// Validation énigmes
-document.querySelectorAll(".validerBtn").forEach((btn,index)=>{
-  btn.onclick=()=>{
-    let enigme=btn.closest(".enigme");
-    let reponse=enigme.querySelector(".repInput").value.trim().toLowerCase();
-    let etat=enigme.querySelector(".etat-enigme");
-    let correcte=(index===0 && reponse==="violet")||(index===1 && reponse==="sort");
-    if(correcte){
-      enigme.style.display="none";
-      etat.textContent="✅";
-      for(let i=0;i<10;i++){
-        let p=document.createElement("div");
-        p.className="etincelle-enigme";
-        p.style.left=(Math.random()*enigme.offsetWidth + enigme.offsetLeft)+"px";
-        p.style.top=(Math.random()*enigme.offsetHeight + enigme.offsetTop)+"px";
-        document.body.appendChild(p);
-        setTimeout(()=>p.remove(),1500);
-      }
-      let toutes=Array.from(document.querySelectorAll(".enigme")).filter(e=>e.style.display!=="none").length===0;
-      if(toutes) finGagnee();
-    } else {etat.textContent="❌";}
-  }
-});
-
-// Bonus magique
-function effetBonusMagique(element){
-  for(let i=0;i<15;i++){
-    let p=document.createElement("div");
-    p.className="particuleBonus";
-    p.style.left=(element.getBoundingClientRect().left + Math.random()*40)+"px";
-    p.style.top=(element.getBoundingClientRect().top + Math.random()*40)+"px";
-    let dx = document.getElementById("inventaire").getBoundingClientRect().left - element.getBoundingClientRect().left + Math.random()*20-10;
-    let dy = document.getElementById("inventaire").getBoundingClientRect().top - element.getBoundingClientRect().top + Math.random()*20-10;
-    p.style.setProperty('--dx', dx+'px'); p.style.setProperty('--dy', dy+'px');
-    p.style.animation='versInventaire 0.8s forwards';
-    document.body.appendChild(p); setTimeout(()=>p.remove(),800);
-  }
-  let mouseMoveHandler=function(e){
-    for(let i=0;i<3;i++){
-      let s=document.createElement("div");
-      s.className="particuleBonus";
-      s.style.left=(e.clientX + Math.random()*10-5)+"px";
-      s.style.top=(e.clientY + Math.random()*10-5)+"px";
-      s.style.animation='versInventaire 0.8s forwards';
-      document.body.appendChild(s); setTimeout(()=>s.remove(),800);
-    }
-  };
-  document.addEventListener("mousemove",mouseMoveHandler);
-  setTimeout(()=>document.removeEventListener("mousemove",mouseMoveHandler),500);
-  let compteur=document.getElementById("compteurBonus"); compteur.classList.add("animate");
-  setTimeout(()=>compteur.classList.remove("animate"),400);
+/* ---------------------- ÉNIGMES ---------------------- */
+function verifier(num){
+  let reponse = document.getElementById("rep"+num).value.toLowerCase();
+  let correcte = (num==1 && reponse==="violet") || (num==2 && reponse==="sort");
+  if(correcte){
+    document.getElementById("enigme"+num).style.display="none";
+    if(num===1) document.getElementById("enigme2").style.display="block";
+    if(document.querySelectorAll(".enigme[style*='display: block']").length===0) finGagnee();
+  } else alert("Ce n’est pas encore la bonne réponse...");
 }
 
-// Trouver objet
-function trouverObjet(e,type){
-  e.style.display="none"; inventaire.push(type);
-  document.getElementById("compteurBonus").innerText=inventaire.length;
-  document.getElementById("bonusTop").innerText=inventaire.length;
-  if(type==="cle"){
-    let enigme=document.querySelector('.enigme[data-bloquee="true"]');
-    enigme.style.display="block"; enigme.dataset.bloquee="false";
-    enigme.classList.add("resolue"); setTimeout(()=>enigme.classList.remove("resolue"),1000);
+/* ---------------------- INDICES ---------------------- */
+function demanderIndice(num){
+  if(indicesUtilises[num]){ alert("Vous avez déjà utilisé l'indice pour cette énigme !"); return; }
+  let accepte = confirm("Voulez-vous utiliser l'indice pour cette énigme ?");
+  if(accepte){
+    let indice = document.getElementById("enigme"+num).getAttribute("data-indice");
+    document.getElementById("afficheIndice"+num).innerText = indice;
+    document.getElementById("afficheIndice"+num).style.display = "block";
+    document.getElementById("sonIndice").play();
+    indicesUtilises[num]=true;
   }
-  let inv=document.getElementById("contenuInventaire");
-  let img=document.createElement("img"); img.src="images/bonus-"+type+".png"; inv.appendChild(img);
-  effetBonusMagique(e);
 }
 
-// Inventaire toggle
-function toggleInventaire(){let c=document.getElementById("contenuInventaire"); c.style.display=c.style.display==="none"?"flex":"none";}
+/* ---------------------- BONUS ---------------------- */
+function trouverBonus(type){
+  document.getElementById("sonBonus").play();
+  let message="";
+  if(type==="fiole"){ tempsRestant+=120; message="⏳ 2 minutes supplémentaires !"; }
+  if(type==="etoile"){ message="✨ Indice secret disponible."; }
+  if(type==="grimoire"){ message="📖 Grimoire magique trouvé."; }
 
-// Apparition bonus
-function apparitionBonus(){document.querySelectorAll(".bonus").forEach(b=>{b.style.display="block"; b.classList.add("scintille");});}
+  bonusCollectes++;
+  document.getElementById("bonusCounter").innerText="Bonus collectés : "+bonusCollectes;
 
-// Fins
-function finGagnee(){clearInterval(timerInterval);document.getElementById("game").style.display="none";
-let endDiv=document.getElementById("end"); endDiv.innerHTML=`<h1 id="endVictory">✨ Victoire ! ✨</h1><p>Vous avez sauvé l'académie !</p>`; endDiv.style.display="flex"; endDiv.style.flexDirection="column"; endDiv.style.justifyContent="center"; endDiv.style.alignItems="center"; endDiv.style.height="100vh";
-document.getElementById("musiqueAmbiance").pause(); document.getElementById("musiqueVictoire").play(); setTimeout(()=>afficherScore(true),3000);}
-function finPerdue(){clearInterval(timerInterval);document.getElementById("game").style.display="none"; let endDiv=document.getElementById("end");
-endDiv.innerHTML=`<h1 id="endDefeat">☠ Défaite... ☠</h1><p>La magie noire a englouti l'académie.</p>`; endDiv.style.display="flex"; endDiv.style.flexDirection="column"; endDiv.style.justifyContent="center"; endDiv.style.alignItems="center"; endDiv.style.height="100vh"; document.getElementById("musiqueAmbiance").pause(); document.getElementById("musiqueDefaite").play();
-let ecran=document.createElement("div"); ecran.id="ecranBrise"; document.body.appendChild(ecran); setTimeout(()=>afficherScore(false),3000);}
+  let img=document.createElement("img");
+  img.src="images/bonus-"+type+".png";
+  document.getElementById("contenuInventaire").appendChild(img);
 
-// Scores
-function afficherScore(victoire){let tbody=document.getElementById("scoreBody"); tbody.innerHTML="";
-let participant=prompt("Entrez le nom du participant :",""); let tempsEcoule=victoire?Math.floor((Date.now()-startTime)/1000):"-";
-let result=victoire?"Victoire":"Défaite"; let tr=document.createElement("tr");
-tr.innerHTML=`<td>${participant}</td><td>${result}</td><td>${victoire?formatTime(tempsEcoule):"-"}</td><td>${nbIndicesUtilises}</td><td>${inventaire.length}</td>`; tbody.appendChild(tr);
-document.getElementById("scoreTable").style.display="block";}
-function formatTime(sec){let h=Math.floor(sec/3600), m=Math.floor((sec%3600)/60), s=sec%60; return `${h}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;}
+  document.getElementById("messagePouvoir").innerText=message;
+  document.getElementById("popupPouvoir").style.display="block";
 
-// Auto start
-document.addEventListener("DOMContentLoaded",()=>{startGame();});
+  document.getElementById("bonus"+capitalize(type)).style.display="none";
+}
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1); }
+
+/* ---------------------- INVENTAIRE ---------------------- */
+function toggleInventaire(){
+  let c=document.getElementById("contenuInventaire");
+  c.style.display = c.style.display==="none"?"flex":"none";
+}
+function closePouvoir(){ document.getElementById("popupPouvoir").style.display="none"; }
+
+/* ---------------------- FIN ---------------------- */
+function finGagnee(){
+  clearInterval(timerInterval);
+  document.getElementById("game").style.display="none";
+  let end=document.getElementById("end");
+  end.style.display="block";
+  let elapsed=Math.floor((new Date().getTime()-startTime)/1000);
+  end.innerHTML="<h1 class='victory'>✨ Victoire ! ✨</h1><p>Vous avez sauvé l'académie !</p>";
+  end.innerHTML+="<h2>Tableau des scores</h2>";
+  let table="<table><tr><th>Nom</th><th>Résultat</th><th>Temps (s)</th><th>Bonus utilisés</th></tr>";
+  table+="<tr><td>Joueur</td><td>Gagné</td><td>"+elapsed+"</td><td>"+bonusCollectes+"</td></tr></table>";
+  end.innerHTML+=table;
+  document.getElementById("musiqueAmbiance").pause();
+  document.getElementById("musiqueVictoire").play();
+}
+function finPerdue(){
+  clearInterval(timerInterval);
+  document.getElementById("game").style.display="none";
+  let end=document.getElementById("end");
+  end.style.display="block";
+  end.innerHTML="<h1 class='defeat'>☠ Défaite... ☠</h1><p>La magie noire a englouti l'académie.</p>";
+  end.innerHTML+="<h2>Tableau des scores</h2>";
+  let table="<table><tr><th>Nom</th><th>Résultat</th><th>Temps (s)</th><th>Bonus utilisés</th></tr>";
+  table+="<tr><td>Joueur</td><td>Perdu</td><td>"+(3600-tempsRestant)+"</td><td>"+bonusCollectes+"</td></tr></table>";
+  end.innerHTML+=table;
+  document.getElementById("musiqueAmbiance").pause();
+  document.getElementById("musiqueDefaite").play();
+}
 </script>
 </body>
 </html>
