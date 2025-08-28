@@ -6,14 +6,14 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran de pseudo -->
+  <!-- Écran d'accueil -->
   <div id="pseudoScreen" class="screen">
     <h1>Bienvenue dans l’Escape Game Magique</h1>
     <input type="text" id="pseudoInput" placeholder="Entre ton pseudo">
     <button id="startButton">Commencer</button>
   </div>
 
-  <!-- Intro grimoire -->
+  <!-- Intro avec effet plume -->
   <div id="introScreen" class="screen hidden">
     <div class="grimoire">
       <div class="page gauche"></div>
@@ -22,35 +22,11 @@
     <button id="enterGame">Entrer dans l’aventure</button>
   </div>
 
-  <!-- Zone du jeu -->
+  <!-- Écran de jeu -->
   <div id="gameScreen" class="screen hidden">
     <img src="images/decor-magique.jpg" id="decor" alt="Décor magique">
     <div id="timer">Temps restant : 30:00</div>
-
-    <!-- Énigmes -->
-    <div id="enigme1" class="enigme">
-      <h2>Énigme 1</h2>
-      <p>Je suis toujours devant toi mais tu ne peux jamais m’atteindre. Qui suis-je ?</p>
-      <input type="text" id="reponse1">
-      <button class="valider" data-enigme="1">Valider</button>
-      <p class="indice hidden">Indice : tu peux toujours essayer de courir après…</p>
-    </div>
-
-    <div id="enigme2" class="enigme hidden">
-      <h2>Énigme 2</h2>
-      <p>Plus tu en prends, plus tu en laisses derrière toi. Que suis-je ?</p>
-      <input type="text" id="reponse2">
-      <button class="valider" data-enigme="2">Valider</button>
-      <p class="indice hidden">Indice : regarde bien le sol après une promenade…</p>
-    </div>
-
-    <div id="enigme3" class="enigme hidden">
-      <h2>Énigme 3</h2>
-      <p>On me casse mais je ne tombe jamais, que suis-je ?</p>
-      <input type="text" id="reponse3">
-      <button class="valider" data-enigme="3">Valider</button>
-      <p class="indice hidden">Indice : cela arrive souvent dans une conversation…</p>
-    </div>
+    <div id="enigmesContainer"></div>
   </div>
 
   <!-- Inventaire -->
@@ -59,10 +35,7 @@
     <div id="contenuInventaire"></div>
   </div>
 
-  <!-- Container effets -->
-  <div id="effectsContainer"></div>
-
-  <!-- Écran fin -->
+  <!-- Écran de fin -->
   <div id="endScreen" class="screen hidden">
     <img id="endImage" src="" alt="Fin" class="end-background">
     <div id="finNarrative"></div>
@@ -83,8 +56,8 @@
     </div>
   </div>
 
-  <!-- Bouton test défaite -->
-  <button id="testDefaite">Test Défaite</button>
+  <!-- Effets -->
+  <div id="effectsContainer"></div>
 
   <!-- Sons -->
   <audio id="musiqueIntro" src="sons/intro.mp3" loop></audio>
