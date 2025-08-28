@@ -10,7 +10,7 @@
   <div id="pseudoScreen" class="screen">
     <h1>Bienvenue dans l’Escape Game Magique</h1>
     <input type="text" id="pseudoInput" placeholder="Entre ton pseudo">
-    <button onclick="demarrerJeu()">Commencer</button>
+    <button id="startButton">Commencer</button>
   </div>
 
   <!-- Intro grimoire -->
@@ -21,23 +21,17 @@
         <h2>Chapitre 1 : Le Royaume Oublié</h2>
         <p>
           Il était une fois, dans un royaume baigné autrefois de lumière, une ombre
-          s’étendit et plongea le monde dans un sommeil éternel. Les anciens grimoires
-          racontent que seuls des aventuriers courageux pourront lever cette malédiction.  
-          Pour y parvenir, vous devrez résoudre des énigmes, dénicher des artefacts, 
-          et faire appel à la magie avec sagesse.  
-          <br><br>
-          Le temps vous est compté… L’horloge de la destinée tourne déjà.
+          s’étendit et plongea le monde dans un sommeil éternel. Pour lever cette malédiction,
+          seuls des aventuriers courageux pourront résoudre les énigmes et découvrir les artefacts magiques.
         </p>
       </div>
     </div>
-    <button onclick="lancerEnigmes()">Entrer dans l’aventure</button>
+    <button id="enterGame">Entrer dans l’aventure</button>
   </div>
 
   <!-- Zone du jeu -->
   <div id="gameScreen" class="screen hidden">
     <img src="images/decor-magique.jpg" id="decor" alt="Décor magique">
-
-    <!-- Timer -->
     <div id="timer">Temps restant : 30:00</div>
 
     <!-- Énigmes -->
@@ -45,7 +39,7 @@
       <h2>Énigme 1</h2>
       <p>Je suis toujours devant toi mais tu ne peux jamais m’atteindre. Qui suis-je ?</p>
       <input type="text" id="reponse1">
-      <button onclick="validerEnigme(1)">Valider</button>
+      <button class="valider" data-enigme="1">Valider</button>
       <p class="indice hidden">Indice : tu peux toujours essayer de courir après…</p>
     </div>
 
@@ -53,7 +47,7 @@
       <h2>Énigme 2</h2>
       <p>Plus tu en prends, plus tu en laisses derrière toi. Que suis-je ?</p>
       <input type="text" id="reponse2">
-      <button onclick="validerEnigme(2)">Valider</button>
+      <button class="valider" data-enigme="2">Valider</button>
       <p class="indice hidden">Indice : regarde bien le sol après une promenade…</p>
     </div>
 
@@ -61,7 +55,7 @@
       <h2>Énigme 3</h2>
       <p>On me casse mais je ne tombe jamais, que suis-je ?</p>
       <input type="text" id="reponse3">
-      <button onclick="validerEnigme(3)">Valider</button>
+      <button class="valider" data-enigme="3">Valider</button>
       <p class="indice hidden">Indice : cela arrive souvent dans une conversation…</p>
     </div>
   </div>
@@ -72,7 +66,7 @@
     <div id="contenuInventaire"></div>
   </div>
 
-  <!-- Container pour pluie/confettis -->
+  <!-- Container effets -->
   <div id="effectsContainer"></div>
 
   <!-- Écran fin -->
@@ -92,9 +86,12 @@
         </thead>
         <tbody id="scoreTableBody"></tbody>
       </table>
-      <button onclick="rejouer()">Rejouer</button>
+      <button id="replayButton">Rejouer</button>
     </div>
   </div>
+
+  <!-- Bouton test défaite -->
+  <button id="testDefaite">Test Défaite</button>
 
   <!-- Sons -->
   <audio id="musiqueIntro" src="sons/intro.mp3" loop></audio>
