@@ -7,7 +7,7 @@
 </head>
 <body>
 
-  <!-- Écran d'accueil -->
+  <!-- Écran pseudo -->
   <div id="pseudoScreen" class="screen">
     <h1>Bienvenue dans l’Escape Game Magique</h1>
     <input type="text" id="pseudoInput" placeholder="Entre ton pseudo">
@@ -23,7 +23,7 @@
     <button id="enterGame">Entrer dans l’aventure</button>
   </div>
 
-  <!-- Écran de jeu -->
+  <!-- Écran jeu -->
   <div id="gameScreen" class="screen hidden">
     <img src="images/decor-magique.jpg" id="decor" alt="Décor magique">
     <div id="timer">Temps restant : 30:00</div>
@@ -31,12 +31,12 @@
   </div>
 
   <!-- Inventaire -->
-  <div id="inventaire">
+  <div id="inventaire" class="hidden">
     <h3>Inventaire</h3>
     <div id="contenuInventaire"></div>
   </div>
 
-  <!-- Écran de fin -->
+  <!-- Écran fin -->
   <div id="endScreen" class="screen hidden">
     <img id="endImage" src="" alt="Fin" class="end-background">
     <div id="finNarrative"></div>
@@ -56,9 +56,6 @@
       <button id="replayButton">Rejouer</button>
     </div>
   </div>
-
-  <!-- Effets visuels -->
-  <div id="effectsContainer"></div>
 
   <!-- Sons -->
   <audio id="musiqueIntro" src="sons/intro.mp3" loop></audio>
