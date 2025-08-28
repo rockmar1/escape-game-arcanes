@@ -31,6 +31,14 @@ button:hover { background: #666; }
   padding: 15px;
   margin: 20px auto;
   max-width: 600px;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.5s ease;
+}
+
+.enigme.show {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 #inventaire {
@@ -53,18 +61,30 @@ button:hover { background: #666; }
 
 /* Podium glow */
 .gold { background: linear-gradient(90deg,#ffd700,#fff3b0); font-weight:bold; position:relative; animation: glowGold 1.5s infinite alternate;}
-@keyframes glowGold { from{box-shadow:0 0 5px #ffd700,0 0 15px #ffd700;} to{box-shadow:0 0 25px #ffec8b,0 0 50px #ffd700;} }
+@keyframes glowGold { from{box-shadow:0 0 5px #ffd700,0 0 15px #ffd700;} to{box-shadow:0 0 25px 20px #ffd700;} }
 .silver { background: linear-gradient(90deg,#c0c0c0,#f0f0f0); font-weight:bold; position:relative; animation: glowSilver 2s infinite alternate;}
 @keyframes glowSilver { from{box-shadow:0 0 3px #c0c0c0,0 0 10px #c0c0c0;} to{box-shadow:0 0 15px #dcdcdc,0 0 30px #c0c0c0;} }
 .bronze { background: linear-gradient(90deg,#cd7f32,#f5deb3); font-weight:bold; position:relative; animation: glowBronze 2.5s infinite alternate;}
 @keyframes glowBronze { from{box-shadow:0 0 3px #cd7f32,0 0 10px #cd7f32;} to{box-shadow:0 0 15px #e6a96b,0 0 25px #cd7f32;} }
 
-/* Apparition podium */
+/* Podium animation */
 #scoreScreen { opacity:0; transform:scale(0.8); animation: showPodium 1s forwards; }
 @keyframes showPodium { to{opacity:1; transform:scale(1);} }
 
 /* Fin narrative */
-#narratif { position:fixed; top:20%; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); padding:20px; border:2px solid #ffd700; border-radius:10px; max-width:600px; text-align:center; color:#fff; }
+#narratif {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  padding: 20px;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  max-width: 600px;
+  text-align: center;
+  color: #fff;
+}
 
 /* Effets victoire */
 #scoreScreen.victoire { box-shadow:0 0 30px 10px gold; border-radius:15px; animation: scintille 2s infinite alternate; }
@@ -81,3 +101,7 @@ button:hover { background: #666; }
 @keyframes shake {0%{transform:translate(0,0);}25%{transform:translate(-10px,5px);}50%{transform:translate(10px,-5px);}75%{transform:translate(-10px,5px);}100%{transform:translate(0,0);}}
 .fragment{position:fixed;width:20px;height:20px;background:#444;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);animation:explode 1s forwards;pointer-events:none;}
 @keyframes explode{to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(720deg);opacity:0;}}
+
+/* Tableau hover */
+#scoreTableBody tr { transition: transform 0.3s; }
+#scoreTableBody tr:hover { transform: scale(1.05) translateY(-2px); }
