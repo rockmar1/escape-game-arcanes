@@ -7,7 +7,13 @@ body {
   overflow-x: hidden;
 }
 
-.hidden { display: none; }
+.screen { 
+  transition: opacity 0.8s ease; 
+}
+.hidden { 
+  display: none; 
+  opacity: 0;
+}
 
 h1, h2 { color: #ffd700; }
 
@@ -20,7 +26,6 @@ button {
   cursor: pointer;
   margin-top: 10px;
 }
-
 button:hover { background: #666; }
 
 #decor, .end-background {
@@ -40,6 +45,8 @@ button:hover { background: #666; }
   padding: 15px;
   margin: 20px auto;
   max-width: 600px;
+  opacity: 1;
+  transition: opacity 0.5s;
 }
 
 #inventaire {
@@ -57,9 +64,23 @@ button:hover { background: #666; }
   cursor: pointer;
   transition: transform 0.2s;
 }
-#contenuInventaire img:hover { transform: scale(1.2); }
+#contenuInventaire img.used { opacity: 0.5; cursor: default; }
+#contenuInventaire img:hover:not(.used) { transform: scale(1.2); }
 
-/* === Grimoire === */
+/* Timer */
+#timer {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: rgba(0,0,0,0.6);
+  color: #ffd700;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-size: 18px;
+  z-index: 5;
+}
+
+/* Grimoire */
 .grimoire {
   display: flex;
   justify-content: center;
@@ -80,22 +101,18 @@ button:hover { background: #666; }
 .page.gauche { border-right: none; }
 .page.droite { border-left: none; }
 
-/* === Pluie étoiles / gouttes === */
-.star, .drop {
-  position: fixed;
-  top: -20px;
-  font-size: 20px;
+/* Pluie / confettis */
+#effectsContainer { position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; }
+.star, .drop, .confetti, .brisure {
+  position: absolute;
   pointer-events: none;
+  font-size: 20px;
   animation: fall linear forwards;
 }
-@keyframes fall {
-  to { transform: translateY(110vh); opacity: 0; }
-}
+@keyframes fall { to { transform: translateY(110vh); opacity: 0; } }
 
-/* === Effet tremblement === */
-.tremble {
-  animation: tremble 0.5s infinite;
-}
+/* Tremblement */
+.tremble { animation: tremble 0.5s infinite; }
 @keyframes tremble {
   0% { transform: translate(0,0); }
   25% { transform: translate(-5px,5px); }
@@ -103,3 +120,9 @@ button:hover { background: #666; }
   75% { transform: translate(-5px,-5px); }
   100% { transform: translate(5px,5px); }
 }
+
+/* Transitions pour énigmes */
+.fade-in { animation: fadeIn 0.8s forwards; }
+.fade-out { animation: fadeOut 0.8s forwards; }
+@keyframes fadeIn { from { opacity:0; transform:scale(0.95);} to { opacity:1; transform:scale(1);} }
+@keyframes fadeOut { from { opacity:1; transform:scale(1);} to { opacity:0; transform:scale(0.95);} }
