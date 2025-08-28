@@ -1,9 +1,10 @@
 body {
   margin: 0;
   font-family: "Cinzel", serif;
-  background: #1b1b1b;
+  background: #000;
   color: #f8f8f2;
   text-align: center;
+  overflow-x: hidden;
 }
 
 .hidden { display: none; }
@@ -22,7 +23,15 @@ button {
 
 button:hover { background: #666; }
 
-#decor { width: 100%; max-height: 200px; object-fit: cover; margin-bottom: 20px; }
+#decor, .end-background {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
 
 .enigme {
   background: rgba(0,0,0,0.7);
@@ -31,14 +40,6 @@ button:hover { background: #666; }
   padding: 15px;
   margin: 20px auto;
   max-width: 600px;
-  opacity: 0;
-  transform: translateY(30px);
-  transition: all 0.5s ease;
-}
-
-.enigme.show {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 #inventaire {
@@ -56,52 +57,49 @@ button:hover { background: #666; }
   cursor: pointer;
   transition: transform 0.2s;
 }
-
 #contenuInventaire img:hover { transform: scale(1.2); }
 
-/* Podium glow */
-.gold { background: linear-gradient(90deg,#ffd700,#fff3b0); font-weight:bold; position:relative; animation: glowGold 1.5s infinite alternate;}
-@keyframes glowGold { from{box-shadow:0 0 5px #ffd700,0 0 15px #ffd700;} to{box-shadow:0 0 25px 20px #ffd700;} }
-.silver { background: linear-gradient(90deg,#c0c0c0,#f0f0f0); font-weight:bold; position:relative; animation: glowSilver 2s infinite alternate;}
-@keyframes glowSilver { from{box-shadow:0 0 3px #c0c0c0,0 0 10px #c0c0c0;} to{box-shadow:0 0 15px #dcdcdc,0 0 30px #c0c0c0;} }
-.bronze { background: linear-gradient(90deg,#cd7f32,#f5deb3); font-weight:bold; position:relative; animation: glowBronze 2.5s infinite alternate;}
-@keyframes glowBronze { from{box-shadow:0 0 3px #cd7f32,0 0 10px #cd7f32;} to{box-shadow:0 0 15px #e6a96b,0 0 25px #cd7f32;} }
-
-/* Podium animation */
-#scoreScreen { opacity:0; transform:scale(0.8); animation: showPodium 1s forwards; }
-@keyframes showPodium { to{opacity:1; transform:scale(1);} }
-
-/* Fin narrative */
-#narratif {
-  position: fixed;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.8);
+/* === Grimoire === */
+.grimoire {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80%;
+  height: 60vh;
+  margin: 50px auto;
+  perspective: 1000px;
+}
+.page {
+  width: 50%;
+  height: 100%;
   padding: 20px;
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  max-width: 600px;
-  text-align: center;
-  color: #fff;
+  background: #fdf6e3;
+  border: 2px solid #b5651d;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.3);
+}
+.page.gauche { border-right: none; }
+.page.droite { border-left: none; }
+
+/* === Pluie étoiles / gouttes === */
+.star, .drop {
+  position: fixed;
+  top: -20px;
+  font-size: 20px;
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+@keyframes fall {
+  to { transform: translateY(110vh); opacity: 0; }
 }
 
-/* Effets victoire */
-#scoreScreen.victoire { box-shadow:0 0 30px 10px gold; border-radius:15px; animation: scintille 2s infinite alternate; }
-@keyframes scintille { from{box-shadow:0 0 20px 5px gold;} to{box-shadow:0 0 40px 20px #fffacd;} }
-
-/* Pluie */
-.star{position:fixed;top:-20px;font-size:20px;color:#ffd700;pointer-events:none;animation:fall linear infinite;}
-@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:0;}}
-.drop{position:fixed;top:-20px;font-size:18px;color:#4a90e2;opacity:0.7;pointer-events:none;animation:rain linear infinite;}
-@keyframes rain{to{transform:translateY(110vh);opacity:0;}}
-
-/* Défaite shake & fragments */
-.shake{animation:shake 0.5s;}
-@keyframes shake {0%{transform:translate(0,0);}25%{transform:translate(-10px,5px);}50%{transform:translate(10px,-5px);}75%{transform:translate(-10px,5px);}100%{transform:translate(0,0);}}
-.fragment{position:fixed;width:20px;height:20px;background:#444;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);animation:explode 1s forwards;pointer-events:none;}
-@keyframes explode{to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(720deg);opacity:0;}}
-
-/* Tableau hover */
-#scoreTableBody tr { transition: transform 0.3s; }
-#scoreTableBody tr:hover { transform: scale(1.05) translateY(-2px); }
+/* === Effet tremblement === */
+.tremble {
+  animation: tremble 0.5s infinite;
+}
+@keyframes tremble {
+  0% { transform: translate(0,0); }
+  25% { transform: translate(-5px,5px); }
+  50% { transform: translate(5px,-5px); }
+  75% { transform: translate(-5px,-5px); }
+  100% { transform: translate(5px,5px); }
+}
