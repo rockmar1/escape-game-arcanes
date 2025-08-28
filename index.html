@@ -6,31 +6,38 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Choix du pseudo -->
+  <!-- Écran de pseudo -->
   <div id="pseudoScreen">
     <h1>Bienvenue dans l’Escape Game Magique</h1>
     <input type="text" id="pseudoInput" placeholder="Entre ton pseudo">
     <button onclick="demarrerJeu()">Commencer</button>
   </div>
 
-  <!-- Intro -->
+  <!-- Intro grimoire -->
   <div id="introScreen" class="hidden">
     <div class="grimoire">
-      <h2>Chapitre 1 : Le Royaume Oublié</h2>
-      <p>
-        Le royaume est plongé dans l’ombre. Seuls les plus courageux pourront 
-        lever la malédiction. Pour réussir, il faudra résoudre des énigmes, 
-        trouver des objets, et utiliser la magie à bon escient…
-      </p>
+      <div class="page gauche"></div>
+      <div class="page droite">
+        <h2>Chapitre 1 : Le Royaume Oublié</h2>
+        <p>
+          Il était une fois, dans un royaume baigné autrefois de lumière, une ombre
+          s’étendit et plongea le monde dans un sommeil éternel. Les anciens grimoires
+          racontent que seuls des aventuriers courageux pourront lever cette malédiction.  
+          Pour y parvenir, vous devrez résoudre des énigmes, dénicher des artefacts, 
+          et faire appel à la magie avec sagesse.  
+          <br><br>
+          Le temps vous est compté… L’horloge de la destinée tourne déjà.
+        </p>
+      </div>
     </div>
     <button onclick="lancerEnigmes()">Entrer dans l’aventure</button>
   </div>
 
-  <!-- Zone des énigmes -->
+  <!-- Zone du jeu -->
   <div id="gameScreen" class="hidden">
     <img src="images/decor-magique.jpg" id="decor" alt="Décor magique">
 
-    <!-- Énigmes -->
+    <!-- Énigme 1 -->
     <div id="enigme1" class="enigme">
       <h2>Énigme 1</h2>
       <p>Je suis toujours devant toi mais tu ne peux jamais m’atteindre. Qui suis-je ?</p>
@@ -39,6 +46,7 @@
       <p class="indice hidden">Indice : tu peux toujours essayer de courir après…</p>
     </div>
 
+    <!-- Énigme 2 -->
     <div id="enigme2" class="enigme hidden">
       <h2>Énigme 2</h2>
       <p>Plus tu en prends, plus tu en laisses derrière toi. Que suis-je ?</p>
@@ -47,6 +55,7 @@
       <p class="indice hidden">Indice : regarde bien le sol après une promenade…</p>
     </div>
 
+    <!-- Énigme 3 -->
     <div id="enigme3" class="enigme hidden">
       <h2>Énigme 3</h2>
       <p>On me casse mais je ne tombe jamais, que suis-je ?</p>
@@ -62,26 +71,25 @@
     <div id="contenuInventaire"></div>
   </div>
 
-  <!-- Fin narrative -->
-  <div id="narratif" class="hidden"></div>
-
-  <!-- Score final -->
-  <div id="scoreScreen" class="hidden">
-    <h2>Tableau des scores</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Rang</th>
-          <th>Pseudo</th>
-          <th>Résultat</th>
-          <th>Temps</th>
-          <th>Bonus utilisés</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody id="scoreTableBody"></tbody>
-    </table>
-    <button onclick="rejouer()">Rejouer</button>
+  <!-- Écran fin -->
+  <div id="endScreen" class="hidden">
+    <img id="endImage" src="" alt="Fin" class="end-background">
+    <div id="finNarrative"></div>
+    <div id="scoreScreen">
+      <h2>Tableau des scores</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Pseudo</th>
+            <th>Résultat</th>
+            <th>Temps</th>
+            <th>Bonus utilisés</th>
+          </tr>
+        </thead>
+        <tbody id="scoreTableBody"></tbody>
+      </table>
+      <button onclick="rejouer()">Rejouer</button>
+    </div>
   </div>
 
   <!-- Sons -->
@@ -90,8 +98,6 @@
   <audio id="musiqueVictoire" src="sons/victoire.mp3"></audio>
   <audio id="musiqueDefaite" src="sons/defaite.mp3"></audio>
   <audio id="sonBonus" src="sons/bonus.mp3"></audio>
-  <audio id="sonEnigme" src="sons/enigme_reussie.mp3"></audio>
-  <audio id="sonErreur" src="sons/erreur.mp3"></audio>
 
   <script src="script.js"></script>
 </body>
