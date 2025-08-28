@@ -1,3 +1,4 @@
+// Script Escape Game
 let Game = {
   pseudo: "",
   temps: 0,
