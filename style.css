@@ -68,5 +68,17 @@ button:hover { background:#666; }
   75%{transform:translate(-5px,-5px);} 100%{transform:translate(5px,5px);}
 }
 
+/* Texte fin plus foncé */
+#finNarrative p { color:#222; font-size:1.1rem; line-height:1.5; }
+
+/* Indication réponse incorrecte */
+.incorrect {
+  color: red;
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 5px;
+  display: inline-block;
+}
+
 /* Étoiles et confettis */
 .star, .confetti, .brisure { position: fixed; pointer-events:none; font-size:20px; }
