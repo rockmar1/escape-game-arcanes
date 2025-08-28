@@ -32,8 +32,8 @@ function lancerEnigmes() {
 
   timer = setInterval(() => {
     temps++;
-    let restant = 1800 - temps;
-    if (restant === 300) {
+    let restant = 60 - temps;
+    if (restant === 30) {
       ambiance.playbackRate = 1.3;
     }
   }, 1000);
