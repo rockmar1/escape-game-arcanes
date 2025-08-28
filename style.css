@@ -1,43 +1,72 @@
-body { margin:0; font-family:"Cinzel", serif; background:#000; color:#f8f8f2; text-align:center; overflow-x:hidden; }
-.screen { transition: opacity 0.8s ease; }
-.hidden { display:none; opacity:0; }
-h1,h2{ color:#ffd700; }
-button{ background:#444; color:white; padding:10px 20px; border:2px solid #ffd700; border-radius:10px; cursor:pointer; margin-top:10px; }
-button:hover{ background:#666; }
-#decor, .end-background{ width:100vw; height:100vh; object-fit:cover; position:absolute; top:0; left:0; z-index:-1; }
-.enigme{ background: rgba(0,0,0,0.7); border:2px solid #ffd700; border-radius:10px; padding:15px; margin:20px auto; max-width:600px; opacity:1; transition:opacity 0.5s; }
-#inventaire{ background:#222; border-top:3px solid #ffd700; padding:10px; position:fixed; bottom:0; width:100%; z-index:5; }
-#contenuInventaire img{ width:50px; margin:5px; cursor:pointer; transition: transform 0.2s; }
-#contenuInventaire img.used{ opacity:0.5; cursor:default; }
-#contenuInventaire img:hover:not(.used){ transform:scale(1.2); }
-#timer{ position:fixed; top:10px; right:20px; background:rgba(0,0,0,0.6); color:#ffd700; padding:10px 15px; border-radius:10px; font-size:18px; z-index:5; }
-.grimoire{ display:flex; justify-content:center; align-items:center; width:80%; height:60vh; margin:50px auto; perspective:1000px; }
-.page{ width:50%; height:100%; padding:20px; background:#fdf6e3; border:2px solid #b5651d; box-shadow:inset 0 0 20px rgba(0,0,0,0.3); }
-.page.gauche{ border-right:none; }
-.page.droite{ border-left:none; }
-#effectsContainer{ position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; }
-.star, .drop, .confetti, .brisure{ position:absolute; pointer-events:none; font-size:20px; animation:fall linear forwards; }
-
-/* === Effet tremblement === */
-.tremble { animation: tremble 0.5s infinite; }
-.tremble-finite { animation: tremble 0.5s 10; } /* 5 secondes */
-@keyframes tremble{ 0%{transform:translate(0,0);}25%{transform:translate(-5px,5px);}50%{transform:translate(5px,-5px);}75%{transform:translate(-5px,-5px);}100%{transform:translate(5px,5px);} }
-
-/* === Effet écriture === */
-.typed-text{ border-right:2px solid #ffd700; white-space:pre-wrap; overflow:hidden; }
-
-/* === Fade in/out === */
-.fade-in{ animation:fadeIn 0.8s forwards; }
-.fade-out{ animation:fadeOut 0.8s forwards; }
-@keyframes fadeIn{ from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
-@keyframes fadeOut{ from{opacity:1; transform:scale(1);} to{opacity:0; transform:scale(0.95);} }
-
-/* === Responsive === */
-@media(max-width:768px){
-  .enigme{ max-width:90%; padding:10px; }
-  #contenuInventaire img{ width:40px; margin:3px; }
-  #timer{ font-size:16px; padding:8px 12px; }
-  button{ padding:8px 15px; font-size:14px; }
-  .grimoire{ flex-direction:column; height:50vh; }
-  .page{ width:90%; margin:5px 0; }
+body {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  background: #000;
+  color: #f8f8f2;
+  text-align: center;
+  overflow-x: hidden;
 }
+
+.screen { display: flex; flex-direction: column; justify-content:center; align-items:center; height:100vh; }
+
+.hidden { display: none; }
+
+h1,h2 { color: #ffd700; }
+
+button {
+  background: #444;
+  color: white;
+  padding: 10px 20px;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+button:hover { background:#666; }
+
+#decor, .end-background { width:100vw; height:100vh; object-fit:cover; position:absolute; top:0; left:0; z-index:-1; }
+
+.enigme {
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+#inventaire {
+  background: #222;
+  border-top: 3px solid #ffd700;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#contenuInventaire img {
+  width: 50px;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+#contenuInventaire img:hover { transform: scale(1.2); }
+
+#timer { font-size: 1.2rem; margin: 10px; color:#ffd700; }
+
+.grimoire { display:flex; justify-content:center; align-items:center; width:80%; height:60vh; margin:50px auto; perspective:1000px; }
+.page { width:50%; height:100%; padding:20px; background:#fdf6e3; border:2px solid #b5651d; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
+.page.gauche { border-right:none; }
+.page.droite { border-left:none; color:#333; font-size:1.1rem; line-height:1.5; }
+
+.typed-text { border-right:2px solid #555; white-space:pre-wrap; display:inline-block; overflow:hidden; }
+
+/* Tremblement fin défaite */
+.tremble-finite { animation: tremble 0.5s infinite; }
+@keyframes tremble {
+  0%{transform:translate(0,0);} 25%{transform:translate(-5px,5px);} 50%{transform:translate(5px,-5px);}
+  75%{transform:translate(-5px,-5px);} 100%{transform:translate(5px,5px);}
+}
+
+/* Étoiles et confettis */
+.star, .confetti, .brisure { position: fixed; pointer-events:none; font-size:20px; }
