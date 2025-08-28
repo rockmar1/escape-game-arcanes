@@ -1,0 +1,83 @@
+body {
+  margin: 0;
+  font-family: "Cinzel", serif;
+  background: #1b1b1b;
+  color: #f8f8f2;
+  text-align: center;
+}
+
+.hidden { display: none; }
+
+h1, h2 { color: #ffd700; }
+
+button {
+  background: #444;
+  color: white;
+  padding: 10px 20px;
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+button:hover { background: #666; }
+
+#decor { width: 100%; max-height: 200px; object-fit: cover; margin-bottom: 20px; }
+
+.enigme {
+  background: rgba(0,0,0,0.7);
+  border: 2px solid #ffd700;
+  border-radius: 10px;
+  padding: 15px;
+  margin: 20px auto;
+  max-width: 600px;
+}
+
+#inventaire {
+  background: #222;
+  border-top: 3px solid #ffd700;
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+#contenuInventaire img {
+  width: 50px;
+  margin: 5px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#contenuInventaire img:hover { transform: scale(1.2); }
+
+/* Podium glow */
+.gold { background: linear-gradient(90deg,#ffd700,#fff3b0); font-weight:bold; position:relative; animation: glowGold 1.5s infinite alternate;}
+@keyframes glowGold { from{box-shadow:0 0 5px #ffd700,0 0 15px #ffd700;} to{box-shadow:0 0 25px #ffec8b,0 0 50px #ffd700;} }
+.silver { background: linear-gradient(90deg,#c0c0c0,#f0f0f0); font-weight:bold; position:relative; animation: glowSilver 2s infinite alternate;}
+@keyframes glowSilver { from{box-shadow:0 0 3px #c0c0c0,0 0 10px #c0c0c0;} to{box-shadow:0 0 15px #dcdcdc,0 0 30px #c0c0c0;} }
+.bronze { background: linear-gradient(90deg,#cd7f32,#f5deb3); font-weight:bold; position:relative; animation: glowBronze 2.5s infinite alternate;}
+@keyframes glowBronze { from{box-shadow:0 0 3px #cd7f32,0 0 10px #cd7f32;} to{box-shadow:0 0 15px #e6a96b,0 0 25px #cd7f32;} }
+
+/* Apparition podium */
+#scoreScreen { opacity:0; transform:scale(0.8); animation: showPodium 1s forwards; }
+@keyframes showPodium { to{opacity:1; transform:scale(1);} }
+
+/* Fin narrative */
+#narratif { position:fixed; top:20%; left:50%; transform:translateX(-50%); background:rgba(0,0,0,0.8); padding:20px; border:2px solid #ffd700; border-radius:10px; max-width:600px; text-align:center; color:#fff; }
+
+/* Effets victoire */
+#scoreScreen.victoire { box-shadow:0 0 30px 10px gold; border-radius:15px; animation: scintille 2s infinite alternate; }
+@keyframes scintille { from{box-shadow:0 0 20px 5px gold;} to{box-shadow:0 0 40px 20px #fffacd;} }
+
+/* Pluie */
+.star{position:fixed;top:-20px;font-size:20px;color:#ffd700;pointer-events:none;animation:fall linear infinite;}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:0;}}
+.drop{position:fixed;top:-20px;font-size:18px;color:#4a90e2;opacity:0.7;pointer-events:none;animation:rain linear infinite;}
+@keyframes rain{to{transform:translateY(110vh);opacity:0;}}
+
+/* Défaite shake & fragments */
+.shake{animation:shake 0.5s;}
+@keyframes shake {0%{transform:translate(0,0);}25%{transform:translate(-10px,5px);}50%{transform:translate(10px,-5px);}75%{transform:translate(-10px,5px);}100%{transform:translate(0,0);}}
+.fragment{position:fixed;width:20px;height:20px;background:#444;top:50%;left:50%;transform:translate(-50%,-50%) rotate(0deg);animation:explode 1s forwards;pointer-events:none;}
+@keyframes explode{to{transform:translate(calc(-50% + var(--x)),calc(-50% + var(--y))) rotate(720deg);opacity:0;}}
