@@ -39,6 +39,7 @@ class GameManager {
   }
   lancerJeu(){
     switchScreen("introScreen","gameScreen");
+    document.getElementById("inventaire").classList.remove("hidden");
     document.getElementById("musiqueIntro").pause();
     let ambiance=document.getElementById("musiqueAmbiance"); ambiance.volume=0.2*volumeFactor; ambiance.play().catch(()=>{});
     this.timer=setInterval(()=>this.updateTimer(),1000);
@@ -53,14 +54,21 @@ class GameManager {
   validerEnigme(id){
     const input=document.getElementById("reponse"+id).value.toLowerCase();
     const enigme=this.enigmes[this.currentEnigme];
+    const container=document.getElementById("enigme"+id);
+    let oldCross = container.querySelector(".incorrect");
+    if(oldCross) oldCross.remove();
     if(enigme.reponses.includes(input)){
-      alert("Bonne réponse !");
       if(enigme.bonus) this.joueur.ajouterObjet(enigme.bonus);
-      document.getElementById("enigme"+id).remove();
+      container.remove();
       this.currentEnigme++;
       if(this.currentEnigme<this.enigmes.length) this.enigmes[this.currentEnigme].afficher();
       else { clearInterval(this.timer); finVictoire(); }
-    } else { alert("Mauvaise réponse, essaye encore !"); }
+    } else {
+      const cross = document.createElement("span");
+      cross.classList.add("incorrect");
+      cross.textContent="❌";
+      container.appendChild(cross);
+    }
   }
 }
 
@@ -114,13 +122,36 @@ function finDefaite(){
 function afficherFin(type,texte){
   document.getElementById("gameScreen").classList.add("hidden");
   document.getElementById("inventaire").classList.add("hidden");
-  const endScreen=document.getElementById("endScreen"); endScreen.classList.remove("hidden");
-  const img=document.getElementById("endImage"); const narrative=document.getElementById("finNarrative");
-  narrative.innerHTML='<p class="typed-text"></p>'; const p=narrative.querySelector("p");
-  let i=0; function typer(){ if(i<texte.length){ p.textContent+=texte[i]; i++; setTimeout(typer,25); } }
+  const endScreen=document.getElementById("endScreen"); 
+  endScreen.classList.remove("hidden");
+
+  const img=document.getElementById("endImage"); 
+  const narrative=document.getElementById("finNarrative");
+  narrative.innerHTML='<p class="typed-text"></p>'; 
+  const p=narrative.querySelector("p");
+  let i=0; 
+  function typer(){ 
+    if(i<texte.length){ p.textContent+=texte[i]; i++; setTimeout(typer,25); }
+    else { document.getElementById("scoreScreen").style.display="block"; }
+  }
   typer();
-  if(type==="victoire"){ img.src="images/victoire.jpg"; document.getElementById("musiqueAmbiance").pause(); document.getElementById("musiqueVictoire").volume=1*volumeFactor; document.getElementById("musiqueVictoire").play().catch(()=>{}); }
-  else{ img.src="images/defaite.jpg"; document.getElementById("musiqueAmbiance").pause(); document.getElementById("musiqueDefaite").volume=1*volumeFactor; document.getElementById("musiqueDefaite").play().catch(()=>{}); document.body.classList.add("tremble-finite"); setTimeout(()=>document.body.classList.remove("tremble-finite"),5000);}
+
+  document.getElementById("scoreScreen").style.display="none";
+
+  if(type==="victoire"){ 
+      img.src="images/victoire.jpg"; 
+      document.getElementById("musiqueAmbiance").pause(); 
+      document.getElementById("musiqueVictoire").volume=1*volumeFactor; 
+      document.getElementById("musiqueVictoire").play().catch(()=>{}); 
+  }
+  else{ 
+      img.src="images/defaite.jpg"; 
+      document.getElementById("musiqueAmbiance").pause(); 
+      document.getElementById("musiqueDefaite").volume=1*volumeFactor; 
+      document.getElementById("musiqueDefaite").play().catch(()=>{}); 
+      document.body.classList.add("tremble-finite"); 
+      setTimeout(()=>document.body.classList.remove("tremble-finite"),5000);
+  }
 }
 
 // === Initialisation du jeu ===
