@@ -1,125 +1,203 @@
-let pseudo="", temps=0, timer, bonusUtilises=0, pluieActive=null;
-const DUREE_TOTALE=1800, DERNIERES_MINUTES=300; // 30min jeu, 5min tension
+let pseudo = "";
+let temps = 0;
+let timer;
+let bonusUtilises = 0;
+let pluieActive = null;
 
 // === DEMARRAGE ===
-function demarrerJeu(){
-  pseudo=document.getElementById("pseudoInput").value;
-  if(pseudo.trim()===""){alert("Entre ton pseudo !"); return;}
+function demarrerJeu() {
+  pseudo = document.getElementById("pseudoInput").value;
+  if (pseudo.trim() === "") {
+    alert("Entre ton pseudo !");
+    return;
+  }
+
   document.getElementById("pseudoScreen").classList.add("hidden");
   document.getElementById("introScreen").classList.remove("hidden");
-  let musique=document.getElementById("musiqueIntro");
-  musique.volume=0.3; musique.play();
+
+  let musique = document.getElementById("musiqueIntro");
+  musique.volume = 0.3;
+  musique.play();
 }
 
-// === LANCEMENT ENIGMES ===
-function lancerEnigmes(){
+function lancerEnigmes() {
   document.getElementById("introScreen").classList.add("hidden");
   document.getElementById("gameScreen").classList.remove("hidden");
   document.getElementById("inventaire").classList.remove("hidden");
 
-  // Timer
-  timer=setInterval(()=>{ temps++; gererMusiqueFin(); },1000);
+  document.getElementById("musiqueIntro").pause();
+  let ambiance = document.getElementById("musiqueAmbiance");
+  ambiance.volume = 0.2;
+  ambiance.play();
 
-  // Musique ambiance
-  let musique=document.getElementById("musiqueAmbiance");
-  musique.volume=0.2;
-  musique.play();
+  timer = setInterval(() => {
+    temps++;
+    let restant = 1800 - temps;
+    if (restant === 300) {
+      ambiance.playbackRate = 1.3;
+    }
+  }, 1000);
 }
 
-// === MUSIQUE DYNAMIQUE ===
-function gererMusiqueFin(){
-  let musique=document.getElementById("musiqueAmbiance");
-  if(temps >= DUREE_TOTALE-DERNIERES_MINUTES){
-    musique.playbackRate=1.5; musique.volume=0.3;
-  }else{ musique.playbackRate=1; }
-}
-
-// === INVENTAIRE & BONUS ===
-function ajouterObjetInventaire(img,id,desc){
-  let el=document.createElement("img"); el.src="images/"+img; el.id=id; el.title=desc;
+// === INVENTAIRE ===
+function ajouterObjetInventaire(img, id, description) {
+  let el = document.createElement("img");
+  el.src = "images/" + img;
+  el.id = id;
+  el.title = description;
   document.getElementById("contenuInventaire").appendChild(el);
 }
-function ajouterBonus(type){
-  let img=document.createElement("img"); img.src="images/"+type+".png"; img.id=type; img.title="Bonus : "+type;
-  img.addEventListener("click",()=>utiliserBonus(type));
+function ajouterBonus(type) {
+  let img = document.createElement("img");
+  img.src = "images/" + type + ".png";
+  img.id = type;
+  img.title = "Bonus : " + type;
+  img.addEventListener("click", () => utiliserBonus(type));
   document.getElementById("contenuInventaire").appendChild(img);
 }
-function utiliserBonus(type){
-  document.getElementById("sonBonus").play(); bonusUtilises++;
-  let enigme=document.querySelector(".enigme:not(.hidden)");
-  switch(type){
-    case "etoile": temps-=300; alert("⭐ Le sablier gagne 5 minutes !"); break;
-    case "fiole": if(enigme){ enigme.remove(); alert("🧪 La fiole résout l'énigme !"); } break;
-    case "grimoire": if(enigme){ let indice=enigme.querySelector(".indice"); if(indice) indice.classList.remove("hidden"); alert("📜 Le grimoire révèle un indice !"); } break;
+function utiliserBonus(type) {
+  document.getElementById("sonBonus").play();
+  bonusUtilises++;
+  let enigmeVisible = document.querySelector(".enigme:not(.hidden)");
+  switch (type) {
+    case "etoile":
+      temps -= 300;
+      alert("⭐ Le sablier gagne 5 minutes !");
+      break;
+    case "fiole":
+      if (enigmeVisible) {
+        enigmeVisible.remove();
+        alert("🧪 La fiole a résolu l’énigme automatiquement !");
+      }
+      break;
+    case "grimoire":
+      if (enigmeVisible) {
+        let indice = enigmeVisible.querySelector(".indice");
+        if (indice) indice.classList.remove("hidden");
+        alert("📜 Le grimoire révèle un indice !");
+      }
+      break;
   }
   document.getElementById(type).remove();
 }
 
 // === VALIDATION ENIGMES ===
-function validerEnigme(num){
-  let input=document.getElementById("reponse"+num).value.toLowerCase();
-  const sonEnigme=document.getElementById("sonEnigme");
-  const sonErreur=document.getElementById("sonErreur");
+function validerEnigme(num) {
+  let input = document.getElementById("reponse" + num).value.toLowerCase();
 
-  if(num===1 && input==="avenir"){
-    document.getElementById("enigme1").remove(); sonEnigme.play(); alert("Bravo ! 🎉 Vous avez trouvé la clé !");
-    ajouterObjetInventaire("clé.png","clé","Une clé mystérieuse."); montrerEnigme("enigme2");
+  if (num === 1 && input === "avenir") {
+    document.getElementById("enigme1").remove();
+    alert("Bravo ! 🎉 Vous avez trouvé la clé !");
+    ajouterObjetInventaire("clé.png", "clé", "Une clé mystérieuse.");
+    document.getElementById("enigme2").classList.remove("hidden");
   }
-  else if(num===2 && input==="pas"){
-    document.getElementById("enigme2").remove(); sonEnigme.play(); alert("Bonne réponse ! ⭐ Bonus étoile !");
-    ajouterBonus("etoile"); montrerEnigme("enigme3");
+  else if (num === 2 && input === "pas") {
+    document.getElementById("enigme2").remove();
+    alert("Bonne réponse ! ⭐ Vous gagnez un bonus étoile !");
+    ajouterBonus("etoile");
+    document.getElementById("enigme3").classList.remove("hidden");
   }
-  else if(num===3 && input==="silence"){
-    document.getElementById("enigme3").remove(); clearInterval(timer);
-    sonEnigme.play(); effetVictoire(); lancerPluie("etoiles");
-    afficherFinNarrative(true,()=>afficherScoreboard(true));
+  else if (num === 3 && input === "silence") {
+    document.getElementById("enigme3").remove();
+    clearInterval(timer);
+    afficherFin(true);
   }
-  else{ sonErreur.play(); alert("Mauvaise réponse, essaye encore !"); }
+  else {
+    alert("Mauvaise réponse, essaye encore !");
+  }
 }
 
-// === MONTRE ENIGME AVEC ANIMATION ===
-function montrerEnigme(id){ let enigme=document.getElementById(id); enigme.classList.remove("hidden"); setTimeout(()=>enigme.classList.add("show"),50); }
+// === FIN ===
+function afficherFin(victoire) {
+  document.getElementById("gameScreen").classList.add("hidden");
+  document.getElementById("inventaire").classList.add("hidden");
+  document.getElementById("endScreen").classList.remove("hidden");
 
-// === PLUIE ===
-function lancerPluie(type){
-  if(pluieActive) clearInterval(pluieActive);
-  pluieActive=setInterval(()=>{
-    let elem=document.createElement("div");
-    if(type==="etoiles"){ elem.classList.add("star"); elem.innerText=Math.random()>0.5?"✨":"★";
-      const colors=["#ffd700","#ff69b4","#00ffff","#ffffff"];
-      elem.style.color=colors[Math.floor(Math.random()*colors.length)];
-      elem.style.fontSize=10+Math.random()*30+"px";
-    } else if(type==="gouttes"){ elem.classList.add("drop"); elem.innerText="💧"; }
-    elem.style.left=Math.random()*100+"vw"; elem.style.animationDuration=2+Math.random()*3+"s";
-    document.body.appendChild(elem); setTimeout(()=>elem.remove(),6000);
-  },150);
+  let img = document.getElementById("endImage");
+  let narrative = document.getElementById("finNarrative");
+
+  if (victoire) {
+    document.getElementById("musiqueAmbiance").pause();
+    document.getElementById("musiqueVictoire").play();
+    img.src = "images/victoire.jpg";
+    narrative.innerHTML = `
+      <h2>Victoire ! ✨</h2>
+      <p>Les ténèbres se dissipent, les chants résonnent dans le royaume et les
+      habitants vous acclament comme de véritables héros. Vous avez brisé la
+      malédiction et rendu la lumière au Royaume Oublié.</p>
+    `;
+    lancerPluie("etoiles");
+    lancerConfettis();
+    ajouterScore("Victoire");
+  } else {
+    document.getElementById("musiqueAmbiance").pause();
+    document.getElementById("musiqueDefaite").play();
+    img.src = "images/defaite.jpg";
+    document.body.classList.add("tremble");
+    creerBrisure();
+    narrative.innerHTML = `
+      <h2>Défaite... 💀</h2>
+      <p>Le temps est écoulé. Les ombres ont pris possession du Royaume. Le
+      silence règne désormais, lourd et éternel...</p>
+    `;
+    ajouterScore("Défaite");
+  }
 }
 
-// === FIN NARRATIVE ===
-function afficherFinNarrative(victoire,callback){
-  const narr=document.getElementById("narratif"); narr.classList.remove("hidden");
-  narr.innerHTML=victoire? "🎉 Vous avez sauvé le royaume ! La joie éclate partout, la magie est rétablie !" 
-                         : "😢 Hélas, la malédiction persiste. Le royaume sombre dans la tristesse...";
-  setTimeout(()=>{ narr.classList.add("hidden"); callback(); },4000);
+// === PLUIE / CONFETTIS ===
+function lancerPluie(type) {
+  if (pluieActive) clearInterval(pluieActive);
+  pluieActive = setInterval(() => {
+    let elem = document.createElement("div");
+    if (type === "etoiles") {
+      elem.classList.add("star");
+      elem.innerText = Math.random()>0.5 ? "✨" : "★";
+      elem.style.color = Math.random()>0.5 ? "#ffd700" : "#ff69b4";
+    }
+    elem.style.left = Math.random()*100+"vw";
+    elem.style.fontSize = 15+Math.random()*20+"px";
+    elem.style.animationDuration = 3+Math.random()*3+"s";
+    document.body.appendChild(elem);
+    setTimeout(()=>elem.remove(),6000);
+  },300);
+}
+function lancerConfettis(){
+  for(let i=0;i<200;i++){
+    let frag=document.createElement("div");
+    frag.innerText="🎉";
+    frag.style.position="fixed";
+    frag.style.top=Math.random()*100+"vh";
+    frag.style.left=Math.random()*100+"vw";
+    frag.style.fontSize="20px";
+    frag.style.opacity=0.8;
+    document.body.appendChild(frag);
+    setTimeout(()=>frag.remove(),2000);
+  }
+}
+function creerBrisure(){
+  for(let i=0;i<30;i++){
+    let frag=document.createElement("div");
+    frag.innerText="▯";
+    frag.style.position="fixed";
+    frag.style.top="50%";
+    frag.style.left="50%";
+    frag.style.fontSize="30px";
+    frag.style.transform=`translate(${(Math.random()-0.5)*400}px,${(Math.random()-0.5)*400}px)`;
+    document.body.appendChild(frag);
+    setTimeout(()=>frag.remove(),1500);
+  }
 }
 
-// === EFFETS VISUELS ===
-function effetVictoire(){ document.getElementById("gameScreen").classList.add("hidden"); document.getElementById("inventaire").classList.add("hidden");
-  document.body.style.backgroundImage="url('images/victoire.jpg')"; document.body.style.backgroundSize="cover"; document.getElementById("scoreScreen").classList.add("victoire");
-  document.getElementById("musiqueVictoire").play(); }
-function effetDefaite(){
-  document.getElementById("gameScreen").classList.add("shake"); lancerPluie("gouttes");
-  document.body.style.backgroundImage="url('images/defaite.jpg')"; document.body.style.backgroundSize="cover"; document.getElementById("musiqueDefaite").play();
-  for(let i=0;i<30;i++){ let frag=document.createElement("div"); frag.className="fragment"; frag.style.setProperty("--x",(Math.random()-0.5)*500+"px"); frag.style.setProperty("--y",(Math.random()-0.5)*500+"px"); document.body.appendChild(frag); setTimeout(()=>frag.remove(),1000); }
-}
-
-// === SCOREBOARD ===
-function afficherScoreboard(victoire){
-  document.getElementById("scoreScreen").classList.remove("hidden");
-  let ligne=document.createElement("tr");
-  ligne.innerHTML=`<td>1</td><td>${pseudo}</td><td>${victoire?"Victoire":"Défaite"}</td><td>${Math.floor(temps/60)} min ${temps%60} s</td><td>${bonusUtilises}</td><td>${Math.max(0,1000-temps+bonusUtilises*50)}</td>`;
+// === SCORE ===
+function ajouterScore(resultat){
+  let ligne = document.createElement("tr");
+  ligne.innerHTML = `
+    <td>${pseudo}</td>
+    <td>${resultat}</td>
+    <td>${formatTemps(temps)}</td>
+    <td>${bonusUtilises}</td>
+  `;
   document.getElementById("scoreTableBody").appendChild(ligne);
 }
-
-// === REJOUER ===
+function formatTemps(s){ return `${Math.floor(s/60)} min ${s%60} s`; }
 function rejouer(){ location.reload(); }
