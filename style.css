@@ -6,7 +6,7 @@ button{ background:#444; color:white; padding:10px 20px; border:2px solid #ffd70
 button:hover{ background:#666; }
 #decor, .end-background{ width:100vw; height:100vh; object-fit:cover; position:absolute; top:0; left:0; z-index:-1; }
 .enigme{ background: rgba(0,0,0,0.7); border:2px solid #ffd700; border-radius:10px; padding:15px; margin:20px auto; max-width:600px; opacity:1; transition:opacity 0.5s; }
-#inventaire{ background:#222; border-top:3px solid #ffd700; padding:10px; position:fixed; bottom:0; width:100%; }
+#inventaire{ background:#222; border-top:3px solid #ffd700; padding:10px; position:fixed; bottom:0; width:100%; z-index:5; }
 #contenuInventaire img{ width:50px; margin:5px; cursor:pointer; transition: transform 0.2s; }
 #contenuInventaire img.used{ opacity:0.5; cursor:default; }
 #contenuInventaire img:hover:not(.used){ transform:scale(1.2); }
@@ -17,9 +17,16 @@ button:hover{ background:#666; }
 .page.droite{ border-left:none; }
 #effectsContainer{ position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; }
 .star, .drop, .confetti, .brisure{ position:absolute; pointer-events:none; font-size:20px; animation:fall linear forwards; }
-@keyframes fall{ to{ transform:translateY(110vh); opacity:0; } }
-.tremble{ animation:tremble 0.5s infinite; }
+
+/* === Effet tremblement === */
+.tremble { animation: tremble 0.5s infinite; }
+.tremble-finite { animation: tremble 0.5s 10; } /* 5 secondes */
 @keyframes tremble{ 0%{transform:translate(0,0);}25%{transform:translate(-5px,5px);}50%{transform:translate(5px,-5px);}75%{transform:translate(-5px,-5px);}100%{transform:translate(5px,5px);} }
+
+/* === Effet écriture === */
+.typed-text{ border-right:2px solid #ffd700; white-space:pre-wrap; overflow:hidden; }
+
+/* === Fade in/out === */
 .fade-in{ animation:fadeIn 0.8s forwards; }
 .fade-out{ animation:fadeOut 0.8s forwards; }
 @keyframes fadeIn{ from{opacity:0; transform:scale(0.95);} to{opacity:1; transform:scale(1);} }
