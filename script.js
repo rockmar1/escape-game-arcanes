@@ -1,20 +1,20 @@
-// Intro narratives aléatoires
+// Intro narratives personnalisées
 const introTexts = [
-  "Les ténèbres s'étendent... Une aventure magique commence.",
-  "Un royaume oublié attend ses gardiens... Êtes-vous prêt ?",
-  "Les étoiles brillent, les ombres avancent... Entrez dans la légende."
+  (name) => `Les ténèbres s'étendent... ${name}, seul toi peux protéger le royaume.`,
+  (name) => `Un royaume oublié attend ses gardiens... ${name}, es-tu prêt à relever le défi ?`,
+  (name) => `${name}, les étoiles brillent et les ombres avancent... Entre dans la légende.`
 ];
 
-// Fins possibles
+// Fins possibles avec pseudo
 const victoryTexts = [
-  "Votre aventure fut parfaite ! Vous avez protégé le royaume sans aide extérieure.",
-  "Avec courage et ruse, vous avez triomphé des ombres.",
-  "Grâce à vos efforts, la lumière revient et le royaume est sauvé."
+  (name) => `Votre aventure fut parfaite, ${name} ! Vous avez protégé le royaume sans aide extérieure.`,
+  (name) => `Avec courage et ruse, ${name}, vous avez triomphé des ombres.`,
+  (name) => `Grâce à vos efforts, ${name}, la lumière revient et le royaume est sauvé.`
 ];
 const defeatTexts = [
-  "Le temps est écoulé... Les ténèbres s’abattent sur le royaume.",
-  "Malgré vos efforts, le mal triomphe... Les habitants attendent votre retour.",
-  "Vous avez échoué, mais chaque échec forge de nouveaux héros."
+  (name) => `Le temps est écoulé, ${name}... Les ténèbres s’abattent sur le royaume.`,
+  (name) => `Malgré tes efforts, ${name}, le mal triomphe... Les habitants attendent ton retour.`,
+  (name) => `${name}, tu as échoué, mais chaque échec forge de nouveaux héros.`
 ];
 
 // Elements
@@ -27,8 +27,8 @@ const inventory = document.getElementById("inventory");
 const feedback = document.getElementById("feedback");
 const scoreTableBody = document.getElementById("scoreTableBody");
 
-// Score stockage
-let scores = [];
+let playerName = "";
+let scores = JSON.parse(localStorage.getItem("scores")) || [];
 
 // ---- Fonctions ----
 function typeWriter(text, element, speed = 40) {
@@ -43,14 +43,15 @@ function typeWriter(text, element, speed = 40) {
 
 function showIntro() {
   const randomText = introTexts[Math.floor(Math.random() * introTexts.length)];
-  typeWriter(randomText, introNarrative);
+  typeWriter(randomText(playerName), introNarrative);
+  introNarrative.classList.remove("hidden");
+  document.getElementById("startGame").classList.remove("hidden");
 }
 
 function startGame() {
   introScreen.classList.add("hidden");
   gameScreen.classList.remove("hidden");
   inventory.classList.remove("hidden");
-  // Exemple de question
   document.getElementById("questionText").textContent = "Quelle est la formule magique de lumière ?";
 }
 
@@ -59,10 +60,11 @@ function showEnd(victory = true) {
   endScreen.classList.remove("hidden");
   const texts = victory ? victoryTexts : defeatTexts;
   const chosen = texts[Math.floor(Math.random() * texts.length)];
-  typeWriter(chosen, finNarrative);
+  typeWriter(chosen(playerName), finNarrative);
 
   // Ajout score
-  scores.push({ pseudo: "Joueur", result: victory ? "Victoire" : "Défaite", time: "5min", bonus: "1" });
+  scores.push({ pseudo: playerName, result: victory ? "Victoire" : "Défaite", time: "5min", bonus: "1" });
+  localStorage.setItem("scores", JSON.stringify(scores));
   updateScoreboard();
 }
 
@@ -75,6 +77,15 @@ function updateScoreboard() {
 }
 
 // ---- Events ----
+document.getElementById("savePseudo").addEventListener("click", () => {
+  const input = document.getElementById("playerName").value.trim();
+  if (input.length > 0) {
+    playerName = input;
+    document.getElementById("pseudoForm").classList.add("hidden");
+    showIntro();
+  }
+});
+
 document.getElementById("startGame").addEventListener("click", startGame);
 document.getElementById("restartGame").addEventListener("click", () => location.reload());
 
@@ -92,5 +103,18 @@ document.getElementById("answerForm").addEventListener("submit", e => {
 document.getElementById("testWin").addEventListener("click", () => showEnd(true));
 document.getElementById("testLose").addEventListener("click", () => showEnd(false));
 
-// Démarrage
-showIntro();
+// Admin : effacer scores
+document.getElementById("clearScores").addEventListener("click", () => {
+  const pass = prompt("Mot de passe admin requis pour supprimer les scores :");
+  if (pass === "secret123") { // 🔑 change ici ton mot de passe admin
+    scores = [];
+    localStorage.setItem("scores", JSON.stringify(scores));
+    updateScoreboard();
+    alert("Scores effacés !");
+  } else {
+    alert("Mot de passe incorrect !");
+  }
+});
+
+// Init
+updateScoreboard();
