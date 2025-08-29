@@ -2,35 +2,68 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Game</title>
+  <title>Les Gardiens du Royaume Oublié</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran 1 : Pseudo -->
-  <div id="screen-pseudo" class="screen">
-    <h1>Bienvenue Aventurier</h1>
-    <p>Entre ton pseudo pour commencer :</p>
-    <input type="text" id="pseudoInput" placeholder="Votre pseudo">
-    <button onclick="startIntro()">Valider</button>
+  <!-- Écran Pseudo -->
+  <div id="screen-pseudo" class="screen active">
+    <h1>Les Gardiens du Royaume Oublié</h1>
+    <div class="pseudo-box">
+      <label>Entrez votre nom d’aventurier :</label><br>
+      <input type="text" id="pseudoInput" placeholder="Votre nom" />
+      <button id="btnPseudo">Valider</button>
+    </div>
   </div>
 
-  <!-- Écran 2 : Introduction -->
+  <!-- Écran Intro -->
   <div id="screen-intro" class="screen hidden">
-    <p id="introText"></p>
-    <button id="btnStart" class="hidden" onclick="startGame()">Entrer dans l’aventure</button>
+    <p id="introText" class="plume-text"></p>
+    <button id="btnStart" class="hidden">Entrer dans l’aventure</button>
   </div>
 
-  <!-- Écran 3 : Jeu -->
+  <!-- Écran Jeu -->
   <div id="screen-game" class="screen hidden">
-    <h2>Escape Game</h2>
-    <p>Ici viendront les énigmes...</p>
-    <div id="inventory" class="hidden">Inventaire vide</div>
+    <div id="timer" class="fade-in">Temps : 60:00</div>
+
+    <div id="inventory" class="hidden">
+      <h2>Inventaire</h2>
+      <ul id="inventoryList"></ul>
+    </div>
+
+    <div id="journal">
+      <h2>Journal de Bord</h2>
+      <ul id="journalList"></ul>
+    </div>
+
+    <div id="enigmes">
+      <h2>Énigmes</h2>
+      <div class="enigme fade-in">
+        <p>Combien font 7 + 5 ?</p>
+        <input type="text" class="answer" data-answer="12">
+        <span class="error hidden">❌</span>
+      </div>
+      <div class="enigme fade-in">
+        <p>Mot magique commençant par H :</p>
+        <input type="text" class="answer" data-answer="Harry">
+        <span class="error hidden">❌</span>
+      </div>
+    </div>
   </div>
 
-  <!-- Écran 4 : Fin -->
+  <!-- Écran Fin -->
   <div id="screen-end" class="screen hidden">
-    <p id="endText"></p>
-    <button onclick="restartGame()">Rejouer</button>
+    <p id="endText" class="plume-text fade-in"></p>
+    <div id="scoreboard">
+      <h2>🏆 Tableau des scores</h2>
+      <table>
+        <thead>
+          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus</th></tr>
+        </thead>
+        <tbody id="scoreList"></tbody>
+      </table>
+    </div>
+    <button id="btnReplay">Rejouer</button>
   </div>
 
   <script src="script.js"></script>
