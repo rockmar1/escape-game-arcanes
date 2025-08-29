@@ -1,60 +1,97 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Ajout de cette ligne pour la réactivité -->
-  <title>Escape Game Arcanes</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Les Gardiens du Royaume Oublié</title>
+
+  <!-- favicon (place images/favicon.svg) -->
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran pseudo -->
-  <div id="screen-pseudo" class="screen active">
-    <h1>Entrez votre pseudo</h1>
-    <input type="text" id="pseudoInput" placeholder="Votre pseudo">
-    <button id="btnPseudo">Valider</button>
-  </div>
 
-  <!-- Écran intro -->
-  <div id="screen-intro" class="screen hidden">
-    <p id="introText"></p>
-    <button id="btnStart" class="hidden">Commencer</button>
-  </div>
-
-  <!-- Écran jeu -->
-  <div id="screen-game" class="screen hidden">
-    <div id="hud">
-      <div id="timer">⏳ 60:00</div>
-      <div id="inventory">
-        <h3>Inventaire</h3>
-        <ul id="inventoryList"></ul>
-      </div>
-      <div id="journal">
-        <h3>Journal</h3>
-        <ul id="journalList"></ul>
+  <!-- SCREEN : PSEUDO -->
+  <section id="screen-pseudo" class="screen active">
+    <div class="card">
+      <h1>Les Gardiens du Royaume Oublié</h1>
+      <p>Entrez votre nom d'aventurier :</p>
+      <input id="pseudoInput" type="text" placeholder="Votre pseudo" autocomplete="off" />
+      <div class="buttons">
+        <button id="btnPseudo">Valider</button>
       </div>
     </div>
-    <div id="gameContent">
-      <p id="enigmeText">Résolvez l'énigme...</p>
-      <input type="text" id="answerInput" placeholder="Votre réponse">
-      <button id="btnAnswer">Valider</button>
-      <p id="feedback"></p>
+  </section>
+
+  <!-- SCREEN : INTRO -->
+  <section id="screen-intro" class="screen">
+    <div class="card">
+      <p id="introText" class="plume-text"></p>
+      <div class="buttons">
+        <button id="btnStart" style="display:none;">Entrer dans l'aventure</button>
+      </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Écran fin -->
-  <div id="screen-end" class="screen hidden">
-    <h1 id="endTitle"></h1>
-    <p id="endMessage"></p>
-    <button onclick="location.reload()">Rejouer</button>
-  </div>
+  <!-- SCREEN : JEU -->
+  <section id="screen-game" class="screen">
+    <div class="card game-layout">
+      <header class="topbar">
+        <div id="timer">Temps : 60:00</div>
+        <div id="hud-right">
+          <div id="inventory">
+            <h3>Inventaire</h3>
+            <ul id="inventoryList"></ul>
+          </div>
+          <div id="journal">
+            <h3>Journal</h3>
+            <ul id="journalList"></ul>
+          </div>
+        </div>
+      </header>
 
-  <!-- Panel Admin -->
-  <div id="adminPanel" class="hidden">
-    <h2>Panel Admin</h2>
-    <button onclick="forceVictory()">Fin victorieuse</button>
-    <button onclick="forceDefeat()">Fin défaite</button>
-    <button onclick="resetScores()">Supprimer scores</button>
-  </div>
+      <main id="game-area">
+        <h2>Énigmes</h2>
+
+        <div class="enigme">
+          <p>Combien font 7 + 5 ?</p>
+          <input class="answer" data-answer="12" placeholder="Réponse" />
+          <span class="error" aria-hidden="true">❌</span>
+        </div>
+
+        <div class="enigme">
+          <p>Mot magique commençant par H :</p>
+          <input class="answer" data-answer="harry" placeholder="Réponse" />
+          <span class="error" aria-hidden="true">❌</span>
+        </div>
+
+        <div class="game-actions">
+          <button id="btnTestAddItem">Ajouter un objet (test)</button>
+        </div>
+      </main>
+    </div>
+  </section>
+
+  <!-- SCREEN : FIN -->
+  <section id="screen-end" class="screen">
+    <div class="card">
+      <p id="endText" class="plume-text"></p>
+      <div id="scoreboard" class="scoreboard-card">
+        <h3>🏆 Tableau des scores</h3>
+        <table>
+          <thead><tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus</th></tr></thead>
+          <tbody id="scoreList"></tbody>
+        </table>
+      </div>
+      <div class="buttons">
+        <button id="btnReplay">Rejouer</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Admin panel (injecté par JS, caché par défaut) -->
+  <div id="adminHolder"></div>
 
   <script src="script.js"></script>
 </body>
