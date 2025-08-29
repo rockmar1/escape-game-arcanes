@@ -1,119 +1,36 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Les Gardiens du Royaume Oublié</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Escape Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- ───────── PSEUDO ───────── -->
-  <section id="screen-pseudo" class="screen active">
-    <h1 id="gameTitle" class="title">Les Gardiens du Royaume Oublié</h1>
-    <div class="card">
-      <label for="pseudoInput">Entrez votre nom d’aventurier :</label>
-      <div class="row">
-        <input id="pseudoInput" type="text" placeholder="Votre pseudo" autocomplete="off" />
-        <button id="btnPseudo" class="btn">Valider</button>
-      </div>
-      <p class="hint">Astuce : appuie sur Entrée pour valider.</p>
-    </div>
-  </section>
+  <!-- Écran 1 : Pseudo -->
+  <div id="screen-pseudo" class="screen">
+    <h1>Bienvenue Aventurier</h1>
+    <p>Entre ton pseudo pour commencer :</p>
+    <input type="text" id="pseudoInput" placeholder="Votre pseudo">
+    <button onclick="startIntro()">Valider</button>
+  </div>
 
-  <!-- ───────── INTRO ───────── -->
-  <section id="screen-intro" class="screen hidden">
-    <div id="introText" class="narrative plume"></div>
-    <button id="btnStart" class="btn hidden">Entrer dans l’aventure</button>
-  </section>
+  <!-- Écran 2 : Introduction -->
+  <div id="screen-intro" class="screen hidden">
+    <p id="introText"></p>
+    <button id="btnStart" class="hidden" onclick="startGame()">Entrer dans l’aventure</button>
+  </div>
 
-  <!-- ───────── JEU ───────── -->
-  <section id="screen-game" class="screen hidden">
-    <div class="hud">
-      <div id="timer">⏳ 60:00</div>
-      <div id="playerNameTag">Aventurier : —</div>
-    </div>
+  <!-- Écran 3 : Jeu -->
+  <div id="screen-game" class="screen hidden">
+    <h2>Escape Game</h2>
+    <p>Ici viendront les énigmes...</p>
+    <div id="inventory" class="hidden">Inventaire vide</div>
+  </div>
 
-    <div id="inventory" class="card hidden">
-      <h2>Inventaire</h2>
-      <div id="inventoryItems" class="inv"></div>
-    </div>
-
-    <div id="enigmes" class="card">
-      <h2>Énigmes</h2>
-
-      <div class="riddle" data-id="1">
-        <p>Je suis toujours devant toi mais tu ne peux jamais m’atteindre. Qui suis-je ?</p>
-        <div class="row">
-          <input class="answer" data-answer="avenir" placeholder="Votre réponse" />
-          <span class="error hidden" title="Mauvaise réponse">❌</span>
-        </div>
-      </div>
-
-      <div class="riddle hidden" data-id="2">
-        <p>Plus tu en prends, plus tu en laisses derrière toi. Que suis-je ?</p>
-        <div class="row">
-          <input class="answer" data-answer="pas" placeholder="Votre réponse" />
-          <span class="error hidden" title="Mauvaise réponse">❌</span>
-        </div>
-      </div>
-
-      <div class="riddle hidden" data-id="3">
-        <p>On me casse mais je ne tombe jamais. Que suis-je ?</p>
-        <div class="row">
-          <input class="answer" data-answer="silence" placeholder="Votre réponse" />
-          <span class="error hidden" title="Mauvaise réponse">❌</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── FIN ───────── -->
-  <section id="screen-end" class="screen hidden">
-    <div id="endText" class="narrative plume"></div>
-
-    <div id="scoreScreen" class="card hidden">
-      <h2>🏆 Tableau des scores</h2>
-      <table class="scores">
-        <thead>
-          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus utilisés</th></tr>
-        </thead>
-        <tbody id="scoreTableBody"></tbody>
-      </table>
-      <div class="row center">
-        <button id="btnReplay" class="btn">Rejouer</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- ───────── ADMIN ───────── -->
-  <section id="screen-admin" class="screen hidden">
-    <h1>⚙️ Panel Administrateur</h1>
-
-    <div id="adminAuth" class="card">
-      <h3>Authentification</h3>
-      <div class="row">
-        <input id="adminPass" type="password" placeholder="Mot de passe admin" />
-        <button id="btnAdminLogin" class="btn">Se connecter</button>
-      </div>
-      <p class="hint">Astuce : ouvre ce panneau avec <strong>Ctrl+Alt+A</strong> ou 5 clics sur le titre.</p>
-    </div>
-
-    <div id="adminTools" class="card hidden">
-      <div class="grid">
-        <button id="btnViewScores" class="btn">📜 Voir les scores</button>
-        <button id="btnExportScores" class="btn">💾 Export JSON</button>
-        <button id="btnImportScores" class="btn">📥 Import JSON</button>
-        <button id="btnClearScores" class="btn danger">🗑 Effacer les scores</button>
-        <button id="btnChangePass" class="btn">🔐 Changer le mot de passe</button>
-        <button id="btnAdminBack" class="btn">↩ Retour</button>
-      </div>
-      <div id="adminScores" class="scroll"></div>
-    </div>
-  </section>
-
-  <!-- ───────── Boutons test (optionnels) ───────── -->
-  <div id="testButtons" class="test">
-    <button id="testWin" class="btn mini">Tester Victoire</button>
-    <button id="testLose" class="btn mini">Tester Défaite</button>
+  <!-- Écran 4 : Fin -->
+  <div id="screen-end" class="screen hidden">
+    <p id="endText"></p>
+    <button onclick="restartGame()">Rejouer</button>
   </div>
 
   <script src="script.js"></script>
