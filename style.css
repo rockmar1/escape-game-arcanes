@@ -1,93 +1,143 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: "Georgia", serif;
-  background: url('https://wallpaperaccess.com/full/2637581.jpg') no-repeat center center/cover;
-  color: #fff;
-  text-align: center;
+/* Base */
+:root{
+  --bg-dark: rgba(0,0,0,.72);
+  --bg-darker: rgba(0,0,0,.82);
+  --gold: #ffd700;
+  --text: #f2f2f2;
+  --muted: #b8b8b8;
+  --danger: #e05151;
 }
 
-.screen {
-  display: none;
-  padding: 20px;
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: Georgia, serif;
+  color: var(--text);
+  text-align:center;
+  background: url("images/decor-magique.jpg") no-repeat center center fixed;
+  background-size: cover;
 }
 
-.screen.active {
-  display: block;
+.hidden{display:none!important}
+
+.screen{display:none;padding:32px}
+.screen.active{display:block}
+
+.title{
+  margin:8px 0 24px;
+  font-size: clamp(28px, 4vw, 44px);
+  text-shadow: 2px 2px 6px #000;
+  user-select:none;
+  cursor: default;
 }
 
-.hidden {
-  display: none !important;
+.card{
+  display:inline-block;
+  padding:20px 22px;
+  margin:12px auto;
+  background: var(--bg-dark);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+  max-width: 900px;
+  width: min(90vw, 900px);
+  text-align:left;
 }
 
-h1 {
-  font-size: 2em;
-  margin-bottom: 20px;
+.card h2{margin:0 0 10px;color:var(--gold);text-align:center}
+
+.row{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  flex-wrap:wrap;
 }
 
-button {
-  background: #222;
-  color: #ffd700;
-  border: 2px solid #ffd700;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 10px;
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+  gap:10px;
 }
 
-button:hover {
-  background: #444;
+.center{justify-content:center}
+
+input{
+  padding:10px 12px;
+  border-radius:8px;
+  border:1px solid rgba(255,255,255,.25);
+  background:#111;
+  color:var(--text);
+  min-width: 220px;
 }
 
-.pseudo-box {
-  background: rgba(0,0,0,0.7);
-  padding: 20px;
-  border-radius: 10px;
-  display: inline-block;
+.btn{
+  background:#222;
+  color: var(--gold);
+  border:2px solid var(--gold);
+  padding:10px 16px;
+  border-radius:9px;
+  cursor:pointer;
+  transition:.2s;
+}
+.btn:hover{background:var(--gold);color:#222}
+.btn.danger{border-color:var(--danger);color:var(--danger)}
+.btn.danger:hover{background:var(--danger);color:#fff}
+.btn.mini{padding:6px 10px;font-size:.9rem}
+
+.hint{color:var(--muted);margin:.4rem 0 0;text-align:center}
+
+/* Narrations (intro/fin) */
+.narrative{
+  background: var(--bg-darker);
+  border-radius: 14px;
+  padding: 22px 20px;
+  margin: 16px auto 12px;
+  width: min(90vw, 1000px);
+  font-size: clamp(18px, 2.1vw, 22px);
+  line-height: 1.6;
+  text-shadow: 2px 2px 5px #000;
+}
+.plume{
+  font-family: "Caveat", "Bradley Hand", cursive;
+  color: #f1ead1; /* plus foncé et lisible */
 }
 
-.plume-text {
-  font-family: "Caveat", cursive;
-  font-size: 1.5em;
-  color: #f8f5e6;
-  white-space: pre-wrap;
-  max-width: 800px;
-  margin: 20px auto;
+/* HUD */
+.hud{
+  display:flex;
+  gap:16px;
+  justify-content:center;
+  align-items:center;
+  margin-bottom:10px;
+  text-shadow:2px 2px 4px #000;
 }
+#timer{font-weight:bold}
 
-.error {
-  color: red;
-  margin-left: 10px;
-  font-size: 1.2em;
-}
+/* Enigmes */
+#enigmes .riddle{margin:18px 0}
+#enigmes .row{justify-content:flex-start}
+.answer{min-width:280px}
+.error{color:#ff4b4b;font-size:1.4rem}
 
-#timer {
-  font-size: 1.3em;
-  margin-bottom: 20px;
+/* Inventaire */
+#inventoryItems{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center
 }
+.inv-item{
+  width:44px;height:44px;border-radius:8px;border:1px solid rgba(255,255,255,.25);
+  background:#101010;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;user-select:none;transition:.15s
+}
+.inv-item:hover{transform:scale(1.06)}
+.inv-item small{font-size:.7rem;color:#ddd}
 
-#inventory {
-  margin: 20px auto;
-  background: rgba(0,0,0,0.6);
-  padding: 15px;
-  border-radius: 8px;
-  width: 50%;
-}
+/* Scores */
+.scores{width:100%;border-collapse:collapse}
+.scores th,.scores td{padding:10px;border-bottom:1px solid rgba(255,255,255,.18)}
+.scores th{color:var(--gold)}
 
-#scoreboard {
-  margin-top: 30px;
-  background: rgba(0,0,0,0.7);
-  padding: 20px;
-  border-radius: 10px;
-  display: inline-block;
-}
-
-#scoreboard table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-#scoreboard th, #scoreboard td {
-  padding: 8px;
-  border-bottom: 1px solid #ffd700;
-}
+/* Admin */
+.scroll{max-height:45vh;overflow:auto;margin-top:10px}
+.test{position:fixed;right:10px;bottom:10px;display:flex;gap:6px}
