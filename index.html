@@ -2,68 +2,57 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Les Gardiens du Royaume Oublié</title>
+  <title>Escape Game Arcanes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran Pseudo -->
+  <!-- Écran pseudo -->
   <div id="screen-pseudo" class="screen active">
-    <h1>Les Gardiens du Royaume Oublié</h1>
-    <div class="pseudo-box">
-      <label>Entrez votre nom d’aventurier :</label><br>
-      <input type="text" id="pseudoInput" placeholder="Votre nom" />
-      <button id="btnPseudo">Valider</button>
-    </div>
+    <h1>Entrez votre pseudo</h1>
+    <input type="text" id="pseudoInput" placeholder="Votre pseudo">
+    <button id="btnPseudo">Valider</button>
   </div>
 
-  <!-- Écran Intro -->
+  <!-- Écran intro -->
   <div id="screen-intro" class="screen hidden">
-    <p id="introText" class="plume-text"></p>
-    <button id="btnStart" class="hidden">Entrer dans l’aventure</button>
+    <p id="introText"></p>
+    <button id="btnStart" class="hidden">Commencer</button>
   </div>
 
-  <!-- Écran Jeu -->
+  <!-- Écran jeu -->
   <div id="screen-game" class="screen hidden">
-    <div id="timer" class="fade-in">Temps : 60:00</div>
-
-    <div id="inventory" class="hidden">
-      <h2>Inventaire</h2>
-      <ul id="inventoryList"></ul>
-    </div>
-
-    <div id="journal">
-      <h2>Journal de Bord</h2>
-      <ul id="journalList"></ul>
-    </div>
-
-    <div id="enigmes">
-      <h2>Énigmes</h2>
-      <div class="enigme fade-in">
-        <p>Combien font 7 + 5 ?</p>
-        <input type="text" class="answer" data-answer="12">
-        <span class="error hidden">❌</span>
+    <div id="hud">
+      <div id="timer">⏳ 60:00</div>
+      <div id="inventory">
+        <h3>Inventaire</h3>
+        <ul id="inventoryList"></ul>
       </div>
-      <div class="enigme fade-in">
-        <p>Mot magique commençant par H :</p>
-        <input type="text" class="answer" data-answer="Harry">
-        <span class="error hidden">❌</span>
+      <div id="journal">
+        <h3>Journal</h3>
+        <ul id="journalList"></ul>
       </div>
+    </div>
+    <div id="gameContent">
+      <p id="enigmeText">Résolvez l'énigme...</p>
+      <input type="text" id="answerInput" placeholder="Votre réponse">
+      <button id="btnAnswer">Valider</button>
+      <p id="feedback"></p>
     </div>
   </div>
 
-  <!-- Écran Fin -->
+  <!-- Écran fin -->
   <div id="screen-end" class="screen hidden">
-    <p id="endText" class="plume-text fade-in"></p>
-    <div id="scoreboard">
-      <h2>🏆 Tableau des scores</h2>
-      <table>
-        <thead>
-          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus</th></tr>
-        </thead>
-        <tbody id="scoreList"></tbody>
-      </table>
-    </div>
-    <button id="btnReplay">Rejouer</button>
+    <h1 id="endTitle"></h1>
+    <p id="endMessage"></p>
+    <button onclick="location.reload()">Rejouer</button>
+  </div>
+
+  <!-- Panel Admin -->
+  <div id="adminPanel" class="hidden">
+    <h2>Panel Admin</h2>
+    <button onclick="forceVictory()">Fin victorieuse</button>
+    <button onclick="forceDefeat()">Fin défaite</button>
+    <button onclick="resetScores()">Supprimer scores</button>
   </div>
 
   <script src="script.js"></script>
