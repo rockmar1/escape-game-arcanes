@@ -2,58 +2,67 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Game Magique</title>
+  <title>Les Gardiens du Royaume Oublié</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Intro -->
-  <section id="introScreen" class="screen active">
-    <h1 class="game-title">Les Gardiens du Royaume Oublié</h1>
-    <div id="pseudoForm">
-      <label for="playerName">Entrez votre nom d’aventurier :</label><br>
-      <input type="text" id="playerName" placeholder="Votre pseudo">
-      <button id="savePseudo">Valider</button>
+  <!-- Écran Pseudo -->
+  <div id="screen-pseudo" class="screen active">
+    <h1>Les Gardiens du Royaume Oublié</h1>
+    <div class="pseudo-box">
+      <label>Entrez votre nom d’aventurier :</label><br>
+      <input type="text" id="pseudoInput" placeholder="Votre nom" />
+      <button id="btnPseudo">Valider</button>
     </div>
-    <div id="introNarrative" class="narrative hidden"></div>
-    <button id="startGame" class="hidden">Entrer dans l’aventure</button>
-  </section>
+  </div>
 
-  <!-- Jeu -->
-  <section id="gameScreen" class="screen hidden">
+  <!-- Écran Intro -->
+  <div id="screen-intro" class="screen hidden">
+    <p id="introText" class="plume-text"></p>
+    <button id="btnStart" class="hidden">Entrer dans l’aventure</button>
+  </div>
+
+  <!-- Écran Jeu -->
+  <div id="screen-game" class="screen hidden">
+    <div id="timer">Temps : 60:00</div>
     <div id="inventory" class="hidden">
       <h2>Inventaire</h2>
-      <div id="inventoryItems"></div>
+      <ul id="inventoryList"></ul>
     </div>
-    <div id="questionArea">
-      <p id="questionText"></p>
-      <form id="answerForm">
-        <input type="text" id="answerInput" placeholder="Votre réponse">
-        <button type="submit">Valider</button>
-      </form>
-      <div id="feedback"></div>
+    <div id="enigmes">
+      <h2>Énigmes</h2>
+      <div class="enigme">
+        <p>Combien font 7 + 5 ?</p>
+        <input type="text" class="answer" data-answer="12">
+        <span class="error hidden">❌</span>
+      </div>
+      <div class="enigme">
+        <p>Mot magique commençant par H :</p>
+        <input type="text" class="answer" data-answer="Harry">
+        <span class="error hidden">❌</span>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Fin -->
-  <section id="endScreen" class="screen hidden">
-    <div id="finNarrative"></div>
-    <div id="scoreScreen">
-      <h2>Tableau des scores</h2>
+  <!-- Écran Fin -->
+  <div id="screen-end" class="screen hidden">
+    <p id="endText" class="plume-text"></p>
+    <div id="scoreboard">
+      <h2>🏆 Tableau des scores</h2>
       <table>
         <thead>
-          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus utilisés</th></tr>
+          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus</th></tr>
         </thead>
-        <tbody id="scoreTableBody"></tbody>
+        <tbody id="scoreList"></tbody>
       </table>
-      <button id="restartGame">Rejouer</button>
-      <button id="clearScores">Effacer le tableau</button>
     </div>
-  </section>
+    <button id="btnReplay">Rejouer</button>
+  </div>
 
-  <!-- Boutons tests -->
-  <div id="testButtons">
-    <button id="testWin">Tester Victoire</button>
-    <button id="testLose">Tester Défaite</button>
+  <!-- Boutons de test -->
+  <div id="test-buttons">
+    <button id="btnTestWin">Tester Victoire</button>
+    <button id="btnTestLose">Tester Défaite</button>
   </div>
 
   <script src="script.js"></script>
