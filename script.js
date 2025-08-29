@@ -47,94 +47,102 @@ function switchScreen(id) {
 // Intro
 // ==================
 document.getElementById("btnPseudo").addEventListener("click", startIntro);
-document.getElementById("pseudoInput").addEventListener("keypress", e => { if (e.key==="Enter") startIntro(); });
+document.getElementById("pseudoInput").addEventListener("keypress", e => { if (e.key === "Enter") startIntro(); });
 
-function startIntro(){
-  const input=document.getElementById("pseudoInput").value.trim();
-  if(!input) return alert("Entrez un pseudo !");
-  Game.pseudo=input;
+function startIntro() {
+  const input = document.getElementById("pseudoInput").value.trim();
+  if (!input) return alert("Entrez un pseudo !");
+  Game.pseudo = input;
   console.log("[DEBUG] Pseudo validé :", Game.pseudo);
 
   switchScreen("screen-intro");
   playSound(Sounds.intro);
 
-  const text=Game.intros[Math.floor(Math.random()*Game.intros.length)].replace("{pseudo}",Game.pseudo);
-  typeWriter(text,"introText",()=>document.getElementById("btnStart").classList.remove("hidden"));
+  const text = Game.intros[Math.floor(Math.random() * Game.intros.length)].replace("{pseudo}", Game.pseudo);
+  typeWriter(text, "introText", () => document.getElementById("btnStart").classList.remove("hidden"));
 }
 
 document.getElementById("btnStart").addEventListener("click", startGame);
 
-function typeWriter(text,id,callback){
-  let i=0; const el=document.getElementById(id); el.textContent="";
-  const timer=setInterval(()=>{
-    el.textContent+=text.charAt(i);
+function typeWriter(text, id, callback) {
+  let i = 0;
+  const el = document.getElementById(id);
+  el.textContent = "";
+  const timer = setInterval(() => {
+    el.textContent += text.charAt(i);
     i++;
-    if(i>=text.length){ clearInterval(timer); if(callback) callback(); }
-  },50);
+    if (i >= text.length) {
+      clearInterval(timer);
+      if (callback) callback();
+    }
+  }, 50);
 }
 
 // ==================
 // Jeu
 // ==================
-function startGame(){
+function startGame() {
   switchScreen("screen-game");
   playSound(Sounds.ambiance);
   startTimer();
 }
 
-function startTimer(){
-  Game.interval=setInterval(()=>{
+function startTimer() {
+  Game.interval = setInterval(() => {
     Game.timer--;
-    if(Game.timer<=0){ clearInterval(Game.interval); endGame(false); }
-    const m=Math.floor(Game.timer/60), s=Game.timer%60;
-    document.getElementById("timer").textContent=`⏳ ${m}:${s.toString().padStart(2,"0")}`;
-  },1000);
+    if (Game.timer <= 0) {
+      clearInterval(Game.interval);
+      endGame(false);
+    }
+    const m = Math.floor(Game.timer / 60), s = Game.timer % 60;
+    document.getElementById("timer").textContent = `⏳ ${m}:${s.toString().padStart(2, "0")}`;
+  }, 1000);
 }
 
 document.getElementById("btnAnswer").addEventListener("click", checkAnswer);
 
-function checkAnswer(){
-  const answer=document.getElementById("answerInput").value.trim().toLowerCase();
-  const feedback=document.getElementById("feedback");
-  if(answer==="clé"){
-    feedback.textContent="Bravo ! Vous avez trouvé la clé.";
+function checkAnswer() {
+  const answer = document.getElementById("answerInput").value.trim().toLowerCase();
+  const feedback = document.getElementById("feedback");
+  if (answer === "clé") {
+    feedback.textContent = "Bravo ! Vous avez trouvé la clé.";
     playSound(Sounds.enigme_reussie);
     addItem("clé");
   } else {
-    feedback.textContent="Mauvaise réponse.";
+    feedback.textContent = "Mauvaise réponse.";
     playSound(Sounds.erreur);
   }
 }
 
-function addItem(item){
-  const li=document.createElement("li");
-  li.className=item;
-  li.textContent=item;
+function addItem(item) {
+  const li = document.createElement("li");
+  li.className = item;
+  li.textContent = item;
   document.getElementById("inventoryList").appendChild(li);
   playSound(Sounds.item);
-  logJournal("Objet trouvé : "+item);
+  logJournal("Objet trouvé : " + item);
 }
 
-function logJournal(text){
-  const li=document.createElement("li");
-  li.textContent=text;
+function logJournal(text) {
+  const li = document.createElement("li");
+  li.textContent = text;
   document.getElementById("journalList").appendChild(li);
 }
 
 // ==================
 // Fin
 // ==================
-function endGame(victory){
+function endGame(victory) {
   clearInterval(Game.interval);
   switchScreen("screen-end");
-  const end=document.getElementById("screen-end");
-  if(victory){
-    end.className="screen active victoire";
-    document.getElementById("endTitle").textContent="Victoire !";
+  const end = document.getElementById("screen-end");
+  if (victory) {
+    end.className = "screen active victoire";
+    document.getElementById("endTitle").textContent = "Victoire !";
     playSound(Sounds.victoire);
   } else {
-    end.className="screen active defaite";
-    document.getElementById("endTitle").textContent="Défaite...";
+    end.className = "screen active defaite";
+    document.getElementById("endTitle").textContent = "Défaite...";
     playSound(Sounds.defaite);
   }
 }
@@ -142,15 +150,18 @@ function endGame(victory){
 // ==================
 // Admin
 // ==================
-function toggleAdminPanel(){
-  const pass=prompt("Mot de passe admin ?");
-  if(pass==="secret123"){ document.getElementById("adminPanel").classList.toggle("hidden"); }
-  else alert("Accès refusé");
+function toggleAdminPanel() {
+  const pass = prompt("Mot de passe admin ?");
+  if (pass === "secret123") {
+    document.getElementById("adminPanel").classList.toggle("hidden");
+  } else {
+    alert("Accès refusé");
+  }
 }
 
-function forceVictory(){ endGame(true); }
-function forceDefeat(){ endGame(false); }
-function resetScores(){ alert("Scores supprimés (placeholder)."); }
+function forceVictory() { endGame(true); }
+function forceDefeat() { endGame(false); }
+function resetScores() { alert("Scores supprimés (placeholder)."); }
 
 // Astuce : appuyer sur F10 pour ouvrir l’admin
-document.addEventListener("keydown",e=>{ if(e.key==="F10") toggleAdminPanel(); });
+document.addEventListener("keydown", e => { if (e.key === "F10") toggleAdminPanel(); });
