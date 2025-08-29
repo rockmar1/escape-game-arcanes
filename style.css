@@ -12,7 +12,6 @@ body {
   display: none;
   padding: 40px;
 }
-
 .screen.active {
   display: block;
 }
@@ -33,13 +32,12 @@ button:hover {
   cursor: pointer;
 }
 
-/* Intro & Fin */
 .narrative {
   max-width: 70%;
   margin: 30px auto;
   padding: 20px;
   font-size: 1.3em;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 12px;
   box-shadow: 0 0 10px rgba(0,0,0,0.7);
   text-shadow: 2px 2px 4px #000;
@@ -50,7 +48,7 @@ button:hover {
   max-width: 80%;
   margin: 60px auto 30px auto;
   padding: 20px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   border-radius: 12px;
   font-size: 1.3em;
   line-height: 1.6em;
@@ -61,7 +59,7 @@ button:hover {
   max-width: 70%;
   margin: 20px auto;
   padding: 20px;
-  background: rgba(20, 20, 20, 0.7);
+  background: rgba(20, 20, 20, 0.8);
   border-radius: 12px;
   text-align: center;
 }
@@ -107,6 +105,21 @@ button:hover {
   color: red;
   font-size: 2em;
   font-weight: bold;
+}
+
+/* Pseudo form */
+#pseudoForm {
+  background: rgba(0,0,0,0.6);
+  padding: 20px;
+  border-radius: 10px;
+  margin: 20px auto;
+  max-width: 400px;
+}
+#pseudoForm input {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  margin-top: 10px;
 }
 
 /* Test boutons */
