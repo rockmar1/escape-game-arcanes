@@ -1,84 +1,117 @@
+/* Base */
 body {
   margin: 0;
-  font-family: "Cinzel", serif;
-  background: #000;
-  color: #f8f8f2;
+  font-family: "Georgia", serif;
+  background: url("images/decor-magique.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #f8f8f8;
   text-align: center;
-  overflow-x: hidden;
 }
 
-.screen { display: flex; flex-direction: column; justify-content:center; align-items:center; height:100vh; }
+.screen {
+  display: none;
+  padding: 40px;
+}
 
-.hidden { display: none; }
-
-h1,h2 { color: #ffd700; }
+.screen.active {
+  display: block;
+}
 
 button {
-  background: #444;
-  color: white;
+  margin-top: 20px;
   padding: 10px 20px;
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 10px;
-}
-button:hover { background:#666; }
-
-#decor, .end-background { width:100vw; height:100vh; object-fit:cover; position:absolute; top:0; left:0; z-index:-1; }
-
-.enigme {
-  background: rgba(0,0,0,0.7);
-  border: 2px solid #ffd700;
-  border-radius: 10px;
-  padding: 15px;
-  margin: 20px auto;
-  max-width: 600px;
-}
-
-#inventaire {
   background: #222;
-  border-top: 3px solid #ffd700;
-  padding: 10px;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
+  color: #FFD700;
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  font-size: 1.1em;
+  transition: 0.3s;
+}
+button:hover {
+  background: #FFD700;
+  color: #222;
+  cursor: pointer;
 }
 
-#contenuInventaire img {
-  width: 50px;
+/* Intro & Fin */
+.narrative {
+  max-width: 70%;
+  margin: 30px auto;
+  padding: 20px;
+  font-size: 1.3em;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.7);
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* Fin */
+#finNarrative {
+  max-width: 80%;
+  margin: 60px auto 30px auto;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 12px;
+  font-size: 1.3em;
+  line-height: 1.6em;
+}
+
+/* Score */
+#scoreScreen {
+  max-width: 70%;
+  margin: 20px auto;
+  padding: 20px;
+  background: rgba(20, 20, 20, 0.7);
+  border-radius: 12px;
+  text-align: center;
+}
+#scoreScreen h2 {
+  font-size: 1.8em;
+  margin-bottom: 15px;
+  color: #FFD700;
+  text-shadow: 1px 1px 3px #000;
+}
+#scoreScreen table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+#scoreScreen th, #scoreScreen td {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+#scoreScreen th {
+  color: #FFD700;
+  font-weight: bold;
+}
+
+/* Inventaire */
+#inventory {
+  margin: 20px auto;
+  padding: 15px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 10px;
+  max-width: 300px;
+}
+#inventoryItems img {
+  width: 40px;
   margin: 5px;
   cursor: pointer;
-  transition: transform 0.2s;
-}
-#contenuInventaire img:hover { transform: scale(1.2); }
-
-#timer { font-size: 1.2rem; margin: 10px; color:#ffd700; }
-
-.grimoire { display:flex; justify-content:center; align-items:center; width:80%; height:60vh; margin:50px auto; perspective:1000px; }
-.page { width:50%; height:100%; padding:20px; background:#fdf6e3; border:2px solid #b5651d; box-shadow: inset 0 0 20px rgba(0,0,0,0.3); }
-.page.gauche { border-right:none; }
-.page.droite { border-left:none; color:#333; font-size:1.1rem; line-height:1.5; }
-
-.typed-text { border-right:2px solid #555; white-space:pre-wrap; display:inline-block; overflow:hidden; }
-
-/* Tremblement fin défaite */
-.tremble-finite { animation: tremble 0.5s infinite; }
-@keyframes tremble {
-  0%{transform:translate(0,0);} 25%{transform:translate(-5px,5px);} 50%{transform:translate(5px,-5px);}
-  75%{transform:translate(-5px,-5px);} 100%{transform:translate(5px,5px);}
 }
 
-/* Texte fin plus foncé */
-#finNarrative p { color:#222; font-size:1.1rem; line-height:1.5; }
-
-/* Indication réponse incorrecte */
-.incorrect {
+/* Feedback */
+#feedback {
+  margin-top: 15px;
+}
+.cross {
   color: red;
+  font-size: 2em;
   font-weight: bold;
-  font-size: 1.5rem;
-  margin-top: 5px;
-  display: inline-block;
 }
 
-/* Étoiles et confettis */
-.star, .confetti, .brisure { position: fixed; pointer-events:none; font-size:20px; }
+/* Test boutons */
+#testButtons {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+}
