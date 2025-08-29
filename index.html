@@ -6,63 +6,49 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- Intro -->
+  <section id="introScreen" class="screen active">
+    <h1 class="game-title">Les Gardiens du Royaume Oublié</h1>
+    <div id="introNarrative" class="narrative"></div>
+    <button id="startGame">Entrer dans l’aventure</button>
+  </section>
 
-  <!-- Écran pseudo -->
-  <div id="pseudoScreen" class="screen">
-    <h1>Bienvenue dans l’Escape Game Magique</h1>
-    <input type="text" id="pseudoInput" placeholder="Entre ton pseudo">
-    <button id="startButton">Commencer</button>
-  </div>
-
-  <!-- Intro avec effet plume -->
-  <div id="introScreen" class="screen hidden">
-    <div class="grimoire">
-      <div class="page gauche"></div>
-      <div class="page droite"></div>
+  <!-- Jeu -->
+  <section id="gameScreen" class="screen hidden">
+    <div id="inventory" class="hidden">
+      <h2>Inventaire</h2>
+      <div id="inventoryItems"></div>
     </div>
-    <button id="enterGame">Entrer dans l’aventure</button>
-  </div>
+    <div id="questionArea">
+      <p id="questionText"></p>
+      <form id="answerForm">
+        <input type="text" id="answerInput" placeholder="Votre réponse">
+        <button type="submit">Valider</button>
+      </form>
+      <div id="feedback"></div>
+    </div>
+  </section>
 
-  <!-- Écran jeu -->
-  <div id="gameScreen" class="screen hidden">
-    <img src="images/decor-magique.jpg" id="decor" alt="Décor magique">
-    <div id="timer">Temps restant : 30:00</div>
-    <div id="enigmesContainer"></div>
-  </div>
-
-  <!-- Inventaire -->
-  <div id="inventaire" class="hidden">
-    <h3>Inventaire</h3>
-    <div id="contenuInventaire"></div>
-  </div>
-
-  <!-- Écran fin -->
-  <div id="endScreen" class="screen hidden">
-    <img id="endImage" src="" alt="Fin" class="end-background">
+  <!-- Fin -->
+  <section id="endScreen" class="screen hidden">
     <div id="finNarrative"></div>
     <div id="scoreScreen">
       <h2>Tableau des scores</h2>
       <table>
         <thead>
-          <tr>
-            <th>Pseudo</th>
-            <th>Résultat</th>
-            <th>Temps</th>
-            <th>Bonus utilisés</th>
-          </tr>
+          <tr><th>Pseudo</th><th>Résultat</th><th>Temps</th><th>Bonus utilisés</th></tr>
         </thead>
         <tbody id="scoreTableBody"></tbody>
       </table>
-      <button id="replayButton">Rejouer</button>
+      <button id="restartGame">Rejouer</button>
     </div>
-  </div>
+  </section>
 
-  <!-- Sons -->
-  <audio id="musiqueIntro" src="sons/intro.mp3" loop></audio>
-  <audio id="musiqueAmbiance" src="sons/ambiance.mp3" loop></audio>
-  <audio id="musiqueVictoire" src="sons/victoire.mp3"></audio>
-  <audio id="musiqueDefaite" src="sons/defaite.mp3"></audio>
-  <audio id="sonBonus" src="sons/bonus.mp3"></audio>
+  <!-- Boutons tests -->
+  <div id="testButtons">
+    <button id="testWin">Tester Victoire</button>
+    <button id="testLose">Tester Défaite</button>
+  </div>
 
   <script src="script.js"></script>
 </body>
