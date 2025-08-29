@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Georgia", serif;
-  background: url('https://wallpaperaccess.com/full/2637581.jpg') no-repeat center center/cover;
+  background: url('images/decor-magique.jpg') no-repeat center center/cover;
   color: #fff;
   text-align: center;
 }
@@ -78,7 +78,7 @@ button:hover {
   transition: color 0.5s;
 }
 
-/* INVENTAIRE */
+/* INVENTAIRE ET JOURNAL */
 #inventory, #journal {
   margin: 20px auto;
   background: rgba(0,0,0,0.6);
@@ -102,7 +102,7 @@ button:hover {
   background: rgba(255, 215, 0, 0.2);
 }
 
-/* SCOREBOARD */
+/* Scoreboard */
 #scoreboard {
   margin-top: 30px;
   background: rgba(0,0,0,0.7);
@@ -123,7 +123,7 @@ button:hover {
   text-align: center;
 }
 
-/* ANIMATIONS */
+/* Animations */
 .fade-in {
   opacity: 0;
   animation: fadeIn 1s forwards;
@@ -132,3 +132,19 @@ button:hover {
 @keyframes fadeIn {
   to { opacity: 1; }
 }
+
+/* FIN VICTOIRE / DEFAITE */
+#screen-end.victoire { 
+  background: url('images/victoire.jpg') no-repeat center center/cover; 
+  background-size: cover; 
+}
+#screen-end.defaite { 
+  background: url('images/defaite.jpg') no-repeat center center/cover; 
+  background-size: cover; 
+}
+
+/* OBJETS INVENTAIRE */
+#inventoryList li.fiole { background-image: url('images/fiole.png'); background-size: 24px 24px; background-repeat: no-repeat; padding-left: 30px;}
+#inventoryList li.grimoire { background-image: url('images/grimoire.png'); background-size: 24px 24px; background-repeat: no-repeat; padding-left: 30px;}
+#inventoryList li.clé { background-image: url('images/clé.png'); background-size: 24px 24px; background-repeat: no-repeat; padding-left: 30px;}
+#inventoryList li.etoile { background-image: url('images/etoile.png'); background-size: 24px 24px; background-repeat: no-repeat; padding-left: 30px;}
