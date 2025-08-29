@@ -9,8 +9,13 @@
   <!-- Intro -->
   <section id="introScreen" class="screen active">
     <h1 class="game-title">Les Gardiens du Royaume Oublié</h1>
-    <div id="introNarrative" class="narrative"></div>
-    <button id="startGame">Entrer dans l’aventure</button>
+    <div id="pseudoForm">
+      <label for="playerName">Entrez votre nom d’aventurier :</label><br>
+      <input type="text" id="playerName" placeholder="Votre pseudo">
+      <button id="savePseudo">Valider</button>
+    </div>
+    <div id="introNarrative" class="narrative hidden"></div>
+    <button id="startGame" class="hidden">Entrer dans l’aventure</button>
   </section>
 
   <!-- Jeu -->
@@ -41,6 +46,7 @@
         <tbody id="scoreTableBody"></tbody>
       </table>
       <button id="restartGame">Rejouer</button>
+      <button id="clearScores">Effacer le tableau</button>
     </div>
   </section>
 
