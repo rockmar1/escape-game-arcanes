@@ -28,6 +28,11 @@ body {
   border-radius: 10px;
 }
 
+#inventory ul,
+#journal ul {
+  padding: 0; /* Ajouté pour éviter le remplissage par défaut */
+}
+
 #inventory ul li,
 #journal ul li {
   list-style: none;
