@@ -1,130 +1,93 @@
-/* Base */
 body {
   margin: 0;
+  padding: 0;
   font-family: "Georgia", serif;
-  background: url("images/decor-magique.jpg") no-repeat center center fixed;
-  background-size: cover;
-  color: #f8f8f8;
+  background: url('https://wallpaperaccess.com/full/2637581.jpg') no-repeat center center/cover;
+  color: #fff;
   text-align: center;
 }
 
 .screen {
   display: none;
-  padding: 40px;
+  padding: 20px;
 }
+
 .screen.active {
   display: block;
 }
 
-button {
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #222;
-  color: #FFD700;
-  border: 2px solid #FFD700;
-  border-radius: 8px;
-  font-size: 1.1em;
-  transition: 0.3s;
-}
-button:hover {
-  background: #FFD700;
-  color: #222;
-  cursor: pointer;
+.hidden {
+  display: none !important;
 }
 
-.narrative {
-  max-width: 70%;
-  margin: 30px auto;
-  padding: 20px;
-  font-size: 1.3em;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.7);
-  text-shadow: 2px 2px 4px #000;
-}
-
-/* Fin */
-#finNarrative {
-  max-width: 80%;
-  margin: 60px auto 30px auto;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 12px;
-  font-size: 1.3em;
-  line-height: 1.6em;
-}
-
-/* Score */
-#scoreScreen {
-  max-width: 70%;
-  margin: 20px auto;
-  padding: 20px;
-  background: rgba(20, 20, 20, 0.8);
-  border-radius: 12px;
-  text-align: center;
-}
-#scoreScreen h2 {
-  font-size: 1.8em;
-  margin-bottom: 15px;
-  color: #FFD700;
-  text-shadow: 1px 1px 3px #000;
-}
-#scoreScreen table {
-  width: 100%;
-  border-collapse: collapse;
+h1 {
+  font-size: 2em;
   margin-bottom: 20px;
 }
-#scoreScreen th, #scoreScreen td {
-  padding: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
-}
-#scoreScreen th {
-  color: #FFD700;
-  font-weight: bold;
-}
 
-/* Inventaire */
-#inventory {
-  margin: 20px auto;
-  padding: 15px;
-  background: rgba(0,0,0,0.5);
-  border-radius: 10px;
-  max-width: 300px;
-}
-#inventoryItems img {
-  width: 40px;
-  margin: 5px;
+button {
+  background: #222;
+  color: #ffd700;
+  border: 2px solid #ffd700;
+  padding: 10px 20px;
+  border-radius: 5px;
   cursor: pointer;
-}
-
-/* Feedback */
-#feedback {
-  margin-top: 15px;
-}
-.cross {
-  color: red;
-  font-size: 2em;
-  font-weight: bold;
-}
-
-/* Pseudo form */
-#pseudoForm {
-  background: rgba(0,0,0,0.6);
-  padding: 20px;
-  border-radius: 10px;
-  margin: 20px auto;
-  max-width: 400px;
-}
-#pseudoForm input {
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
   margin-top: 10px;
 }
 
-/* Test boutons */
-#testButtons {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
+button:hover {
+  background: #444;
+}
+
+.pseudo-box {
+  background: rgba(0,0,0,0.7);
+  padding: 20px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.plume-text {
+  font-family: "Caveat", cursive;
+  font-size: 1.5em;
+  color: #f8f5e6;
+  white-space: pre-wrap;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.error {
+  color: red;
+  margin-left: 10px;
+  font-size: 1.2em;
+}
+
+#timer {
+  font-size: 1.3em;
+  margin-bottom: 20px;
+}
+
+#inventory {
+  margin: 20px auto;
+  background: rgba(0,0,0,0.6);
+  padding: 15px;
+  border-radius: 8px;
+  width: 50%;
+}
+
+#scoreboard {
+  margin-top: 30px;
+  background: rgba(0,0,0,0.7);
+  padding: 20px;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+#scoreboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#scoreboard th, #scoreboard td {
+  padding: 8px;
+  border-bottom: 1px solid #ffd700;
 }
