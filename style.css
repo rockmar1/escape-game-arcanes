@@ -1,143 +1,39 @@
-/* Base */
-:root{
-  --bg-dark: rgba(0,0,0,.72);
-  --bg-darker: rgba(0,0,0,.82);
-  --gold: #ffd700;
-  --text: #f2f2f2;
-  --muted: #b8b8b8;
-  --danger: #e05151;
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: #eee;
+  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  font-family: Georgia, serif;
-  color: var(--text);
-  text-align:center;
-  background: url("images/decor-magique.jpg") no-repeat center center fixed;
-  background-size: cover;
+.screen {
+  padding: 20px;
 }
 
-.hidden{display:none!important}
-
-.screen{display:none;padding:32px}
-.screen.active{display:block}
-
-.title{
-  margin:8px 0 24px;
-  font-size: clamp(28px, 4vw, 44px);
-  text-shadow: 2px 2px 6px #000;
-  user-select:none;
-  cursor: default;
+.hidden {
+  display: none;
 }
 
-.card{
-  display:inline-block;
-  padding:20px 22px;
-  margin:12px auto;
-  background: var(--bg-dark);
-  border:1px solid rgba(255,255,255,.1);
-  border-radius:14px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.35);
-  max-width: 900px;
-  width: min(90vw, 900px);
-  text-align:left;
+button {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background: #444;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
-.card h2{margin:0 0 10px;color:var(--gold);text-align:center}
-
-.row{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:center;
-  flex-wrap:wrap;
+button:hover {
+  background: #666;
 }
 
-.grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-  gap:10px;
+#introText, #endText {
+  font-family: "Courier New", monospace;
+  font-size: 18px;
+  color: #ddd;
+  min-height: 100px;
+  margin: 20px auto;
+  width: 80%;
 }
-
-.center{justify-content:center}
-
-input{
-  padding:10px 12px;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,.25);
-  background:#111;
-  color:var(--text);
-  min-width: 220px;
-}
-
-.btn{
-  background:#222;
-  color: var(--gold);
-  border:2px solid var(--gold);
-  padding:10px 16px;
-  border-radius:9px;
-  cursor:pointer;
-  transition:.2s;
-}
-.btn:hover{background:var(--gold);color:#222}
-.btn.danger{border-color:var(--danger);color:var(--danger)}
-.btn.danger:hover{background:var(--danger);color:#fff}
-.btn.mini{padding:6px 10px;font-size:.9rem}
-
-.hint{color:var(--muted);margin:.4rem 0 0;text-align:center}
-
-/* Narrations (intro/fin) */
-.narrative{
-  background: var(--bg-darker);
-  border-radius: 14px;
-  padding: 22px 20px;
-  margin: 16px auto 12px;
-  width: min(90vw, 1000px);
-  font-size: clamp(18px, 2.1vw, 22px);
-  line-height: 1.6;
-  text-shadow: 2px 2px 5px #000;
-}
-.plume{
-  font-family: "Caveat", "Bradley Hand", cursive;
-  color: #f1ead1; /* plus foncé et lisible */
-}
-
-/* HUD */
-.hud{
-  display:flex;
-  gap:16px;
-  justify-content:center;
-  align-items:center;
-  margin-bottom:10px;
-  text-shadow:2px 2px 4px #000;
-}
-#timer{font-weight:bold}
-
-/* Enigmes */
-#enigmes .riddle{margin:18px 0}
-#enigmes .row{justify-content:flex-start}
-.answer{min-width:280px}
-.error{color:#ff4b4b;font-size:1.4rem}
-
-/* Inventaire */
-#inventoryItems{
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center
-}
-.inv-item{
-  width:44px;height:44px;border-radius:8px;border:1px solid rgba(255,255,255,.25);
-  background:#101010;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;user-select:none;transition:.15s
-}
-.inv-item:hover{transform:scale(1.06)}
-.inv-item small{font-size:.7rem;color:#ddd}
-
-/* Scores */
-.scores{width:100%;border-collapse:collapse}
-.scores th,.scores td{padding:10px;border-bottom:1px solid rgba(255,255,255,.18)}
-.scores th{color:var(--gold)}
-
-/* Admin */
-.scroll{max-height:45vh;overflow:auto;margin-top:10px}
-.test{position:fixed;right:10px;bottom:10px;display:flex;gap:6px}
