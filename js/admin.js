@@ -1,8 +1,7 @@
-// admin.js
-import { endGame, backToMenu } from "./router.js";
-import { clearScoreboard } from "./scoreboard.js";
+import { endGame, backToMenu, skipCurrentPuzzle, addTime } from "./router.js";
+import { clearScoreboard, showSolutions } from "./scoreboard.js";
 
-// Mot de passe admin hashé (SHA-256 du mot "admin123")
+// Hash du mot de passe "admin123"
 const ADMIN_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
 
 function hashString(str) {
@@ -14,7 +13,7 @@ function hashString(str) {
         });
 }
 
-// Création du panneau admin flottant
+// Création panneau flottant
 const adminPanel = document.createElement("div");
 adminPanel.id = "admin-panel";
 adminPanel.innerHTML = `
@@ -28,17 +27,21 @@ adminPanel.innerHTML = `
             <button id="btn-force-defeat">Forcer Défaite</button>
             <button id="btn-reset-scores">Réinitialiser Scores</button>
             <button id="btn-back-menu">Retour Menu</button>
+            <hr>
+            <button id="btn-skip">⏭️ Sauter énigme</button>
+            <button id="btn-add-time">⏱️ +60s</button>
+            <button id="btn-solutions">📜 Voir Solutions</button>
         </div>
     </div>
 `;
 document.body.appendChild(adminPanel);
 
-// Gestion ouverture / fermeture du menu
+// Toggle ouverture menu
 document.getElementById("toggle-admin").addEventListener("click", () => {
     document.getElementById("admin-menu").classList.toggle("hidden");
 });
 
-// Vérification mot de passe
+// Login Admin
 document.getElementById("btn-login").addEventListener("click", async () => {
     const input = document.getElementById("admin-password").value.trim();
     const hashed = await hashString(input);
@@ -61,11 +64,21 @@ document.getElementById("btn-force-defeat").addEventListener("click", () => {
 });
 
 document.getElementById("btn-reset-scores").addEventListener("click", () => {
-    if (confirm("Effacer tout le scoreboard ?")) {
-        clearScoreboard();
-    }
+    if (confirm("Effacer tout le scoreboard ?")) clearScoreboard();
 });
 
 document.getElementById("btn-back-menu").addEventListener("click", () => {
     backToMenu();
+});
+
+document.getElementById("btn-skip").addEventListener("click", () => {
+    skipCurrentPuzzle();
+});
+
+document.getElementById("btn-add-time").addEventListener("click", () => {
+    addTime(60);
+});
+
+document.getElementById("btn-solutions").addEventListener("click", () => {
+    showSolutions();
 });
