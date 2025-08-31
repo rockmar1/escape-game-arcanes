@@ -2,47 +2,57 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Game Magique</title>
+  <title>✨ Les Gardiens du Royaume Oublié ✨</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="./js/main.js" defer></script>
+  <script type="module" src="./js/admin.js" defer></script>
 </head>
 <body>
-
-  <!-- Intro -->
-  <div id="screen-intro" class="screen">
-    <h1>Bienvenue dans le Royaume Magique</h1>
-    <input type="text" id="player-name" placeholder="Entrez votre pseudo">
-    <button id="btn-start">Commencer</button>
+  <!-- Écran d'accueil -->
+  <div id="screen-start" class="screen active">
+    <h1>✨ Les Gardiens du Royaume Oublié ✨</h1>
+    <p>Entrez votre nom d’aventurier :</p>
+    <input type="text" id="playerName" placeholder="Votre pseudo...">
+    <button id="btn-start">Commencer l’aventure</button>
   </div>
 
-  <!-- Jeu -->
+  <!-- Écran de jeu -->
   <div id="screen-game" class="screen hidden">
-    <h2>Énigmes</h2>
-    <p>Résolvez les puzzles pour progresser...</p>
-    <div id="puzzle-container"></div>
-    <p>Temps restant : <span id="timer">300</span> secondes</p>
+    <h2 id="game-title">Votre mission commence...</h2>
+    <div id="game-area"></div>
+    
+    <!-- HUD -->
+    <div id="hud">
+      <span id="timer">⏳ 300s</span>
+      <span id="score">⭐ 0</span>
+    </div>
   </div>
 
-  <!-- Victoire -->
-  <div id="screen-victory" class="screen hidden">
-    <h1>Victoire ! 🎉</h1>
-    <p id="victory-message"></p>
-    <button id="btn-menu1">Retour au menu</button>
+  <!-- Écran de fin -->
+  <div id="screen-end" class="screen hidden">
+    <h2 id="end-title"></h2>
+    <p id="end-message"></p>
+    <button id="btn-replay">🔄 Rejouer</button>
   </div>
 
-  <!-- Défaite -->
-  <div id="screen-defeat" class="screen hidden">
-    <h1>Défaite... 💀</h1>
-    <p id="defeat-message"></p>
-    <button id="btn-menu2">Retour au menu</button>
+  <!-- Panel admin (toujours présent, caché par défaut) -->
+  <div id="admin-panel">
+    <button id="toggle-admin">⚙️ Admin</button>
+    <div id="admin-menu" class="hidden">
+      <input type="password" id="admin-password" placeholder="Mot de passe">
+      <button id="btn-login">Se connecter</button>
+      <div id="admin-tools" class="hidden">
+        <h3>Outils Admin</h3>
+        <button id="btn-force-victory">Forcer Victoire</button>
+        <button id="btn-force-defeat">Forcer Défaite</button>
+        <button id="btn-reset-scores">Réinitialiser Scores</button>
+        <button id="btn-back-menu">Retour Menu</button>
+        <hr>
+        <button id="btn-skip">⏭️ Sauter énigme</button>
+        <button id="btn-add-time">⏱️ +60s</button>
+        <button id="btn-solutions">📜 Voir Solutions</button>
+      </div>
+    </div>
   </div>
-
-  <!-- Scoreboard -->
-  <div id="screen-scoreboard" class="screen hidden">
-    <h2>Tableau des scores</h2>
-    <ul id="score-list"></ul>
-    <button id="btn-menu3">Retour au menu</button>
-  </div>
-
-  <script type="module" src="./js/router.js"></script>
 </body>
 </html>
