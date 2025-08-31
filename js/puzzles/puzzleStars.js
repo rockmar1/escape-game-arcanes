@@ -1,38 +1,19 @@
-// show sequence flash then user clicks same order
+// memory: flash nodes then repeat order
 export async function mount({onSolved,onFail,meta}){
-  const overlay = document.createElement("div"); overlay.className="puzzle-overlay";
-  overlay.innerHTML = `<div class="puzzle-container"><h3>${meta.title}</h3><div id="stars-area"></div>
-    <div><button id="stars-cancel">Annuler</button></div></div>`;
-  document.body.appendChild(overlay);
-
-  const area = overlay.querySelector("#stars-area");
-  const count = 6;
-  const seq = Array.from({length:count}, ()=> Math.floor(Math.random()*count));
-  // make star nodes
-  for(let i=0;i<count;i++){
-    const s = document.createElement("div"); s.className="star"; s.dataset.idx = i;
-    s.style.display="inline-block"; s.style.width="40px"; s.style.height="40px"; s.style.margin="6px";
-    s.style.background = "#222"; s.style.borderRadius="50%";
-    area.appendChild(s);
+  const overlay = makeOverlay(meta.title, "Regarde la séquence, puis reproduis-la");
+  const area = document.createElement("div"); area.style.display="flex"; area.style.gap="8px"; overlay.content.appendChild(area);
+  const n=6; const seq = Array.from({length:n}, ()=> Math.floor(Math.random()*n));
+  const nodes = [];
+  for(let i=0;i<n;i++){ const s=document.createElement("div"); s.style.width="40px"; s.style.height="40px"; s.style.borderRadius="50%"; s.style.background="#333"; area.appendChild(s); nodes.push(s); }
+  // flash
+  for(let i=0;i<seq.length;i++){
+    ((i)=> setTimeout(()=>{ nodes[seq[i]].style.background="#ffd700"; setTimeout(()=> nodes[seq[i]].style.background="#333",300); }, i*500))(i);
   }
-  // flash sequence
-  const stars = Array.from(area.children);
-  async function flash(){
-    for(const i of seq){
-      stars[i].style.background="#ffd700";
-      await new Promise(r=>setTimeout(r,400));
-      stars[i].style.background="#222";
-    }
-  }
-  await flash();
-  // user clicks to reproduce
-  const userSeq = [];
-  stars.forEach(s=> s.addEventListener("click", ()=>{ userSeq.push(+s.dataset.idx); if(userSeq.length===seq.length){ check(); } }));
-  function check(){
-    const ok = seq.every((v,i)=> v === userSeq[i]);
-    if(ok){ onSolved({score:140}); cleanup(); } else { alert("Mauvais ordre"); onFail({penalty:20}); }
-  }
-  overlay.querySelector("#stars-cancel").addEventListener("click", ()=>{ onFail({penalty:10}); cleanup(); });
+  const user=[]; nodes.forEach((nd,idx)=> nd.addEventListener("click", ()=>{ user.push(idx); if(user.length===seq.length){ check(); } }));
+  function check(){ const ok = seq.every((v,i)=> v===user[i]); if(ok){ onSolved({score:140}); cleanup(); } else { alert("Mauvais ordre"); onFail({penalty:20}); cleanup(); } }
+  const cancel=makeBtn("Abandon"); overlay.content.appendChild(cancel); cancel.addEventListener("click", ()=>{ onFail({penalty:10}); cleanup(); });
   function cleanup(){ overlay.remove(); }
 }
+function makeOverlay(title, subtitle){ const ov=document.createElement("div"); ov.className="puzzle-overlay"; ov.style.position="fixed"; ov.style.left=0; ov.style.top=0; ov.style.right=0; ov.style.bottom=0; ov.style.display="flex"; ov.style.alignItems="center"; ov.style.justifyContent="center"; const box=document.createElement("div"); box.className="puzzle-container"; const h=document.createElement("h3"); h.textContent=title; box.appendChild(h); const s=document.createElement("p"); s.textContent=subtitle; box.appendChild(s); ov.appendChild(box); document.body.appendChild(ov); return {overlay:ov, content:box, remove:()=>ov.remove()}; }
+function makeBtn(t){ const b=document.createElement("button"); b.textContent=t; b.style.margin="6px"; return b; }
 export function unmount(){}
