@@ -99,8 +99,40 @@ const screenAudioMap = {
   defeat: () => playSfx("defaite"),
 };
 
+// Option 1 : écrans sans son ignorés
 export function playAudio(screen) {
   const fn = screenAudioMap[screen];
-  if (fn) fn();
-  else console.warn("Audio inconnu pour l'écran :", screen);
+  if (fn) fn(); // sinon on ignore
+}
+
+// --- Helper simple pour jouer un SFX depuis n'importe où ---
+export function playEffect(name, volume = 0.4) {
+  playSfx(name, volume);
+}
+
+// --- Super helper pour puzzles : action automatique ---
+export function playActionEffect(action, item = null, volume = 0.4) {
+  switch(action) {
+    case "collect":
+      if (item && sfxMap[item]) {
+        playSfx(item, volume);
+      } else {
+        playSfx("item", volume); // son générique
+      }
+      break;
+    case "error":
+      playSfx("erreur", volume);
+      break;
+    case "bonus":
+      playSfx("bonus", volume);
+      break;
+    case "teleport":
+      playSfx("teleportation", volume);
+      break;
+    case "scintillement":
+      playSfx("scintillement", volume);
+      break;
+    default:
+      console.warn("Action audio inconnue :", action, item);
+  }
 }
