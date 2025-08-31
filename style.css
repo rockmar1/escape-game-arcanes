@@ -1,42 +1,22 @@
 body {
-  margin: 0;
+  background: url("images/decor-magique.jpg") no-repeat center center/cover;
   font-family: "Cinzel", serif;
-  background: url("images/decor-magique.jpg") no-repeat center center fixed;
-  background-size: cover;
-  color: #f5e6d3;
+  color: #fdf6e3;
   text-align: center;
 }
+.screen { display: none; padding: 20px; }
+.screen.active { display: block; animation: fadeIn 1s; }
 
-.screen {
-  display: none;
-  padding: 2rem;
-  animation: fadeIn 1s ease-in-out;
+.zone.locked { opacity: 0.3; pointer-events: none; }
+.zone.unlocked { opacity: 1; pointer-events: auto; transition: opacity 1s; }
+
+.plume-text { font-style: italic; animation: plume 4s steps(40) forwards; white-space: pre-line; }
+
+#admin-panel { position: fixed; top: 10px; right: 10px; }
+#admin-tools.hidden, #admin-actions.hidden { display: none; }
+
+@keyframes plume {
+  from { width: 0; }
+  to { width: 100%; }
 }
-
-.screen.active {
-  display: block;
-}
-
-button {
-  background: #5a2d82;
-  border: 2px solid #d4af37;
-  color: #f5e6d3;
-  padding: 10px 20px;
-  margin: 10px;
-  cursor: pointer;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  transition: transform 0.2s ease, background 0.3s ease;
-}
-
-button:hover {
-  background: #7d42a8;
-  transform: scale(1.05);
-}
-
-.hidden { display: none; }
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
