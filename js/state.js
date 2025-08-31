@@ -1,28 +1,31 @@
-// État global minimal
-export const GameState = {
-  player: { name: "", score: 0 },
-  timer: 600,
-  puzzlesSolved: [],
-  zonesUnlocked: new Set(),
-  victory: false,
-  defeat: false,
-  debug: false
+// state.js
+export let gameState = {
+    player: null,
+    score: 0,
+    solvedPuzzles: [],
+    startTime: null,
+    timeLimit: 600, // secondes
 };
 
-export function unlockZone(id){
-  const el = document.getElementById(id);
-  if(el){ el.classList.remove("locked"); el.classList.add("unlocked"); GameState.zonesUnlocked.add(id); if(GameState.debug) console.log("[DBG] zone unlocked",id); }
+export function resetState() {
+    console.debug("[DEBUG] Reset du state");
+    gameState = {
+        player: null,
+        score: 0,
+        solvedPuzzles: [],
+        startTime: Date.now(),
+        timeLimit: 600,
+    };
 }
 
-export function markSolved(id){
-  if(!GameState.puzzlesSolved.includes(id)){
-    GameState.puzzlesSolved.push(id);
-    if(GameState.debug) console.log("[DBG] puzzle solved",id);
-  }
+export function addScore(points) {
+    gameState.score += points;
+    console.debug(`[DEBUG] Score ajouté: ${points}, total: ${gameState.score}`);
 }
 
-export function addScore(n){
-  GameState.player.score += n;
-  const el = document.getElementById("hud-score");
-  if(el) el.textContent = GameState.player.score;
+export function solvePuzzle(puzzleId) {
+    if (!gameState.solvedPuzzles.includes(puzzleId)) {
+        gameState.solvedPuzzles.push(puzzleId);
+        console.debug(`[DEBUG] Puzzle résolu: ${puzzleId}`);
+    }
 }
