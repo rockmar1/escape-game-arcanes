@@ -22,6 +22,7 @@ export function initAudioOnUserGesture() {
   }
 }
 
+// Arrêter toutes les musiques
 export function stopAllAudio() {
   [ambience, ambienceStress].forEach(a => {
     if (a) { a.pause(); a.currentTime = 0; }
@@ -29,7 +30,7 @@ export function stopAllAudio() {
   currentAmbience = null;
 }
 
-// Sons ponctuels
+// Jouer un son ponctuel (bonus, erreur, potion, rune…)
 export function playActionEffect(name) {
   let src = null;
   switch (name) {
@@ -48,7 +49,7 @@ export function playActionEffect(name) {
   }
 }
 
-// Switch musique stress
+// Passer à la musique stress (quand il reste peu de temps)
 export function switchToStressAmbience() {
   if (!currentAmbience || currentAmbience === ambienceStress) return;
   const vol = currentAmbience.volume;
@@ -58,7 +59,7 @@ export function switchToStressAmbience() {
   currentAmbience.play().catch(() => {});
 }
 
-// Remet ambiance normale
+// Revenir à la musique normale
 export function switchToNormalAmbience() {
   if (!currentAmbience || currentAmbience === ambience) return;
   const vol = currentAmbience.volume;
