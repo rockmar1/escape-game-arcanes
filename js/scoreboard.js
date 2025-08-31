@@ -1,22 +1,36 @@
-const KEY = "escape_scores_v1";
-export function saveScore(entry){
-  // entry: {name, score, time, result}
-  const arr = JSON.parse(localStorage.getItem(KEY) || "[]");
-  arr.push(entry);
-  localStorage.setItem(KEY, JSON.stringify(arr));
+// scoreboard.js
+import { gameState } from "./state.js";
+
+const STORAGE_KEY = "escapeGameScores";
+
+export function autoSaveResult(victory) {
+    const scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    scores.push({
+        player: gameState.player,
+        score: gameState.score,
+        victory,
+        date: new Date().toLocaleString()
+    });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
+    console.debug("[DEBUG] Score sauvegardé :", scores[scores.length - 1]);
+    loadScoreboard();
 }
-export function getScores(){
-  return JSON.parse(localStorage.getItem(KEY) || "[]");
+
+export function loadScoreboard() {
+    const scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+    const list = document.getElementById("score-list");
+    if (list) {
+        list.innerHTML = "";
+        scores.forEach(s => {
+            const li = document.createElement("li");
+            li.textContent = `${s.player} - ${s.victory ? "Victoire" : "Défaite"} - Score: ${s.score} - ${s.date}`;
+            list.appendChild(li);
+        });
+    }
 }
-export function renderScores(listId, limit=10){
-  const ul = document.getElementById(listId);
-  if(!ul) return;
-  const scores = getScores().slice(-limit).reverse();
-  ul.innerHTML = "";
-  scores.forEach(s=>{
-    const li = document.createElement("li");
-    li.textContent = `${s.name} — ${s.result} — ${s.score} pts — ${s.time}s`;
-    ul.appendChild(li);
-  });
+
+export function clearScoreboard() {
+    localStorage.removeItem(STORAGE_KEY);
+    loadScoreboard();
+    console.debug("[DEBUG] Scoreboard réinitialisé");
 }
-export function clearScores(){ localStorage.removeItem(KEY); }
