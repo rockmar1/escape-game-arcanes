@@ -1,7 +1,7 @@
-import { getPlayerName, debugLog, setScore, getScore } from "./state.js";
+import { getPlayerName, setScore, getScore, debugLog } from "./state.js";
 import { initAudioOnUserGesture, playActionEffect, stopAllAudio, switchToStressAmbience } from "./audio.js";
 
-// Mini-jeux importés
+// Mini-jeux
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
 import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
@@ -20,65 +20,44 @@ const puzzles = [
   puzzleTextInverse
 ];
 
-let currentScreen = "pseudo";
 let currentPuzzleIndex = 0;
 let timerInterval = null;
-let totalTime = 300; // 300s = 5min
+let totalTime = 300; // 5min
 
-// --- Changement d'écran ---
-export function goToScreen(screenId) {
-  debugLog(`➡️ Passage à l’écran : ${screenId}`);
+export function goToScreen(id) {
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(screenId).classList.remove("hidden");
-  currentScreen = screenId;
-
-  if (screenId === "screen-victory" || screenId === "screen-defeat") {
-    stopAllAudio();
-  }
+  document.getElementById(id).classList.remove("hidden");
+  if (id === "screen-victory" || id === "screen-defeat") stopAllAudio();
 }
 
-// --- Initialisation du router ---
 export function initRouter() {
   goToScreen("screen-pseudo");
 
   const startBtn = document.getElementById("start-btn");
+  const beginBtn = document.getElementById("begin-game");
+
   startBtn.addEventListener("click", () => {
-    const nameInput = document.getElementById("player-name");
-    const name = nameInput.value.trim();
-    if (!name) return alert("Merci de saisir ton nom !");
-    getPlayerName(name);
-
-    // Lancer l'ambiance
+    const name = document.getElementById("player-name").value.trim();
+    if (!name) return alert("Entre un pseudo !");
     initAudioOnUserGesture();
-
-    goToIntro();
+    goToScreen("screen-intro");
+    document.getElementById("intro-content").textContent =
+      `Bienvenue ${name}, le royaume t’attend...`;
   });
 
-  const beginGameBtn = document.getElementById("begin-game");
-  beginGameBtn.addEventListener("click", () => startNextMiniGame());
+  beginBtn.addEventListener("click", () => {
+    startNextMiniGame();
+  });
 }
 
-// --- Intro ---
-function goToIntro() {
-  goToScreen("screen-intro");
-  const introContent = document.getElementById("intro-content");
-  introContent.textContent = "Le royaume oublié a besoin de toi ! Prépare-toi à relever les énigmes.";
-}
-
-// --- Lancer le prochain mini-jeu ---
 export function startNextMiniGame() {
-  if (currentPuzzleIndex >= puzzles.length) {
-    endGame(true);
-    return;
-  }
+  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
 
   const puzzle = puzzles[currentPuzzleIndex];
   currentPuzzleIndex++;
 
   goToScreen("screen-game");
-
-  const hudPlayer = document.getElementById("hud-player");
-  hudPlayer.textContent = `Joueur : ${getPlayerName()}`;
+  document.getElementById("hud-player").textContent = `👤 ${getPlayerName()}`;
 
   startTimer();
 
@@ -86,27 +65,34 @@ export function startNextMiniGame() {
     meta: { title: `Énigme ${currentPuzzleIndex}` },
     onSolved: ({ score }) => {
       setScore(getScore() + score);
-      playActionEffect("collect","bonus");
+      playActionEffect("bonus");
+      startNextMiniGame();
     },
     onFail: ({ penalty }) => {
       setScore(Math.max(0, getScore() - penalty));
       playActionEffect("error");
+      startNextMiniGame();
     }
   });
 }
 
-// --- Timer 5min ---
 function startTimer() {
   clearInterval(timerInterval);
   totalTime = 300;
   const timerEl = document.getElementById("timer");
+  timerEl.classList.remove("stress");
+
   timerInterval = setInterval(() => {
     totalTime--;
     const minutes = Math.floor(totalTime / 60);
     const seconds = totalTime % 60;
     timerEl.textContent = `⏳ ${minutes}:${seconds.toString().padStart(2,'0')}`;
 
-    if (totalTime === 300-240) { switchToStressAmbience(); } // à 60s ou 5min, switch si tu veux ici
+    if (totalTime === 60) { // dernière minute, stress
+      switchToStressAmbience();
+      timerEl.classList.add("stress");
+    }
+
     if (totalTime <= 0) {
       clearInterval(timerInterval);
       endGame(false);
@@ -114,7 +100,6 @@ function startTimer() {
   }, 1000);
 }
 
-// --- Fin de partie ---
 export function endGame(victory = true) {
   clearInterval(timerInterval);
   if (victory) {
