@@ -1,84 +1,77 @@
-import { endGame, backToMenu, skipCurrentPuzzle, addTime } from "./router.js";
-import { clearScoreboard, showSolutions } from "./scoreboard.js";
+import { endGame } from "./router.js";
+import { resetScoreboard } from "./scoreboard.js";
+import { debugLog } from "./state.js";
 
-// Hash du mot de passe "admin123"
-const ADMIN_HASH = "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9";
+// ==========================
+// Mot de passe admin (hashé)
+// ==========================
+// Mot de passe clair = "magie123" (par exemple)
+const ADMIN_PASSWORD_HASH =
+  "0b86b9c6df5dbf9c38c2a3a22153f6b86e2456e5b9e84a41a6c72e5e6ad37e63"; 
+// (SHA-256 de "magie123")
 
-function hashString(str) {
-    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str))
-        .then(buf => {
-            return Array.from(new Uint8Array(buf))
-                .map(b => b.toString(16).padStart(2, "0"))
-                .join("");
-        });
+// Fonction de hash SHA-256
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(password);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
 }
 
-// Création panneau flottant
-const adminPanel = document.createElement("div");
-adminPanel.id = "admin-panel";
-adminPanel.innerHTML = `
-    <button id="toggle-admin">⚙️ Admin</button>
-    <div id="admin-menu" class="hidden">
-        <input type="password" id="admin-password" placeholder="Mot de passe">
-        <button id="btn-login">Se connecter</button>
-        <div id="admin-tools" class="hidden">
-            <h3>Outils Admin</h3>
-            <button id="btn-force-victory">Forcer Victoire</button>
-            <button id="btn-force-defeat">Forcer Défaite</button>
-            <button id="btn-reset-scores">Réinitialiser Scores</button>
-            <button id="btn-back-menu">Retour Menu</button>
-            <hr>
-            <button id="btn-skip">⏭️ Sauter énigme</button>
-            <button id="btn-add-time">⏱️ +60s</button>
-            <button id="btn-solutions">📜 Voir Solutions</button>
-        </div>
-    </div>
-`;
-document.body.appendChild(adminPanel);
+// ==========================
+// Gestion du Panel Admin
+// ==========================
+const toggleBtn = document.getElementById("admin-toggle");
+const adminPanel = document.getElementById("admin-panel");
+const loginBtn = document.getElementById("admin-login");
+const passwordInput = document.getElementById("admin-password");
+const toolsDiv = document.getElementById("admin-tools");
 
-// Toggle ouverture menu
-document.getElementById("toggle-admin").addEventListener("click", () => {
-    document.getElementById("admin-menu").classList.toggle("hidden");
+toggleBtn.addEventListener("click", () => {
+  adminPanel.classList.toggle("hidden");
 });
 
-// Login Admin
-document.getElementById("btn-login").addEventListener("click", async () => {
-    const input = document.getElementById("admin-password").value.trim();
-    const hashed = await hashString(input);
+// Login admin
+loginBtn.addEventListener("click", async () => {
+  const entered = passwordInput.value;
+  const hash = await hashPassword(entered);
 
-    if (hashed === ADMIN_HASH) {
-        document.getElementById("admin-tools").classList.remove("hidden");
-        alert("✅ Accès Admin autorisé !");
-    } else {
-        alert("❌ Mot de passe incorrect");
-    }
+  if (hash === ADMIN_PASSWORD_HASH) {
+    debugLog("✅ Connexion admin réussie");
+    toolsDiv.classList.remove("hidden");
+  } else {
+    debugLog("❌ Mot de passe incorrect");
+    alert("Mot de passe incorrect !");
+  }
 });
 
-// Actions admin
-document.getElementById("btn-force-victory").addEventListener("click", () => {
-    endGame(true, "Victoire forcée par Admin");
+// ==========================
+// Outils Admin
+// ==========================
+document.getElementById("force-victory").addEventListener("click", () => {
+  debugLog("⚡ Forçage Victoire");
+  endGame("victory");
 });
 
-document.getElementById("btn-force-defeat").addEventListener("click", () => {
-    endGame(false, "Défaite forcée par Admin");
+document.getElementById("force-defeat").addEventListener("click", () => {
+  debugLog("⚡ Forçage Défaite");
+  endGame("defeat");
 });
 
-document.getElementById("btn-reset-scores").addEventListener("click", () => {
-    if (confirm("Effacer tout le scoreboard ?")) clearScoreboard();
+document.getElementById("reset-scoreboard").addEventListener("click", () => {
+  debugLog("🗑 Réinitialisation scores");
+  resetScoreboard();
 });
 
-document.getElementById("btn-back-menu").addEventListener("click", () => {
-    backToMenu();
-});
+// Debug Mode
+const debugCheckbox = document.getElementById("debug-mode");
+const debugOutput = document.getElementById("debug-log");
 
-document.getElementById("btn-skip").addEventListener("click", () => {
-    skipCurrentPuzzle();
-});
-
-document.getElementById("btn-add-time").addEventListener("click", () => {
-    addTime(60);
-});
-
-document.getElementById("btn-solutions").addEventListener("click", () => {
-    showSolutions();
-});
+export function adminDebug(message) {
+  console.log("[ADMIN DEBUG]", message);
+  if (debugCheckbox && debugCheckbox.checked && debugOutput) {
+    debugOutput.textContent += `[ADMIN DEBUG] ${message}\n`;
+  }
+}
