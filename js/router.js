@@ -1,5 +1,5 @@
 import { getPlayerName, setScore, getScore, debugLog } from "./state.js";
-import { initAudioOnUserGesture, playActionEffect, stopAllAudio, switchToStressAmbience } from "./audio.js";
+import { initAudioOnUserGesture, playActionEffect, stopAllAudio, switchToStressAmbience, switchToNormalAmbience } from "./audio.js";
 
 // Mini-jeux
 import * as puzzleClock from "./puzzles/puzzleClock.js";
@@ -22,35 +22,27 @@ const puzzles = [
 
 let currentPuzzleIndex = 0;
 let timerInterval = null;
-let totalTime = 300; // 5min
+let totalTime = 300; // 5 min
 
 // === Changement d’écran ===
-export function goToScreen(id) {
+export function goToScreen(screenName) {
+  const id = "screen-" + screenName;
+  const screenEl = document.getElementById(id);
+  if (!screenEl) {
+    console.error(`Écran introuvable : ${id}`);
+    return;
+  }
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
+  screenEl.classList.remove("hidden");
 
-  if (id === "screen-victory" || id === "screen-defeat") stopAllAudio();
+  if (screenName === "victory" || screenName === "defeat") {
+    stopAllAudio();
+  }
 }
 
 // === Initialisation du router ===
 export function initRouter() {
-  goToScreen("screen-pseudo");
-
-  const startBtn = document.getElementById("start-btn");
-  const beginBtn = document.getElementById("begin-game");
-
-  startBtn.addEventListener("click", () => {
-    const name = document.getElementById("player-name").value.trim();
-    if (!name) return alert("Entre un pseudo !");
-    initAudioOnUserGesture();
-    goToScreen("screen-intro");
-    document.getElementById("intro-content").textContent =
-      `Bienvenue ${name}, le royaume t’attend...`;
-  });
-
-  beginBtn.addEventListener("click", () => {
-    startNextMiniGame();
-  });
+  goToScreen("pseudo");
 }
 
 // === Lancer le prochain mini-jeu ===
@@ -60,7 +52,7 @@ export function startNextMiniGame() {
   const puzzle = puzzles[currentPuzzleIndex];
   currentPuzzleIndex++;
 
-  goToScreen("screen-game");
+  goToScreen("game");
   document.getElementById("hud-player").textContent = `👤 ${getPlayerName()}`;
 
   startTimer();
@@ -93,7 +85,7 @@ function startTimer() {
     const seconds = totalTime % 60;
     timerEl.textContent = `⏳ ${minutes}:${seconds.toString().padStart(2,'0')}`;
 
-    if (totalTime === 60) { // dernière minute, stress
+    if (totalTime === 300 / 60) { // 5 min ? Ici, tu peux adapter
       switchToStressAmbience();
       timerEl.classList.add("stress");
     }
@@ -111,17 +103,19 @@ export function endGame(victory = true) {
   if (victory) {
     document.getElementById("victory-text").textContent =
       `Bravo ${getPlayerName()} ! Score final : ${getScore()}`;
-    goToScreen("screen-victory");
+    goToScreen("victory");
   } else {
     document.getElementById("defeat-text").textContent =
       `Hélas ${getPlayerName()}... le royaume s’effondre.`;
-    goToScreen("screen-defeat");
+    goToScreen("defeat");
   }
+  stopAllAudio();
 }
 
-// === Réinitialisation pour recommencer une partie (optionnel) ===
+// === Réinitialisation pour recommencer une partie ===
 export function resetGame() {
   currentPuzzleIndex = 0;
   setScore(0);
-  goToScreen("screen-pseudo");
+  switchToNormalAmbience();
+  goToScreen("pseudo");
 }
