@@ -1,7 +1,7 @@
 import { getPlayerName, debugLog, setScore, getScore } from "./state.js";
-import { playAudio } from "./audio.js";
+import { initAudioOnUserGesture, playActionEffect, stopAllAudio, switchToStressAmbience } from "./audio.js";
 
-// Liste de tous les puzzles à jouer dans l’ordre
+// Mini-jeux importés
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
 import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
@@ -22,6 +22,8 @@ const puzzles = [
 
 let currentScreen = "pseudo";
 let currentPuzzleIndex = 0;
+let timerInterval = null;
+let totalTime = 300; // 300s = 5min
 
 // --- Changement d'écran ---
 export function goToScreen(screenId) {
@@ -29,28 +31,31 @@ export function goToScreen(screenId) {
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
   document.getElementById(screenId).classList.remove("hidden");
   currentScreen = screenId;
-  playAudio(screenId);
+
+  if (screenId === "screen-victory" || screenId === "screen-defeat") {
+    stopAllAudio();
+  }
 }
 
-// --- Démarrage du router ---
+// --- Initialisation du router ---
 export function initRouter() {
   goToScreen("screen-pseudo");
 
-  // Bouton pseudo
   const startBtn = document.getElementById("start-btn");
   startBtn.addEventListener("click", () => {
     const nameInput = document.getElementById("player-name");
     const name = nameInput.value.trim();
     if (!name) return alert("Merci de saisir ton nom !");
-    getPlayerName(name); // stocke le nom
+    getPlayerName(name);
+
+    // Lancer l'ambiance
+    initAudioOnUserGesture();
+
     goToIntro();
   });
 
-  // Bouton intro
   const beginGameBtn = document.getElementById("begin-game");
-  beginGameBtn.addEventListener("click", () => {
-    startNextMiniGame();
-  });
+  beginGameBtn.addEventListener("click", () => startNextMiniGame());
 }
 
 // --- Intro ---
@@ -75,20 +80,43 @@ export function startNextMiniGame() {
   const hudPlayer = document.getElementById("hud-player");
   hudPlayer.textContent = `Joueur : ${getPlayerName()}`;
 
-  // Monte le puzzle et gère score + fin de puzzle
+  startTimer();
+
   puzzle.mount({
-    meta: {title: `Énigme ${currentPuzzleIndex}`},
-    onSolved: ({score}) => {
+    meta: { title: `Énigme ${currentPuzzleIndex}` },
+    onSolved: ({ score }) => {
       setScore(getScore() + score);
+      playActionEffect("collect","bonus");
     },
-    onFail: ({penalty}) => {
+    onFail: ({ penalty }) => {
       setScore(Math.max(0, getScore() - penalty));
+      playActionEffect("error");
     }
   });
 }
 
+// --- Timer 5min ---
+function startTimer() {
+  clearInterval(timerInterval);
+  totalTime = 300;
+  const timerEl = document.getElementById("timer");
+  timerInterval = setInterval(() => {
+    totalTime--;
+    const minutes = Math.floor(totalTime / 60);
+    const seconds = totalTime % 60;
+    timerEl.textContent = `⏳ ${minutes}:${seconds.toString().padStart(2,'0')}`;
+
+    if (totalTime === 300-240) { switchToStressAmbience(); } // à 60s ou 5min, switch si tu veux ici
+    if (totalTime <= 0) {
+      clearInterval(timerInterval);
+      endGame(false);
+    }
+  }, 1000);
+}
+
 // --- Fin de partie ---
 export function endGame(victory = true) {
+  clearInterval(timerInterval);
   if (victory) {
     document.getElementById("victory-text").textContent =
       `Bravo ${getPlayerName()} ! Score final : ${getScore()}`;
