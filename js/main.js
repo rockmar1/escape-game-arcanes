@@ -1,34 +1,37 @@
-import { navigateTo } from "./router.js";
-import { setPlayerName, getPlayerName, resetState } from "./state.js";
-import { playAudio, stopAllAudio } from "./audio.js";
+import { initRouter, goToScreen } from "./router.js";
+import { setPlayerName } from "./state.js";
+import { debugLog } from "./state.js";
+import "./admin.js"; // Active le panneau admin
+import "./audio.js"; // Gère les sons globaux
 
-// On récupère le bouton
-const startBtn = document.getElementById("btn-start");
-const playerInput = document.getElementById("playerName");
+// =====================
+// Initialisation
+// =====================
+document.addEventListener("DOMContentLoaded", () => {
+  debugLog("🎮 Initialisation du jeu...");
 
-// Ajout d’un écouteur sur le bouton
-if (startBtn) {
+  initRouter();
+
+  const startBtn = document.getElementById("start-btn");
+  const beginBtn = document.getElementById("begin-game");
+
+  // Entrer le pseudo
   startBtn.addEventListener("click", () => {
-    console.log("[DEBUG] Bouton Commencer cliqué"); // ✅ Vérif bouton
-
-    const name = playerInput.value.trim();
+    const name = document.getElementById("player-name").value.trim();
     if (!name) {
-      alert("Veuillez entrer un pseudo !");
+      alert("Entre un pseudo pour commencer !");
       return;
     }
-
     setPlayerName(name);
-    console.log("[DEBUG] Pseudo défini :", getPlayerName());
-
-    resetState();
-
-    // Musique intro -> ambiance
-    stopAllAudio();
-    playAudio("intro");
-
-    // On passe à l’écran intro
-    navigateTo("intro");
+    debugLog("✅ Pseudo validé : " + name);
+    goToScreen("intro");
+    document.getElementById("intro-content").textContent =
+      `Bienvenue ${name}, le royaume t’attend...`;
   });
-} else {
-  console.error("[ERREUR] Impossible de trouver le bouton #btn-start");
-}
+
+  // Lancer le jeu après l’intro
+  beginBtn.addEventListener("click", () => {
+    goToScreen("game");
+    debugLog("🚪 Début de l’aventure !");
+  });
+});
