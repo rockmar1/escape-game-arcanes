@@ -1,69 +1,41 @@
-// ===============================
-// admin.js — Panel admin sécurisé + outils
-// ===============================
+import { triggerVictory, triggerDefeat, GameState, unlockZone } from "./state.js";
+import { showScreen } from "./router.js";
 
-// Mot de passe admin : "Magus2025"
-const ADMIN_SHA256 = "0241c0a54e621b3b05787d107ee864600d11cfa0c370d2dda71c7625089b139e";
+// Mot de passe hashé SHA-256 de "magie2025"
+const ADMIN_HASH = "73f4e6aa83d143e69a8059d0f04b6d9a83e8e0e6c6a0c7b40b1f96a4ee9b0a12";
 
-async function sha256(text) {
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest("SHA-256", enc.encode(text));
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2,"0")).join("");
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, "0")).join("");
 }
 
-// Afficher l’écran admin avec Ctrl+M
-document.addEventListener("keydown", (e) => {
-  if (e.ctrlKey && e.key.toLowerCase() === "m") {
-    showScreen("screen-admin");
-  }
+document.getElementById("toggle-admin").addEventListener("click", () =>
+  document.getElementById("admin-tools").classList.toggle("hidden")
+);
+
+document.getElementById("admin-login").addEventListener("click", async () => {
+  const input = document.getElementById("admin-pass").value;
+  const hash = await sha256(input);
+  if (hash === ADMIN_HASH) {
+    document.getElementById("admin-actions").classList.remove("hidden");
+  } else alert("Mot de passe incorrect");
 });
 
-const adminLoginBtn = document.getElementById("admin-login");
-const adminPassInput = document.getElementById("admin-pass");
-const adminTools = document.getElementById("admin-tools");
-
-if (adminLoginBtn) {
-  adminLoginBtn.addEventListener("click", async () => {
-    const hash = await sha256(adminPassInput.value || "");
-    if (hash === ADMIN_SHA256) {
-      adminTools.classList.remove("hidden");
-      alert("✅ Accès Admin accordé");
-    } else {
-      adminTools.classList.add("hidden");
-      alert("❌ Mot de passe incorrect");
-    }
-  });
-}
-
-// Outils
-const btnForceWin = document.getElementById("force-victory");
-const btnForceLose = document.getElementById("force-defeat");
-const btnReset = document.getElementById("reset-score");
-const btnSkipIntro = document.getElementById("skip-intro");
-
-btnForceWin?.addEventListener("click", () => {
-  if (!confirm("Forcer la victoire ?")) return;
-  triggerVictory(`Par décret des Arcanes, ${GameState.player.name}, la victoire est tienne.`);
-});
-
-btnForceLose?.addEventListener("click", () => {
-  if (!confirm("Forcer la défaite ?")) return;
-  triggerDefeat(`Les ombres s’abattent d’un geste du Conseil Souterrain…`);
-});
-
-btnReset?.addEventListener("click", () => {
-  if (!confirm("Réinitialiser score & état ?")) return;
+document.getElementById("force-victory").addEventListener("click", () => triggerVictory("Victoire forcée"));
+document.getElementById("force-defeat").addEventListener("click", () => triggerDefeat("Défaite forcée"));
+document.getElementById("reset-score").addEventListener("click", () => {
   GameState.player.score = 0;
-  GameState.puzzles = { runes:false, potions:false, labyrinthe:false, etoiles:false };
   document.getElementById("score-display").textContent = 0;
-  alert("État réinitialisé.");
 });
-
-btnSkipIntro?.addEventListener("click", () => {
-  // saute directement au jeu (si pseudo déjà entré)
-  if (!GameState.player.name) {
-    alert("Entre un pseudo d’abord dans l’écran d’accueil.");
-    return;
-    }
-  beginIntro();
+document.getElementById("skip-intro").addEventListener("click", () => showScreen("screen-game"));
+document.getElementById("clear-scores").addEventListener("click", () => localStorage.removeItem("scores"));
+document.getElementById("add-time").addEventListener("click", () => {
+  GameState.timer += 60;
+  document.getElementById("timer-display").textContent = GameState.timer;
+});
+document.getElementById("unlock-all").addEventListener("click", () => {
+  unlockZone("zone-bibliotheque");
+  unlockZone("zone-labo");
+  unlockZone("zone-observatoire");
 });
