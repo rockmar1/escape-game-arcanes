@@ -1,67 +1,72 @@
 body {
   margin: 0;
-  font-family: 'Trebuchet MS', sans-serif;
+  font-family: 'Cinzel', serif;
   background: url("images/decor-magique.jpg") no-repeat center center fixed;
   background-size: cover;
-  color: white;
+  color: #fff;
   text-align: center;
 }
 
 .screen {
   display: none;
-  height: 100vh;
-  width: 100vw;
-  justify-content: center;
-  align-items: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  background: rgba(0,0,0,0.6);
+  border-radius: 12px;
+  margin: 50px auto;
+  width: 80%;
+  max-width: 700px;
+  box-shadow: 0 0 20px #4ff;
 }
 
 .screen.active {
-  display: flex;
+  display: block;
 }
 
-.card {
-  background: rgba(0,0,0,0.7);
-  padding: 2rem;
-  border-radius: 20px;
-  max-width: 600px;
+h1, h2 {
+  text-shadow: 0 0 10px #0ff, 0 0 20px #0f0;
 }
 
-#timer {
-  font-size: 2rem;
+button {
+  margin: 10px;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background: linear-gradient(45deg, #4ff, #0ff);
+  color: #000;
   font-weight: bold;
+  transition: 0.3s;
 }
 
-#inventory {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+button:hover {
+  background: linear-gradient(45deg, #0ff, #4ff);
+  transform: scale(1.05);
 }
 
-#inventory img {
-  width: 50px;
+#objects img {
+  width: 80px;
+  margin: 10px;
   cursor: pointer;
   transition: transform 0.2s;
 }
 
-#inventory img:hover {
+#objects img:hover {
   transform: scale(1.2);
 }
 
+#timer {
+  font-size: 1.5em;
+  margin: 10px;
+  text-shadow: 0 0 10px #f0f;
+}
+
 #admin-panel {
-  position: fixed;
-  top: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.8);
-  padding: 1rem;
-  border-radius: 12px;
-  display: none; /* cacher par défaut */
+  background: rgba(30,30,30,0.9);
+  border: 2px solid #0ff;
+  margin-top: 20px;
 }
 
-body.danger {
-  animation: pulse 1s infinite alternate;
-}
-
-@keyframes pulse {
-  from { background-color: rgba(255,0,0,0.1); }
-  to { background-color: rgba(255,0,0,0.3); }
+.hidden {
+  display: none !important;
 }
