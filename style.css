@@ -1,82 +1,44 @@
-body {
-  margin: 0;
-  padding: 0;
-  font-family: 'Cinzel', serif;
-  background: url('assets/images/decor-magique.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
-}
-
+/* Écrans */
 .screen {
   display: none;
   text-align: center;
-  padding: 40px;
+  padding: 20px;
 }
-
 .screen.active {
   display: block;
 }
 
+/* HUD */
+#hud {
+  margin-top: 20px;
+  font-size: 18px;
+}
+
+/* Admin Panel */
+#admin-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(20,20,30,0.9);
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  z-index: 1000;
+  font-size: 14px;
+}
+#admin-panel button {
+  display: block;
+  margin: 5px 0;
+  padding: 5px 10px;
+  background: #444;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  cursor: pointer;
+}
+#admin-panel button:hover {
+  background: #666;
+}
 .hidden {
   display: none;
 }
-
-button {
-  background: linear-gradient(135deg, #6b42f5, #9c6dff);
-  border: none;
-  padding: 10px 20px;
-  color: white;
-  font-size: 1.2rem;
-  margin-top: 20px;
-  cursor: pointer;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(255,255,255,0.5);
-  transition: all 0.3s;
-}
-
-button:hover {
-  transform: scale(1.1);
-}
-
-#hud {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.2rem;
-  padding: 10px;
-  background: rgba(0,0,0,0.6);
-  border-radius: 10px;
-  margin-bottom: 20px;
-}
-
-#admin-panel {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    background: rgba(20, 20, 30, 0.9);
-    color: white;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 14px;
-    z-index: 1000;
-    box-shadow: 0 0 10px #000;
-}
-
-#admin-panel button {
-    margin: 3px 0;
-    padding: 5px 10px;
-    background: #444;
-    border: none;
-    border-radius: 5px;
-    color: white;
-    cursor: pointer;
-}
-
-#admin-panel button:hover {
-    background: #666;
-}
-
-#admin-menu.hidden,
-#admin-tools.hidden {
-    display: none;
-}
-
