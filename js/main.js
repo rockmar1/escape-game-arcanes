@@ -1,44 +1,34 @@
-// main.js
-import { startGame, endGame } from "./router.js";
-import { setPlayerName } from "./state.js";
-import { resetScoreboard } from "./scoreboard.js";
+import { navigateTo } from "./router.js";
+import { setPlayerName, getPlayerName, resetState } from "./state.js";
+import { playAudio, stopAllAudio } from "./audio.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const startBtn = document.getElementById("btn-start");
-  if (startBtn) {
-    startBtn.addEventListener("click", () => {
-      const name = document.getElementById("playerName").value.trim();
-      if (!name) {
-        alert("Veuillez entrer un pseudo !");
-        return;
-      }
-      setPlayerName(name);
-      startGame();
-    });
-  }
+// On récupère le bouton
+const startBtn = document.getElementById("btn-start");
+const playerInput = document.getElementById("playerName");
 
-  const replay1 = document.getElementById("btn-replay");
-  if (replay1) replay1.onclick = () => location.reload();
+// Ajout d’un écouteur sur le bouton
+if (startBtn) {
+  startBtn.addEventListener("click", () => {
+    console.log("[DEBUG] Bouton Commencer cliqué"); // ✅ Vérif bouton
 
-  const replay2 = document.getElementById("btn-replay2");
-  if (replay2) replay2.onclick = () => location.reload();
-});
+    const name = playerInput.value.trim();
+    if (!name) {
+      alert("Veuillez entrer un pseudo !");
+      return;
+    }
 
-// expose admin tools globally
-window.endGame = endGame;
-window.resetScoreboard = resetScoreboard;
-window.skipCurrentPuzzle = () => {
-  if (window.currentPuzzleUnmount) {
-    window.currentPuzzleUnmount();
-    document.getElementById("puzzle-container").innerHTML = "<p>Énigme sautée par admin.</p>";
-  }
-};
-window.toggleDebug = () => {
-  const log = document.getElementById("debug-log");
-  if (log.style.display === "block") {
-    log.style.display = "none";
-  } else {
-    log.style.display = "block";
-    log.textContent += "\n[DEBUG] Debug activé";
-  }
-};
+    setPlayerName(name);
+    console.log("[DEBUG] Pseudo défini :", getPlayerName());
+
+    resetState();
+
+    // Musique intro -> ambiance
+    stopAllAudio();
+    playAudio("intro");
+
+    // On passe à l’écran intro
+    navigateTo("intro");
+  });
+} else {
+  console.error("[ERREUR] Impossible de trouver le bouton #btn-start");
+}
