@@ -1,3 +1,5 @@
+import { showScreen } from "./router.js";
+
 export const GameState = {
   player: { name: "", score: 0 },
   timer: 600,
