@@ -1,36 +1,32 @@
-// drag & drop: ingredients into beaker in right order
+// drag & drop potion ingredients into beaker in correct order
 export async function mount({onSolved,onFail,meta}){
-  const overlay = document.createElement("div"); overlay.className="puzzle-overlay";
-  overlay.innerHTML = `<div class="puzzle-container">
-    <h3>${meta.title}</h3>
-    <p>Glisse les ingrédients dans le bon ordre pour créer la potion.</p>
-    <div id="ingredients">
-      <div draggable="true" class="ing" data-val="WATER">Eau</div>
-      <div draggable="true" class="ing" data-val="FIRE">Feu</div>
-      <div draggable="true" class="ing" data-val="HERB">Herbe</div>
-    </div>
-    <div id="beaker" style="min-height:60px;border:1px dashed #fff;margin-top:10px;"></div>
-    <div><button id="potions-check">Valider</button><button id="potions-cancel">Annuler</button></div>
-  </div>`;
-  document.body.appendChild(overlay);
-
-  const beaker = overlay.querySelector("#beaker");
-  const sequence = [];
-  overlay.querySelectorAll(".ing").forEach(el=>{
-    el.addEventListener("dragstart", (e)=> e.dataTransfer.setData("text/plain", el.dataset.val));
+  const overlay = makeOverlay(meta.title, "Glisse les ingrédients dans le bon ordre");
+  const ingBox = document.createElement("div"); ingBox.style.display="flex"; ingBox.style.justifyContent="center"; ingBox.style.gap="12px";
+  const ingredients = [{id:"WATER",label:"Eau"},{id:"FIRE",label:"Feu"},{id:"HERB",label:"Herbe"}].sort(()=>Math.random()-0.5);
+  ingredients.forEach(it=>{
+    const d = document.createElement("div"); d.draggable=true; d.textContent=it.label; d.dataset.val=it.id;
+    d.style.padding="8px"; d.style.border="1px solid #fff"; d.style.borderRadius="8px";
+    d.addEventListener("dragstart", e=> e.dataTransfer.setData("text/plain", it.id));
+    ingBox.appendChild(d);
   });
-  beaker.addEventListener("dragover", e=>e.preventDefault());
+  overlay.content.appendChild(ingBox);
+  const beaker = document.createElement("div"); beaker.style.minHeight="60px"; beaker.style.border="2px dashed #fff"; beaker.style.marginTop="12px"; overlay.content.appendChild(beaker);
+  const seq = [];
+  beaker.addEventListener("dragover", e=> e.preventDefault());
   beaker.addEventListener("drop", e=>{
     const v = e.dataTransfer.getData("text/plain");
-    sequence.push(v);
-    const pill = document.createElement("div"); pill.textContent = v; pill.style.display="inline-block"; pill.style.margin="4px";
-    beaker.appendChild(pill);
+    if(!v) return;
+    seq.push(v);
+    const pill = document.createElement("span"); pill.textContent=v; pill.style.margin="6px"; beaker.appendChild(pill);
   });
-  overlay.querySelector("#potions-check").addEventListener("click", ()=>{
+  const ok=makeBtn("Valider"), cancel=makeBtn("Abandon"); overlay.content.appendChild(ok); overlay.content.appendChild(cancel);
+  ok.addEventListener("click", ()=>{
     const sol = ["WATER","FIRE","HERB"].join(",");
-    if(sequence.join(",") === sol){ onSolved({score:120}); cleanup(); } else { alert("Potion instable !"); onFail({penalty:20}); }
+    if(seq.join(",") === sol){ onSolved({score:120}); cleanup(); } else { alert("Mauvais mélange"); onFail({penalty:20}); }
   });
-  overlay.querySelector("#potions-cancel").addEventListener("click", ()=>{ onFail({penalty:10}); cleanup(); });
+  cancel.addEventListener("click", ()=>{ onFail({penalty:10}); cleanup(); });
   function cleanup(){ overlay.remove(); }
 }
+function makeOverlay(title, subtitle){ const ov=document.createElement("div"); ov.className="puzzle-overlay"; ov.style.position="fixed"; ov.style.left=0; ov.style.top=0; ov.style.right=0; ov.style.bottom=0; ov.style.display="flex"; ov.style.alignItems="center"; ov.style.justifyContent="center"; const box=document.createElement("div"); box.className="puzzle-container"; box.style.width="480px"; const h=document.createElement("h3"); h.textContent=title; box.appendChild(h); const s=document.createElement("p"); s.textContent=subtitle; box.appendChild(s); ov.appendChild(box); document.body.appendChild(ov); return {overlay:ov, content:box, remove:()=>ov.remove()}; }
+function makeBtn(t){ const b=document.createElement("button"); b.textContent=t; b.style.margin="8px"; return b; }
 export function unmount(){}
