@@ -1,27 +1,18 @@
-import { showScreen } from "./router.js";
-
+import { log } from "./config.js";
 export const GameState = {
-  player: { name: "", score: 0 },
-  timer: 600,
+  player: { name:"", score:0 },
+  timer: 0,
   puzzlesSolved: [],
-  victory: false,
-  defeat: false
+  zonesUnlocked: new Set(),
+  victory:false, defeat:false
 };
-
-export function unlockZone(id) {
+export function unlockZone(id){
   const zone = document.getElementById(id);
-  zone.classList.remove("locked");
-  zone.classList.add("unlocked");
+  if(zone){ zone.classList.remove("locked"); zone.classList.add("unlocked"); GameState.zonesUnlocked.add(id); log("Zone unlocked", id); }
 }
-
-export function triggerVictory(text) {
-  GameState.victory = true;
-  document.getElementById("victory-story").textContent = text;
-  showScreen("screen-victory");
-}
-
-export function triggerDefeat(text) {
-  GameState.defeat = true;
-  document.getElementById("defeat-story").textContent = text;
-  showScreen("screen-defeat");
+export function markSolved(puzzleId){
+  if(!GameState.puzzlesSolved.includes(puzzleId)){
+    GameState.puzzlesSolved.push(puzzleId);
+    log("Puzzle solved:", puzzleId);
+  }
 }
