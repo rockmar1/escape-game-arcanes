@@ -1,9 +1,9 @@
-import { getPlayerName, debugLog, setScore, getScore } from "./state.js";
+import { getPlayerName, debugLog, getScore } from "./state.js";
 import { playAudio } from "./audio.js";
 
 let currentScreen = "pseudo";
 
-// === Changement d’écran ===
+// --- Changement d'écran ---
 export function goToScreen(screen) {
   debugLog(`➡️ Passage à l’écran : ${screen}`);
 
@@ -12,18 +12,16 @@ export function goToScreen(screen) {
 
   currentScreen = screen;
 
-  if (screen === "intro") playAudio("intro");
-  if (screen === "game") playAudio("ambiance");
-  if (screen === "victory") playAudio("victoire");
-  if (screen === "defeat") playAudio("defaite");
+  // joue automatiquement le son correspondant
+  playAudio(screen);
 }
 
-// === Initialisation ===
+// --- Initialisation ---
 export function initRouter() {
-  goToScreen("pseudo"); // par défaut
+  goToScreen("pseudo");
 }
 
-// === Fin de partie ===
+// --- Fin de partie ---
 export function endGame(victory = true) {
   if (victory) {
     document.getElementById("victory-text").textContent =
