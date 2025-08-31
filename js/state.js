@@ -1,31 +1,24 @@
 // state.js
 export let gameState = {
-    player: null,
+    player: "",
     score: 0,
+    timeLeft: 300, // 5 minutes
     solvedPuzzles: [],
-    startTime: null,
-    timeLimit: 600, // secondes
+    victory: false
 };
 
-export function resetState() {
-    console.debug("[DEBUG] Reset du state");
+export function resetGame() {
     gameState = {
-        player: null,
+        player: gameState.player, // on garde le pseudo
         score: 0,
+        timeLeft: 300,
         solvedPuzzles: [],
-        startTime: Date.now(),
-        timeLimit: 600,
+        victory: false
     };
+    console.debug("[DEBUG] GameState reset:", gameState);
 }
 
-export function addScore(points) {
-    gameState.score += points;
-    console.debug(`[DEBUG] Score ajouté: ${points}, total: ${gameState.score}`);
-}
-
-export function solvePuzzle(puzzleId) {
-    if (!gameState.solvedPuzzles.includes(puzzleId)) {
-        gameState.solvedPuzzles.push(puzzleId);
-        console.debug(`[DEBUG] Puzzle résolu: ${puzzleId}`);
-    }
+export function setPlayerName(name) {
+    gameState.player = name;
+    console.debug("[DEBUG] Joueur défini :", name);
 }
