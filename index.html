@@ -4,72 +4,79 @@
   <meta charset="UTF-8">
   <title>Escape Game Magique</title>
   <link rel="stylesheet" href="style.css">
-  <script type="module" src="js/main.js"></script>
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
-  <!-- Écran pseudo -->
-  <section id="screen-start" class="screen active">
-    <h1>✨ Les Gardiens du Royaume Oublié ✨</h1>
-    <input type="text" id="player-name" placeholder="Entre ton pseudo">
-    <button id="start-btn">Commencer</button>
-  </section>
-
-  <!-- Intro -->
-  <section id="screen-intro" class="screen">
-    <p id="intro-story" class="plume-text"></p>
-    <button id="begin-game">Entrer dans le Royaume</button>
-  </section>
-
-  <!-- Zones de jeu -->
-  <section id="screen-game" class="screen">
-    <div id="hud">
-      <span id="player-display"></span> | Score : <span id="score-display">0</span> | Temps : <span id="timer-display">600</span>
-    </div>
-    <div id="zones">
-      <div id="zone-bibliotheque" class="zone locked"><h2>Bibliothèque</h2><div class="puzzles"></div></div>
-      <div id="zone-labo" class="zone locked"><h2>Labo magique</h2><div class="puzzles"></div></div>
-      <div id="zone-observatoire" class="zone locked"><h2>Observatoire</h2><div class="puzzles"></div></div>
-    </div>
-  </section>
-
-  <!-- Victoire -->
-  <section id="screen-victory" class="screen">
-    <p id="victory-story" class="plume-text"></p>
-    <button onclick="location.reload()">Rejouer</button>
-  </section>
-
-  <!-- Défaite -->
-  <section id="screen-defeat" class="screen">
-    <p id="defeat-story" class="plume-text"></p>
-    <button onclick="location.reload()">Réessayer</button>
-  </section>
-
-  <!-- Scores -->
-  <section id="screen-scores" class="screen">
-    <h2>Tableau des Scores</h2>
-    <ul id="scoreboard"></ul>
-    <button onclick="showScreen('screen-start')">Retour</button>
-  </section>
-
-  <!-- Panel admin -->
+  <!-- Panel Admin -->
   <div id="admin-panel">
-    <button id="toggle-admin">⚙</button>
+    <button id="admin-toggle">⚙️ Admin</button>
     <div id="admin-tools" class="hidden">
-      <input type="password" id="admin-pass" placeholder="Mot de passe">
+      <input type="password" id="admin-pass" placeholder="Mot de passe admin">
       <button id="admin-login">Connexion</button>
       <div id="admin-actions" class="hidden">
-        <h3>Outils admin</h3>
-        <button id="force-victory">Forcer victoire</button>
-        <button id="force-defeat">Forcer défaite</button>
-        <button id="reset-score">Reset score</button>
-        <button id="skip-intro">Sauter intro</button>
-        <button id="clear-scores">Vider scores</button>
-        <button id="add-time">+60 sec</button>
-        <button id="unlock-all">Débloquer toutes zones</button>
-        <h4>Solutions énigmes</h4>
+        <h3>Outils Admin</h3>
+        <button id="force-win">Forcer Victoire</button>
+        <button id="force-lose">Forcer Défaite</button>
+        <button id="reset-scores">Réinitialiser Scores</button>
+        <button id="toggle-debug">Mode Debug</button>
+        <h4>Solutions Énigmes</h4>
         <ul id="solutions-list"></ul>
       </div>
     </div>
   </div>
+
+  <!-- Écran Pseudo -->
+  <div id="screen-pseudo" class="screen active">
+    <h1 class="plume-text">Bienvenue dans le Royaume Oublié</h1>
+    <input type="text" id="player-name" placeholder="Entre ton nom, aventurier...">
+    <button id="start-btn">Commencer</button>
+  </div>
+
+  <!-- Intro -->
+  <div id="screen-intro" class="screen">
+    <h2 class="plume-text" id="intro-text"></h2>
+    <button id="intro-continue">Entrer dans l'aventure</button>
+  </div>
+
+  <!-- Jeu -->
+  <div id="screen-game" class="screen">
+    <div id="hud">
+      Joueur : <span id="hud-player"></span> | Score : <span id="hud-score">0</span>
+    </div>
+    <div id="timer-orb">60</div>
+    <div id="zones">
+      <div id="zone-bibliotheque" class="zone locked">
+        <h3>📚 Bibliothèque</h3>
+        <div id="puzzle-bibliotheque"></div>
+      </div>
+      <div id="zone-laboratoire" class="zone locked">
+        <h3>🧪 Laboratoire</h3>
+        <div id="puzzle-laboratoire"></div>
+      </div>
+      <div id="zone-observatoire" class="zone locked">
+        <h3>🔭 Observatoire</h3>
+        <div id="puzzle-observatoire"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Écrans Fin -->
+  <div id="screen-victory" class="screen">
+    <h2 class="plume-text" id="victory-text"></h2>
+    <ul id="scoreboard"></ul>
+    <button id="play-again">Rejouer</button>
+  </div>
+
+  <div id="screen-defeat" class="screen">
+    <h2 class="plume-text" id="defeat-text"></h2>
+    <ul id="scoreboard"></ul>
+    <button id="play-again-lose">Rejouer</button>
+  </div>
+
+  <!-- Scripts -->
+  <script src="script.js"></script>
+  <script type="module" src="puzzles/puzzlePotions.js"></script>
+  <script type="module" src="puzzles/puzzleLabyrinthe.js"></script>
+  <script type="module" src="puzzles/puzzleConstellations.js"></script>
 </body>
 </html>
