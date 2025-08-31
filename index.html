@@ -4,76 +4,77 @@
   <meta charset="UTF-8">
   <title>Escape Game Magique</title>
   <link rel="stylesheet" href="style.css">
+  <script type="module" src="js/main.js"></script>
 </head>
 <body>
-  <!-- Écran pseudo -->
-  <section id="screen-pseudo" class="screen active">
-    <h1>Bienvenue dans le Royaume Oublié</h1>
-    <p>Entre ton nom, voyageur :</p>
-    <input type="text" id="player-name" placeholder="Ton pseudo">
+  <!-- Formulaire pseudo -->
+  <section id="screen-start" class="screen active">
+    <h1>Les Gardiens du Royaume Oublié</h1>
+    <input type="text" id="player-name" placeholder="Entre ton pseudo">
     <button id="start-btn">Commencer</button>
   </section>
 
-  <!-- Écran intro -->
+  <!-- Intro -->
   <section id="screen-intro" class="screen">
-    <div class="intro-text">
-      <h2 id="intro-title">Une destinée t’attend...</h2>
-      <p id="intro-story"></p>
-      <button id="begin-game">Entrer dans le château</button>
-    </div>
+    <p id="intro-story" class="plume-text"></p>
+    <button id="begin-game">Entrer dans le Royaume</button>
   </section>
 
-  <!-- Écran jeu -->
+  <!-- Zones du jeu -->
   <section id="screen-game" class="screen">
-    <header>
-      <h2>Le Château Magique</h2>
-      <div id="hud">
-        <span id="player-display"></span> |
-        Score : <span id="score-display">0</span> |
-        Temps restant : <span id="timer-display">600</span>s
+    <div id="hud">
+      <span id="player-display"></span> | Score : <span id="score-display">0</span> | Temps : <span id="timer-display">600</span>
+    </div>
+
+    <div id="zones">
+      <div id="zone-bibliotheque" class="zone locked">
+        <h2>Bibliothèque</h2>
+        <div class="puzzles"></div>
       </div>
-    </header>
-
-    <div id="game-area">
-      <p>Explore les salles et résous les énigmes...</p>
-      <button class="open-puzzle" data-puzzle="runes">🔮 Enigme des runes</button>
-      <button class="open-puzzle" data-puzzle="potions">⚗️ Enigme des potions</button>
-      <button class="open-puzzle" data-puzzle="labyrinthe">🌀 Labyrinthe magique</button>
-      <button class="open-puzzle" data-puzzle="etoiles">✨ Constellation mystique</button>
+      <div id="zone-labo" class="zone locked">
+        <h2>Labo magique</h2>
+        <div class="puzzles"></div>
+      </div>
+      <div id="zone-observatoire" class="zone locked">
+        <h2>Observatoire</h2>
+        <div class="puzzles"></div>
+      </div>
     </div>
   </section>
 
-  <!-- Écran victoire -->
+  <!-- Victoire -->
   <section id="screen-victory" class="screen">
-    <h2>Victoire ✨</h2>
-    <p id="victory-story"></p>
+    <p id="victory-story" class="plume-text"></p>
     <button onclick="location.reload()">Rejouer</button>
   </section>
 
-  <!-- Écran défaite -->
+  <!-- Défaite -->
   <section id="screen-defeat" class="screen">
-    <h2>Défaite ☠️</h2>
-    <p id="defeat-story"></p>
-    <button onclick="location.reload()">Rejouer</button>
+    <p id="defeat-story" class="plume-text"></p>
+    <button onclick="location.reload()">Réessayer</button>
   </section>
 
-  <!-- Panel admin -->
-  <section id="screen-admin" class="screen">
-    <h2>Panel Admin</h2>
-    <input type="password" id="admin-pass" placeholder="Mot de passe admin">
-    <button id="admin-login">Connexion</button>
+  <!-- Tableau des scores -->
+  <section id="screen-scores" class="screen">
+    <h2>Tableau des Scores</h2>
+    <ul id="scoreboard"></ul>
+    <button onclick="showScreen('screen-start')">Retour</button>
+  </section>
 
+  <!-- Panel admin flottant -->
+  <div id="admin-panel" class="collapsed">
+    <button id="toggle-admin">⚙</button>
     <div id="admin-tools" class="hidden">
-      <button id="force-victory">Forcer victoire</button>
-      <button id="force-defeat">Forcer défaite</button>
-      <button id="reset-score">Reset score</button>
-      <button id="skip-intro">Passer intro</button>
+      <input type="password" id="admin-pass" placeholder="Mot de passe">
+      <button id="admin-login">Connexion</button>
+      <div id="admin-actions" class="hidden">
+        <button id="force-victory">Forcer victoire</button>
+        <button id="force-defeat">Forcer défaite</button>
+        <button id="reset-score">Reset score</button>
+        <button id="skip-intro">Sauter intro</button>
+        <button id="clear-scores">Vider scores</button>
+      </div>
     </div>
-  </section>
-
-  <script src="js/audio.js"></script>
-  <script src="js/puzzles.js"></script>
-  <script src="js/admin.js"></script>
-  <script src="js/main.js"></script>
+  </div>
 </body>
 </html>
