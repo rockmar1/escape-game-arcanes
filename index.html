@@ -1,58 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>✨ Les Gardiens du Royaume Oublié ✨</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="./js/main.js" defer></script>
-  <script type="module" src="./js/admin.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>Les Gardiens du Royaume Oublié</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <!-- Écran d'accueil -->
+
+  <!-- Écran d’accueil -->
   <div id="screen-start" class="screen active">
-    <h1>✨ Les Gardiens du Royaume Oublié ✨</h1>
-    <p>Entrez votre nom d’aventurier :</p>
-    <input type="text" id="playerName" placeholder="Votre pseudo...">
+    <h1>Les Gardiens du Royaume Oublié</h1>
+    <input type="text" id="playerName" placeholder="Entrez votre pseudo" />
     <button id="btn-start">Commencer l’aventure</button>
   </div>
 
-  <!-- Écran de jeu -->
+  <!-- Intro -->
+  <div id="screen-intro" class="screen hidden">
+    <h2>Introduction</h2>
+    <p id="intro-text"></p>
+    <button id="btn-begin">Entrer dans le royaume</button>
+  </div>
+
+  <!-- Jeu principal -->
   <div id="screen-game" class="screen hidden">
-    <h2 id="game-title">Votre mission commence...</h2>
-    <div id="game-area"></div>
-    
-    <!-- HUD -->
-    <div id="hud">
-      <span id="timer">⏳ 300s</span>
-      <span id="score">⭐ 0</span>
-    </div>
+    <h2 id="hud-player"></h2>
+    <div id="hud-timer">Temps : <span id="timer">300</span>s</div>
+    <div id="puzzle-container"></div>
   </div>
 
-  <!-- Écran de fin -->
-  <div id="screen-end" class="screen hidden">
-    <h2 id="end-title"></h2>
-    <p id="end-message"></p>
-    <button id="btn-replay">🔄 Rejouer</button>
+  <!-- Victoire -->
+  <div id="screen-victory" class="screen hidden">
+    <h2>Victoire !</h2>
+    <p id="victory-text"></p>
+    <button id="btn-replay">Rejouer</button>
   </div>
 
-  <!-- Panel admin (toujours présent, caché par défaut) -->
-  <div id="admin-panel">
-    <button id="toggle-admin">⚙️ Admin</button>
-    <div id="admin-menu" class="hidden">
-      <input type="password" id="admin-password" placeholder="Mot de passe">
-      <button id="btn-login">Se connecter</button>
-      <div id="admin-tools" class="hidden">
-        <h3>Outils Admin</h3>
-        <button id="btn-force-victory">Forcer Victoire</button>
-        <button id="btn-force-defeat">Forcer Défaite</button>
-        <button id="btn-reset-scores">Réinitialiser Scores</button>
-        <button id="btn-back-menu">Retour Menu</button>
-        <hr>
-        <button id="btn-skip">⏭️ Sauter énigme</button>
-        <button id="btn-add-time">⏱️ +60s</button>
-        <button id="btn-solutions">📜 Voir Solutions</button>
-      </div>
-    </div>
+  <!-- Défaite -->
+  <div id="screen-defeat" class="screen hidden">
+    <h2>Défaite...</h2>
+    <p id="defeat-text"></p>
+    <button id="btn-replay2">Réessayer</button>
   </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" class="admin hidden">
+    <h3>Panel Admin</h3>
+    <button onclick="window.skipCurrentPuzzle()">⏭ Forcer énigme suivante</button>
+    <button onclick="window.endGame('victory')">✅ Forcer victoire</button>
+    <button onclick="window.endGame('defeat')">❌ Forcer défaite</button>
+    <button onclick="window.resetScoreboard()">🗑 Réinitialiser scores</button>
+    <button onclick="window.toggleDebug()">🐞 Debug ON/OFF</button>
+    <pre id="debug-log"></pre>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
 </body>
 </html>
