@@ -1,114 +1,39 @@
-import { getPlayerName, setScore, getScore, debugLog } from "./state.js";
-import { initAudioOnUserGesture, playActionEffect, stopAllAudio, switchToStressAmbience } from "./audio.js";
+import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
+import { setPlayerName } from "./state.js";
+import { debugLog } from "./state.js";
+import "./admin.js"; // Active le panneau admin
+import "./audio.js"; // Gère les sons globaux
 
-// Mini-jeux
-import * as puzzleClock from "./puzzles/puzzleClock.js";
-import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
-import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
-import * as puzzlePotions from "./puzzles/puzzlePotions.js";
-import * as puzzleRunes from "./puzzles/puzzleRunes.js";
-import * as puzzleStars from "./puzzles/puzzleStars.js";
-import * as puzzleTextInverse from "./puzzles/puzzleTextInverse.js";
+// =====================
+// Initialisation
+// =====================
+document.addEventListener("DOMContentLoaded", () => {
+  debugLog("🎮 Initialisation du jeu...");
 
-const puzzles = [
-  puzzleClock,
-  puzzleCrystals,
-  puzzleLabyrinth,
-  puzzlePotions,
-  puzzleRunes,
-  puzzleStars,
-  puzzleTextInverse
-];
-
-let currentPuzzleIndex = 0;
-let timerInterval = null;
-let totalTime = 300; // 5min
-
-export function goToScreen(id) {
-  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.getElementById(id).classList.remove("hidden");
-  if (id === "screen-victory" || id === "screen-defeat") stopAllAudio();
-}
-
-export function initRouter() {
-  goToScreen("screen-pseudo");
+  initRouter();
 
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
 
+  // Entrer le pseudo et passer à l'écran intro
   startBtn.addEventListener("click", () => {
     const name = document.getElementById("player-name").value.trim();
-    if (!name) return alert("Entre un pseudo !");
-    initAudioOnUserGesture();
+    if (!name) {
+      alert("Entre un pseudo pour commencer !");
+      return;
+    }
+    setPlayerName(name);
+    debugLog("✅ Pseudo validé : " + name);
+
+    // Affiche l'intro avec message personnalisé
     goToScreen("screen-intro");
     document.getElementById("intro-content").textContent =
       `Bienvenue ${name}, le royaume t’attend...`;
   });
 
+  // Lancer le jeu après l’intro
   beginBtn.addEventListener("click", () => {
+    debugLog("🚪 Début de l’aventure !");
     startNextMiniGame();
   });
-}
-
-export function startNextMiniGame() {
-  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
-
-  const puzzle = puzzles[currentPuzzleIndex];
-  currentPuzzleIndex++;
-
-  goToScreen("screen-game");
-  document.getElementById("hud-player").textContent = `👤 ${getPlayerName()}`;
-
-  startTimer();
-
-  puzzle.mount({
-    meta: { title: `Énigme ${currentPuzzleIndex}` },
-    onSolved: ({ score }) => {
-      setScore(getScore() + score);
-      playActionEffect("bonus");
-      startNextMiniGame();
-    },
-    onFail: ({ penalty }) => {
-      setScore(Math.max(0, getScore() - penalty));
-      playActionEffect("error");
-      startNextMiniGame();
-    }
-  });
-}
-
-function startTimer() {
-  clearInterval(timerInterval);
-  totalTime = 300;
-  const timerEl = document.getElementById("timer");
-  timerEl.classList.remove("stress");
-
-  timerInterval = setInterval(() => {
-    totalTime--;
-    const minutes = Math.floor(totalTime / 60);
-    const seconds = totalTime % 60;
-    timerEl.textContent = `⏳ ${minutes}:${seconds.toString().padStart(2,'0')}`;
-
-    if (totalTime === 60) { // dernière minute, stress
-      switchToStressAmbience();
-      timerEl.classList.add("stress");
-    }
-
-    if (totalTime <= 0) {
-      clearInterval(timerInterval);
-      endGame(false);
-    }
-  }, 1000);
-}
-
-export function endGame(victory = true) {
-  clearInterval(timerInterval);
-  if (victory) {
-    document.getElementById("victory-text").textContent =
-      `Bravo ${getPlayerName()} ! Score final : ${getScore()}`;
-    goToScreen("screen-victory");
-  } else {
-    document.getElementById("defeat-text").textContent =
-      `Hélas ${getPlayerName()}... le royaume s’effondre.`;
-    goToScreen("screen-defeat");
-  }
-}
+});
