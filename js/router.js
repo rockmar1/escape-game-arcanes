@@ -1,26 +1,38 @@
-import { getPlayerName, debugLog, getScore } from "./state.js";
+import { getPlayerName, debugLog, setScore, getScore } from "./state.js";
 import { playAudio } from "./audio.js";
 
-let currentScreen = "pseudo";
+// Liste de tous les puzzles à jouer dans l’ordre
+import * as puzzleClock from "./puzzles/puzzleClock.js";
+import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
+import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
+import * as puzzlePotions from "./puzzles/puzzlePotions.js";
+import * as puzzleRunes from "./puzzles/puzzleRunes.js";
+import * as puzzleStars from "./puzzles/puzzleStars.js";
+import * as puzzleTextInverse from "./puzzles/puzzleTextInverse.js";
 
-// --- Liste des mini-jeux (ou logique générale) ---
-const miniGames = ["screen-game"]; // ici tu as un écran unique "game"
-let currentMiniGameIndex = 0;
+const puzzles = [
+  puzzleClock,
+  puzzleCrystals,
+  puzzleLabyrinth,
+  puzzlePotions,
+  puzzleRunes,
+  puzzleStars,
+  puzzleTextInverse
+];
+
+let currentScreen = "pseudo";
+let currentPuzzleIndex = 0;
 
 // --- Changement d'écran ---
-export function goToScreen(screen) {
-  debugLog(`➡️ Passage à l’écran : ${screen}`);
-
+export function goToScreen(screenId) {
+  debugLog(`➡️ Passage à l’écran : ${screenId}`);
   document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
-  document.querySelector(`#${screen}`).classList.remove("hidden");
-
-  currentScreen = screen;
-
-  // jouer le son correspondant
-  playAudio(screen);
+  document.getElementById(screenId).classList.remove("hidden");
+  currentScreen = screenId;
+  playAudio(screenId);
 }
 
-// --- Initialisation du router ---
+// --- Démarrage du router ---
 export function initRouter() {
   goToScreen("screen-pseudo");
 
@@ -30,7 +42,7 @@ export function initRouter() {
     const nameInput = document.getElementById("player-name");
     const name = nameInput.value.trim();
     if (!name) return alert("Merci de saisir ton nom !");
-    getPlayerName(name); // stocke le nom dans state.js
+    getPlayerName(name); // stocke le nom
     goToIntro();
   });
 
@@ -44,28 +56,35 @@ export function initRouter() {
 // --- Intro ---
 function goToIntro() {
   goToScreen("screen-intro");
-  // On peut remplir le contenu du prologue
   const introContent = document.getElementById("intro-content");
   introContent.textContent = "Le royaume oublié a besoin de toi ! Prépare-toi à relever les énigmes.";
 }
 
-// --- Mini-jeux / écran principal ---
+// --- Lancer le prochain mini-jeu ---
 export function startNextMiniGame() {
-  if (currentMiniGameIndex >= miniGames.length) {
-    endGame(true); // fin de l’aventure → victoire
+  if (currentPuzzleIndex >= puzzles.length) {
+    endGame(true);
     return;
   }
 
-  const nextGame = miniGames[currentMiniGameIndex];
-  currentMiniGameIndex++;
+  const puzzle = puzzles[currentPuzzleIndex];
+  currentPuzzleIndex++;
 
-  goToScreen(nextGame);
+  goToScreen("screen-game");
 
-  // Exemple : initialisation du jeu
   const hudPlayer = document.getElementById("hud-player");
   hudPlayer.textContent = `Joueur : ${getPlayerName()}`;
 
-  // Ici tu peux appeler la logique de puzzle / timer / score
+  // Monte le puzzle et gère score + fin de puzzle
+  puzzle.mount({
+    meta: {title: `Énigme ${currentPuzzleIndex}`},
+    onSolved: ({score}) => {
+      setScore(getScore() + score);
+    },
+    onFail: ({penalty}) => {
+      setScore(Math.max(0, getScore() - penalty));
+    }
+  });
 }
 
 // --- Fin de partie ---
