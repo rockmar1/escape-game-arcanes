@@ -1,36 +1,18 @@
 // scoreboard.js
-import { gameState } from "./state.js";
+let scores = [];
 
-const STORAGE_KEY = "escapeGameScores";
-
-export function autoSaveResult(victory) {
-    const scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    scores.push({
-        player: gameState.player,
-        score: gameState.score,
-        victory,
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(scores));
-    console.debug("[DEBUG] Score sauvegardé :", scores[scores.length - 1]);
-    loadScoreboard();
+export function saveScore(player, score) {
+  scores.push({ player, score, date: new Date().toISOString() });
+  localStorage.setItem("scoreboard", JSON.stringify(scores));
 }
 
-export function loadScoreboard() {
-    const scores = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-    const list = document.getElementById("score-list");
-    if (list) {
-        list.innerHTML = "";
-        scores.forEach(s => {
-            const li = document.createElement("li");
-            li.textContent = `${s.player} - ${s.victory ? "Victoire" : "Défaite"} - Score: ${s.score} - ${s.date}`;
-            list.appendChild(li);
-        });
-    }
+export function loadScores() {
+  const data = localStorage.getItem("scoreboard");
+  if (data) scores = JSON.parse(data);
+  return scores;
 }
 
-export function clearScoreboard() {
-    localStorage.removeItem(STORAGE_KEY);
-    loadScoreboard();
-    console.debug("[DEBUG] Scoreboard réinitialisé");
+export function resetScoreboard() {
+  scores = [];
+  localStorage.removeItem("scoreboard");
 }
