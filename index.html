@@ -1,61 +1,76 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <title>Les Gardiens du Royaume Oublié</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Escape Game Magique</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
 </head>
 <body>
+  <!-- Écran pseudo -->
+  <section id="screen-pseudo" class="screen active">
+    <h1 class="title">Les Gardiens du Royaume Oublié</h1>
+    <p>Entre ton pseudo pour commencer :</p>
+    <input type="text" id="player-name" placeholder="Ton nom magique...">
+    <button id="start-btn">Commencer l’aventure</button>
+  </section>
 
-  <!-- Écran d’accueil -->
-  <div id="screen-start" class="screen active">
-    <h1>Les Gardiens du Royaume Oublié</h1>
-    <input type="text" id="playerName" placeholder="Entrez votre pseudo" />
-    <button id="btn-start">Commencer l’aventure</button>
-  </div>
+  <!-- Écran intro -->
+  <section id="screen-intro" class="screen hidden">
+    <div class="intro-text">
+      <h2>Prologue</h2>
+      <p id="intro-content"></p>
+      <button id="begin-game">Entrer dans le royaume</button>
+    </div>
+  </section>
 
-  <!-- Intro -->
-  <div id="screen-intro" class="screen hidden">
-    <h2>Introduction</h2>
-    <p id="intro-text"></p>
-    <button id="btn-begin">Entrer dans le royaume</button>
-  </div>
+  <!-- Écran jeu -->
+  <section id="screen-game" class="screen hidden">
+    <header>
+      <h2 id="hud-player"></h2>
+      <div id="hud">
+        <span id="timer">⏳ 300s</span>
+        <span id="score">⭐ 0</span>
+      </div>
+    </header>
+    <main id="game-area">
+      <p>Explore les pièces et résous les énigmes !</p>
+    </main>
+  </section>
 
-  <!-- Jeu principal -->
-  <div id="screen-game" class="screen hidden">
-    <h2 id="hud-player"></h2>
-    <div id="hud-timer">Temps : <span id="timer">300</span>s</div>
-    <div id="puzzle-container"></div>
-  </div>
-
-  <!-- Victoire -->
-  <div id="screen-victory" class="screen hidden">
-    <h2>Victoire !</h2>
+  <!-- Écran victoire -->
+  <section id="screen-victory" class="screen hidden">
+    <h2>🎉 Victoire !</h2>
     <p id="victory-text"></p>
-    <button id="btn-replay">Rejouer</button>
-  </div>
+    <button onclick="location.reload()">Rejouer</button>
+  </section>
 
-  <!-- Défaite -->
-  <div id="screen-defeat" class="screen hidden">
-    <h2>Défaite...</h2>
+  <!-- Écran défaite -->
+  <section id="screen-defeat" class="screen hidden">
+    <h2>💀 Défaite...</h2>
     <p id="defeat-text"></p>
-    <button id="btn-replay2">Réessayer</button>
+    <button onclick="location.reload()">Réessayer</button>
+  </section>
+
+  <!-- Panel Admin -->
+  <div id="admin-wrapper">
+    <button id="admin-toggle">⚙️</button>
+    <div id="admin-panel" class="hidden">
+      <h3>🔮 Panneau Admin</h3>
+      <input type="password" id="admin-password" placeholder="Mot de passe...">
+      <button id="admin-login">Connexion</button>
+      <div id="admin-tools" class="hidden">
+        <button id="force-victory">Forcer Victoire</button>
+        <button id="force-defeat">Forcer Défaite</button>
+        <button id="reset-scoreboard">Reset Scores</button>
+        <label>
+          <input type="checkbox" id="debug-mode"> Mode Debug
+        </label>
+        <pre id="debug-log"></pre>
+      </div>
+    </div>
   </div>
 
-    <!-- Bouton flottant -->
-   <button id="admin-toggle" class="admin-btn">⚙️ Admin</button>
-
-<!-- Admin Panel -->
-  <div id="admin-panel" class="admin hidden">
-    <h3>Panel Admin</h3>
-    <button onclick="window.skipCurrentPuzzle()">⏭ Forcer énigme suivante</button>
-    <button onclick="window.endGame('victory')">✅ Forcer victoire</button>
-    <button onclick="window.endGame('defeat')">❌ Forcer défaite</button>
-    <button onclick="window.resetScoreboard()">🗑 Réinitialiser scores</button>
-    <button onclick="window.toggleDebug()">🐞 Debug ON/OFF</button>
-    <pre id="debug-log"></pre>
-  </div>
-
-  <script type="module" src="./js/main.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
