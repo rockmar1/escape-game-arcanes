@@ -1,61 +1,37 @@
-// router.js
-import { state, resetState } from "./state.js";
-import { showScreen, updateHUD } from "./ui.js";
-import { loadRandomPuzzle } from "./puzzles/loader.js";
-import { saveScore } from "./scoreboard.js";
+import { getPlayerName, debugLog, setScore, getScore } from "./state.js";
+import { playAudio } from "./audio.js";
 
-export function startGame() {
-  resetState();
-  showScreen("screen-intro");
+let currentScreen = "pseudo";
 
-  const introText = document.getElementById("intro-text");
-  if (introText) {
-    introText.textContent = `Bienvenue, ${state.playerName}. L'aventure commence...`;
-  }
+// === Changement d’écran ===
+export function goToScreen(screen) {
+  debugLog(`➡️ Passage à l’écran : ${screen}`);
 
-  const btn = document.getElementById("btn-begin");
-  if (btn) {
-    btn.onclick = () => {
-      showScreen("screen-game");
-      updateHUD();
-      startTimer();
-      loadRandomPuzzle();
-    };
-  }
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  document.querySelector(`#screen-${screen}`).classList.remove("hidden");
+
+  currentScreen = screen;
+
+  if (screen === "intro") playAudio("intro");
+  if (screen === "game") playAudio("ambiance");
+  if (screen === "victory") playAudio("victoire");
+  if (screen === "defeat") playAudio("defaite");
 }
 
-export function endGame(type) {
-  stopTimer();
-  if (type === "victory") {
-    showScreen("screen-victory");
+// === Initialisation ===
+export function initRouter() {
+  goToScreen("pseudo"); // par défaut
+}
+
+// === Fin de partie ===
+export function endGame(victory = true) {
+  if (victory) {
     document.getElementById("victory-text").textContent =
-      `${state.playerName}, tu as triomphé avec un score de ${state.score}!`;
+      `Bravo ${getPlayerName()} ! Score final : ${getScore()}`;
+    goToScreen("victory");
   } else {
-    showScreen("screen-defeat");
     document.getElementById("defeat-text").textContent =
-      `${state.playerName}, ton aventure s'arrête ici... Score : ${state.score}`;
+      `Hélas ${getPlayerName()}... le royaume s’effondre.`;
+    goToScreen("defeat");
   }
-  saveScore(state.playerName, state.score);
-}
-
-// Timer
-let timerInterval = null;
-
-function startTimer() {
-  state.timer = 300;
-  const el = document.getElementById("timer");
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = setInterval(() => {
-    state.timer--;
-    if (el) el.textContent = state.timer;
-    if (state.timer <= 0) {
-      clearInterval(timerInterval);
-      endGame("defeat");
-    }
-  }, 1000);
-}
-
-function stopTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  timerInterval = null;
 }
