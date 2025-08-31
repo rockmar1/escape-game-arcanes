@@ -1,4 +1,4 @@
-import { log } from "./config.js";
+import { log } from "./state.js";
 
 let ambience = null;
 let ambienceStress = null;
@@ -18,11 +18,10 @@ export function initAudioOnUserGesture() {
   }
   if (!currentAmbience) {
     currentAmbience = ambience;
-    currentAmbience.play().catch(e => log("Ambience play blocked", e));
+    currentAmbience.play().catch(e => log("Ambience play blocked: " + e));
   }
 }
 
-// Stoppe toute musique
 export function stopAllAudio() {
   [ambience, ambienceStress].forEach(a => {
     if (a) { a.pause(); a.currentTime = 0; }
@@ -30,44 +29,41 @@ export function stopAllAudio() {
   currentAmbience = null;
 }
 
-// Jouer un son ponctuel (cristal, rune, potion…)
-export function playActionEffect(type, name) {
+// Sons ponctuels
+export function playActionEffect(name) {
   let src = null;
   switch (name) {
     case "potion": src = "assets/audio/potion.mp3"; break;
     case "rune": src = "assets/audio/rune.mp3"; break;
     case "etoile": src = "assets/audio/etoile.mp3"; break;
     case "item": src = "assets/audio/item.mp3"; break;
-    case "collect": src = "assets/audio/bonus.mp3"; break;
+    case "bonus": src = "assets/audio/bonus.mp3"; break;
     case "error": src = "assets/audio/erreur.mp3"; break;
-    case "scintillement": src = "assets/audio/scintillement.mp3"; break;
     default: src = null;
   }
   if (src) {
     const s = new Audio(src);
     s.volume = 0.5;
-    s.play().catch(e => log("playActionEffect blocked", e));
+    s.play().catch(() => {});
   }
 }
 
-// Remplace la musique d’ambiance par l’ambiance stress
+// Switch musique stress
 export function switchToStressAmbience() {
-  if (!currentAmbience) return;
-  if (currentAmbience === ambienceStress) return; // déjà en stress
+  if (!currentAmbience || currentAmbience === ambienceStress) return;
   const vol = currentAmbience.volume;
   currentAmbience.pause();
   ambienceStress.volume = vol;
   currentAmbience = ambienceStress;
-  currentAmbience.play().catch(e => log("Ambience stress play blocked", e));
+  currentAmbience.play().catch(() => {});
 }
 
-// Remet l’ambiance normale
+// Remet ambiance normale
 export function switchToNormalAmbience() {
-  if (!currentAmbience) return;
-  if (currentAmbience === ambience) return;
+  if (!currentAmbience || currentAmbience === ambience) return;
   const vol = currentAmbience.volume;
   currentAmbience.pause();
   ambience.volume = vol;
   currentAmbience = ambience;
-  currentAmbience.play().catch(e => log("Ambience normal play blocked", e));
+  currentAmbience.play().catch(() => {});
 }
