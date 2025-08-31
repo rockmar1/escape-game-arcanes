@@ -1,4 +1,4 @@
-import { log } from "./state.js";
+import { debugLog } from "./state.js";
 
 let ambience = null;
 let ambienceStress = null;
@@ -18,7 +18,7 @@ export function initAudioOnUserGesture() {
   }
   if (!currentAmbience) {
     currentAmbience = ambience;
-    currentAmbience.play().catch(e => log("Ambience play blocked: " + e));
+    currentAmbience.play().catch(e => debugLog("Ambience play blocked: " + e));
   }
 }
 
