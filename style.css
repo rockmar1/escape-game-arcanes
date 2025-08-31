@@ -1,72 +1,42 @@
 body {
   margin: 0;
-  font-family: 'Cinzel', serif;
+  font-family: "Cinzel", serif;
   background: url("images/decor-magique.jpg") no-repeat center center fixed;
   background-size: cover;
-  color: #fff;
+  color: #f5e6d3;
   text-align: center;
 }
 
 .screen {
   display: none;
-  padding: 20px;
-  backdrop-filter: blur(4px);
-  background: rgba(0,0,0,0.6);
-  border-radius: 12px;
-  margin: 50px auto;
-  width: 80%;
-  max-width: 700px;
-  box-shadow: 0 0 20px #4ff;
+  padding: 2rem;
+  animation: fadeIn 1s ease-in-out;
 }
 
 .screen.active {
   display: block;
 }
 
-h1, h2 {
-  text-shadow: 0 0 10px #0ff, 0 0 20px #0f0;
-}
-
 button {
+  background: #5a2d82;
+  border: 2px solid #d4af37;
+  color: #f5e6d3;
+  padding: 10px 20px;
   margin: 10px;
-  padding: 12px 24px;
-  border: none;
-  border-radius: 10px;
   cursor: pointer;
-  background: linear-gradient(45deg, #4ff, #0ff);
-  color: #000;
-  font-weight: bold;
-  transition: 0.3s;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  transition: transform 0.2s ease, background 0.3s ease;
 }
 
 button:hover {
-  background: linear-gradient(45deg, #0ff, #4ff);
+  background: #7d42a8;
   transform: scale(1.05);
 }
 
-#objects img {
-  width: 80px;
-  margin: 10px;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
+.hidden { display: none; }
 
-#objects img:hover {
-  transform: scale(1.2);
-}
-
-#timer {
-  font-size: 1.5em;
-  margin: 10px;
-  text-shadow: 0 0 10px #f0f;
-}
-
-#admin-panel {
-  background: rgba(30,30,30,0.9);
-  border: 2px solid #0ff;
-  margin-top: 20px;
-}
-
-.hidden {
-  display: none !important;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
