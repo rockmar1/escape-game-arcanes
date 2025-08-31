@@ -4,55 +4,45 @@
   <meta charset="UTF-8">
   <title>Escape Game Magique</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="assets/images/favicon.ico">
 </head>
 <body>
-  <!-- Formulaire pseudo -->
-  <section id="screen-login" class="screen active">
-    <div class="login-box">
-      <h1>Bienvenue dans le Royaume Oublié</h1>
-      <p>Entre ton nom d’aventurier :</p>
-      <input type="text" id="player-name" placeholder="Ton pseudo...">
-      <button id="btn-start">Commencer</button>
-    </div>
-  </section>
 
   <!-- Intro -->
-  <section id="screen-intro" class="screen hidden">
-    <div class="intro-text"></div>
-    <button id="btn-play">Entrer dans le royaume</button>
-  </section>
-
-  <!-- Jeu principal -->
-  <section id="screen-game" class="screen hidden">
-    <div id="hud">
-      <span id="hud-player"></span>
-      <span id="hud-timer"></span>
-      <span id="hud-score"></span>
-    </div>
-    <div id="game-area"></div>
-  </section>
-
-  <!-- Fin -->
-  <section id="screen-end" class="screen hidden">
-    <div class="end-text"></div>
-    <button id="btn-restart">Rejouer</button>
-  </section>
-
-  <!-- Panel Admin -->
-  <div id="admin-panel" class="hidden">
-    <h2>Panneau Admin</h2>
-    <input type="password" id="admin-pass" placeholder="Mot de passe">
-    <button id="admin-login">Accéder</button>
-    <div id="admin-tools" class="hidden">
-      <button id="admin-force-win">Forcer Victoire</button>
-      <button id="admin-force-lose">Forcer Défaite</button>
-      <button id="admin-reset-scores">Réinitialiser Scores</button>
-      <button id="admin-show-solutions">Voir Solutions</button>
-      <button id="admin-debug">Mode Debug</button>
-    </div>
+  <div id="screen-intro" class="screen">
+    <h1>Bienvenue dans le Royaume Magique</h1>
+    <input type="text" id="player-name" placeholder="Entrez votre pseudo">
+    <button id="btn-start">Commencer</button>
   </div>
 
-  <script type="module" src="js/main.js"></script>
+  <!-- Jeu -->
+  <div id="screen-game" class="screen hidden">
+    <h2>Énigmes</h2>
+    <p>Résolvez les puzzles pour progresser...</p>
+    <div id="puzzle-container"></div>
+    <p>Temps restant : <span id="timer">300</span> secondes</p>
+  </div>
+
+  <!-- Victoire -->
+  <div id="screen-victory" class="screen hidden">
+    <h1>Victoire ! 🎉</h1>
+    <p id="victory-message"></p>
+    <button id="btn-menu1">Retour au menu</button>
+  </div>
+
+  <!-- Défaite -->
+  <div id="screen-defeat" class="screen hidden">
+    <h1>Défaite... 💀</h1>
+    <p id="defeat-message"></p>
+    <button id="btn-menu2">Retour au menu</button>
+  </div>
+
+  <!-- Scoreboard -->
+  <div id="screen-scoreboard" class="screen hidden">
+    <h2>Tableau des scores</h2>
+    <ul id="score-list"></ul>
+    <button id="btn-menu3">Retour au menu</button>
+  </div>
+
+  <script type="module" src="./js/router.js"></script>
 </body>
 </html>
