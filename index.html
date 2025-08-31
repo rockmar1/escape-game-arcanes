@@ -2,58 +2,89 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Escape Game Magique</title>
+  <title>Les Gardiens du Royaume Oublié</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- === Écran Pseudo === -->
-  <section id="screen-pseudo" class="screen active">
-    <div class="card">
-      <h1>Bienvenue dans le Royaume Oublié</h1>
-      <input type="text" id="pseudo" placeholder="Entrez votre pseudo">
-      <button id="btn-start">Commencer</button>
-    </div>
+
+  <!-- Accueil : saisie du pseudo -->
+  <section id="screen-start" class="screen active">
+    <h1>✨ Les Gardiens du Royaume Oublié ✨</h1>
+    <p>Entre ton nom, voyageur :</p>
+    <input type="text" id="pseudo-input" placeholder="Ton nom magique">
+    <button id="start-btn">Commencer l’aventure</button>
   </section>
 
-  <!-- === Écran Intro === -->
-  <section id="screen-intro" class="screen">
-    <div class="card">
-      <h2>Préparez-vous...</h2>
-      <p>Une aventure magique vous attend. Trouvez les objets, résolvez les énigmes, sauvez le royaume !</p>
-      <button id="btn-play">Lancer l'aventure</button>
-    </div>
+  <!-- Intro narrative -->
+  <section id="screen-intro" class="screen hidden">
+    <div id="intro-text"></div>
+    <button id="begin-game">Entrer dans le Royaume</button>
   </section>
 
-  <!-- === Écran Jeu === -->
-  <section id="screen-game" class="screen">
-    <header>
-      <div id="timer">60:00</div>
-      <div id="player"></div>
-    </header>
-
-    <main>
-      <div id="game-area">
-        <p>Cherchez des objets magiques pour progresser !</p>
-        <div id="inventory"></div>
+  <!-- Jeu principal -->
+  <section id="screen-game" class="screen hidden">
+    <div id="timer">⏳ 10:00</div>
+    <div id="inventory"></div>
+    <div id="game-zone">
+      <p id="game-text">Explore les lieux pour trouver des objets enchantés…</p>
+      <div id="objects">
+        <img src="images/grimoire.png" class="game-object" data-obj="grimoire">
+        <img src="images/fiole.png" class="game-object" data-obj="fiole">
+        <img src="images/clé.png" class="game-object" data-obj="cle">
+        <img src="images/etoile.png" class="game-object" data-obj="etoile">
       </div>
-    </main>
-  </section>
-
-  <!-- === Écran Fin === -->
-  <section id="screen-end" class="screen">
-    <div class="card">
-      <h2 id="end-title"></h2>
-      <button onclick="location.reload()">Rejouer</button>
     </div>
   </section>
 
-  <!-- === Panel Admin === -->
-  <aside id="admin-panel">
-    <h3>Admin Panel</h3>
-    <button id="force-victory">Forcer la victoire</button>
-    <button id="force-defeat">Forcer la défaite</button>
-    <button id="clear-scores">Réinitialiser scores</button>
-  </aside>
+  <!-- Mini-jeux -->
+  <section id="screen-runes" class="screen hidden">
+    <h2>🔮 Puzzle des Runes</h2>
+    <div id="runes-puzzle"></div>
+    <button class="quit-puzzle">Quitter</button>
+  </section>
+
+  <section id="screen-potions" class="screen hidden">
+    <h2>⚗️ Alchimie Magique</h2>
+    <div id="potions-puzzle"></div>
+    <button class="quit-puzzle">Quitter</button>
+  </section>
+
+  <section id="screen-labyrinth" class="screen hidden">
+    <h2>🗝️ Labyrinthe Magique</h2>
+    <canvas id="labyrinth-canvas" width="400" height="400"></canvas>
+    <button class="quit-puzzle">Quitter</button>
+  </section>
+
+  <section id="screen-stars" class="screen hidden">
+    <h2>✨ Constellation Mystique</h2>
+    <div id="stars-puzzle"></div>
+    <button class="quit-puzzle">Quitter</button>
+  </section>
+
+  <!-- Fin -->
+  <section id="screen-end" class="screen hidden">
+    <div id="end-text"></div>
+    <button id="restart-btn">Rejouer</button>
+  </section>
+
+  <!-- Panel Admin -->
+  <section id="admin-login" class="screen hidden">
+    <h2>🔑 Connexion Admin</h2>
+    <input type="password" id="admin-password" placeholder="Mot de passe">
+    <button id="admin-connect">Connexion</button>
+    <p id="admin-error" class="hidden">❌ Mot de passe incorrect</p>
+  </section>
+
+  <section id="admin-panel" class="hidden">
+    <h2>🛠️ Panel Admin</h2>
+    <button id="admin-victory">Forcer Victoire</button>
+    <button id="admin-defeat">Forcer Défaite</button>
+    <button id="admin-reset">Reset Scores & Inventaire</button>
+    <button id="admin-skip">Passer Énigme</button>
+    <button id="admin-toggle-hints">Activer/Désactiver Indices Illimités</button>
+    <button id="admin-status">Voir État du Jeu</button>
+    <div id="admin-output"></div>
+  </section>
 
   <script src="script.js"></script>
 </body>
