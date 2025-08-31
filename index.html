@@ -4,79 +4,55 @@
   <meta charset="UTF-8">
   <title>Escape Game Magique</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="icon" href="assets/images/favicon.ico">
 </head>
 <body>
-  <!-- Panel Admin -->
-  <div id="admin-panel">
-    <button id="admin-toggle">⚙️ Admin</button>
-    <div id="admin-tools" class="hidden">
-      <input type="password" id="admin-pass" placeholder="Mot de passe admin">
-      <button id="admin-login">Connexion</button>
-      <div id="admin-actions" class="hidden">
-        <h3>Outils Admin</h3>
-        <button id="force-win">Forcer Victoire</button>
-        <button id="force-lose">Forcer Défaite</button>
-        <button id="reset-scores">Réinitialiser Scores</button>
-        <button id="toggle-debug">Mode Debug</button>
-        <h4>Solutions Énigmes</h4>
-        <ul id="solutions-list"></ul>
-      </div>
+  <!-- Formulaire pseudo -->
+  <section id="screen-login" class="screen active">
+    <div class="login-box">
+      <h1>Bienvenue dans le Royaume Oublié</h1>
+      <p>Entre ton nom d’aventurier :</p>
+      <input type="text" id="player-name" placeholder="Ton pseudo...">
+      <button id="btn-start">Commencer</button>
     </div>
-  </div>
-
-  <!-- Écran Pseudo -->
-  <div id="screen-pseudo" class="screen active">
-    <h1 class="plume-text">Bienvenue dans le Royaume Oublié</h1>
-    <input type="text" id="player-name" placeholder="Entre ton nom, aventurier...">
-    <button id="start-btn">Commencer</button>
-  </div>
+  </section>
 
   <!-- Intro -->
-  <div id="screen-intro" class="screen">
-    <h2 class="plume-text" id="intro-text"></h2>
-    <button id="intro-continue">Entrer dans l'aventure</button>
-  </div>
+  <section id="screen-intro" class="screen hidden">
+    <div class="intro-text"></div>
+    <button id="btn-play">Entrer dans le royaume</button>
+  </section>
 
-  <!-- Jeu -->
-  <div id="screen-game" class="screen">
+  <!-- Jeu principal -->
+  <section id="screen-game" class="screen hidden">
     <div id="hud">
-      Joueur : <span id="hud-player"></span> | Score : <span id="hud-score">0</span>
+      <span id="hud-player"></span>
+      <span id="hud-timer"></span>
+      <span id="hud-score"></span>
     </div>
-    <div id="timer-orb">60</div>
-    <div id="zones">
-      <div id="zone-bibliotheque" class="zone locked">
-        <h3>📚 Bibliothèque</h3>
-        <div id="puzzle-bibliotheque"></div>
-      </div>
-      <div id="zone-laboratoire" class="zone locked">
-        <h3>🧪 Laboratoire</h3>
-        <div id="puzzle-laboratoire"></div>
-      </div>
-      <div id="zone-observatoire" class="zone locked">
-        <h3>🔭 Observatoire</h3>
-        <div id="puzzle-observatoire"></div>
-      </div>
+    <div id="game-area"></div>
+  </section>
+
+  <!-- Fin -->
+  <section id="screen-end" class="screen hidden">
+    <div class="end-text"></div>
+    <button id="btn-restart">Rejouer</button>
+  </section>
+
+  <!-- Panel Admin -->
+  <div id="admin-panel" class="hidden">
+    <h2>Panneau Admin</h2>
+    <input type="password" id="admin-pass" placeholder="Mot de passe">
+    <button id="admin-login">Accéder</button>
+    <div id="admin-tools" class="hidden">
+      <button id="admin-force-win">Forcer Victoire</button>
+      <button id="admin-force-lose">Forcer Défaite</button>
+      <button id="admin-reset-scores">Réinitialiser Scores</button>
+      <button id="admin-show-solutions">Voir Solutions</button>
+      <button id="admin-debug">Mode Debug</button>
     </div>
   </div>
 
-  <!-- Écrans Fin -->
-  <div id="screen-victory" class="screen">
-    <h2 class="plume-text" id="victory-text"></h2>
-    <ul id="scoreboard"></ul>
-    <button id="play-again">Rejouer</button>
-  </div>
-
-  <div id="screen-defeat" class="screen">
-    <h2 class="plume-text" id="defeat-text"></h2>
-    <ul id="scoreboard"></ul>
-    <button id="play-again-lose">Rejouer</button>
-  </div>
-
-  <!-- Scripts -->
-  <script src="script.js"></script>
-  <script type="module" src="puzzles/puzzlePotions.js"></script>
-  <script type="module" src="puzzles/puzzleLabyrinthe.js"></script>
-  <script type="module" src="puzzles/puzzleConstellations.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
