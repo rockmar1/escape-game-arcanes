@@ -1,22 +1,167 @@
+/* --- Global --- */
 body {
   background: url("images/decor-magique.jpg") no-repeat center center/cover;
   font-family: "Cinzel", serif;
   color: #fdf6e3;
+  margin: 0;
   text-align: center;
+  overflow-x: hidden;
 }
-.screen { display: none; padding: 20px; }
-.screen.active { display: block; animation: fadeIn 1s; }
 
-.zone.locked { opacity: 0.3; pointer-events: none; }
-.zone.unlocked { opacity: 1; pointer-events: auto; transition: opacity 1s; }
-
-.plume-text { font-style: italic; animation: plume 4s steps(40) forwards; white-space: pre-line; }
-
-#admin-panel { position: fixed; top: 10px; right: 10px; }
-#admin-tools.hidden, #admin-actions.hidden { display: none; }
-
-@keyframes plume {
-  from { width: 0; }
-  to { width: 100%; }
+h1, h2, h3 {
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
 }
+
+button {
+  background: linear-gradient(135deg, #6a0dad, #8a2be2);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin: 8px;
+  font-size: 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 15px #a29bfe;
+}
+
+/* --- Screens --- */
+.screen { display: none; padding: 20px; min-height: 100vh; }
+.screen.active { display: block; animation: fadeIn 1.2s ease-in-out; }
+
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* --- Zones --- */
+#zones {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.zone {
+  background: rgba(0,0,0,0.6);
+  border: 2px solid #fff;
+  border-radius: 16px;
+  width: 30%;
+  padding: 15px;
+  min-height: 200px;
+  transition: all 0.8s;
+}
+
+.zone.locked {
+  opacity: 0;
+  transform: scale(0);
+  pointer-events: none;
+}
+.zone.unlocked {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* --- HUD --- */
+#hud {
+  font-size: 1.2rem;
+  background: rgba(0,0,0,0.5);
+  padding: 8px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+/* Timer Orbe magique */
+#timer-orb {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin: auto;
+  background: radial-gradient(circle at center, #ffdd00, #ff8800);
+  box-shadow: 0 0 25px #ff8800;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 15px #ff8800; }
+  50% { box-shadow: 0 0 35px #ffd700; }
+}
+
+/* --- Plume magique (texte qui s’écrit) --- */
+.plume-text {
+  display: inline-block;
+  font-style: italic;
+  white-space: pre-line;
+  overflow: hidden;
+  border-right: 3px solid rgba(255,255,255,0.7);
+  animation: typing 5s steps(40) forwards, blink 0.7s infinite;
+}
+@keyframes typing {
+  from { width: 0 }
+  to { width: 100% }
+}
+@keyframes blink {
+  50% { border-color: transparent }
+}
+
+/* --- Admin panel --- */
+#admin-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+}
+#admin-tools {
+  background: rgba(0,0,0,0.7);
+  padding: 10px;
+  border-radius: 12px;
+  margin-top: 5px;
+}
+#admin-tools.hidden, #admin-actions.hidden {
+  display: none;
+}
+#admin-pass {
+  padding: 6px;
+  border-radius: 8px;
+  border: none;
+}
+
+/* --- Mini-jeux --- */
+.puzzle-container {
+  margin: 15px;
+  padding: 15px;
+  background: rgba(255,255,255,0.1);
+  border: 2px solid #fff;
+  border-radius: 12px;
+}
+
+.labyrinth-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 40px);
+  grid-gap: 4px;
+  justify-content: center;
+}
+.labyrinth-cell {
+  width: 40px;
+  height: 40px;
+  background: #222;
+  border: 1px solid #fff;
+  cursor: pointer;
+}
+.labyrinth-cell.path { background: #6a0dad; }
+
+/* --- Scoreboard --- */
+#scoreboard {
+  list-style: none;
+  padding: 0;
+}
+#scoreboard li {
+  background: rgba(0,0,0,0.6);
+  margin: 5px;
+  padding: 8px;
+  border-radius: 10px;
+}
