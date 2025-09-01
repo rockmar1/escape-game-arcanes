@@ -2,67 +2,58 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escape Game Arcanes</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- HUD toujours visible -->
+  <!-- === HUD Global === -->
   <div id="hud">
-    <span id="hud-player">👤 -</span>
+    <span id="hud-player">👤 Joueur</span>
     <span id="score">⭐ 0</span>
-    <span id="timer">⏳ 0:00</span>
+    <span id="timer">⏳ 10:00</span>
   </div>
 
-  <!-- Écrans -->
+  <!-- === Écrans === -->
   <div id="screen-pseudo" class="screen">
-    <h2>Entrez votre pseudo</h2>
-    <input id="player-name" type="text" placeholder="Votre pseudo">
+    <h2>Bienvenue</h2>
+    <input type="text" id="player-name" placeholder="Entrez votre pseudo">
     <button id="start-btn">Commencer</button>
   </div>
 
-  <div id="screen-intro" class="screen">
-    <h2>Introduction</h2>
-    <p id="intro-content"></p>
-    <button id="begin-game">Commencer l'aventure</button>
+  <div id="screen-intro" class="screen hidden">
+    <h2 id="intro-content"></h2>
+    <button id="begin-game">Démarrer l’aventure</button>
   </div>
 
-  <div id="screen-game" class="screen">
-    <h2>Mini-jeu en cours</h2>
-    <p>Résolvez l'énigme affichée...</p>
+  <div id="screen-game" class="screen hidden">
+    <h2>Mini-Jeu</h2>
+    <div id="game-container"></div>
   </div>
 
-  <div id="screen-victory" class="screen">
-    <h2>Victoire !</h2>
-    <p>Félicitations, vous avez terminé le jeu !</p>
-    <button onclick="resetGame()">Recommencer</button>
+  <div id="screen-victory" class="screen hidden">
+    <h2>🎉 Victoire !</h2>
+    <button onclick="resetGame()">Rejouer</button>
   </div>
 
-  <div id="screen-defeat" class="screen">
-    <h2>Défaite...</h2>
-    <p>Temps écoulé !</p>
-    <button onclick="resetGame()">Recommencer</button>
-  </div>
-
-  <!-- Panel Admin sécurisé -->
-  <div id="admin-wrapper">
-    <button id="admin-toggle">⚙️</button>
-    <div id="admin-panel" style="display:none;">
-      <h3>Admin Panel</h3>
-      <input id="admin-pass" type="password" placeholder="Mot de passe">
-      <button id="unlock-admin">Déverrouiller</button>
-      <div id="admin-tools" style="display:none;">
-        <button onclick="resetGame()">Réinitialiser jeu</button>
-        <button onclick="startNextMiniGame()">Forcer mini-jeu</button>
-      </div>
-    </div>
+  <div id="screen-defeat" class="screen hidden">
+    <h2>💀 Défaite !</h2>
+    <button onclick="resetGame()">Rejouer</button>
   </div>
 
   <!-- Scripts -->
-  <script type="module" src="js/debug.js"></script>
-  <script type="module" src="js/state.js"></script>
-  <script type="module" src="js/audio.js"></script>
-  <script type="module" src="js/router.js"></script>
-  <script type="module" src="js/admin.js"></script>
-  <script type="module" src="js/main.js"></script>
+  <script src="crypto-js.min.js"></script>
+  <script type="module">
+    import "./js/state.js";
+    import "./js/debug.js";
+    import "./js/audio.js";
+    import "./js/router.js";
+    import { initAdminPanel } from "./js/admin.js";
+    import "./js/main.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initAdminPanel();
+    });
+  </script>
 </body>
 </html>
