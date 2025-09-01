@@ -1,46 +1,45 @@
-import { initRouter, goToScreen, startNextMiniGame, startTimer } from "./router.js";
+import { initRouter, goToScreen, startNextMiniGame, resetGame } from "./router.js";
 import { setPlayerName } from "./state.js";
 import { initAdminPanel } from "./admin.js";
 import { initAudioOnUserGesture } from "./audio.js";
 
-// =====================
-// Initialisation
-// =====================
 document.addEventListener("DOMContentLoaded", () => {
-  console.clear();
+
   console.log("🎮 Initialisation du jeu...");
 
+  // === Router et audio ===
   initRouter();
-  initAdminPanel();
 
+  // === HUD et boutons ===
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
-  const nameInput = document.getElementById("player-name");
+  const playerInput = document.getElementById("player-name");
 
-  // Premier clic utilisateur -> activer audio
-  document.body.addEventListener("click", function firstClickHandler() {
-    initAudioOnUserGesture();
-    document.body.removeEventListener("click", firstClickHandler);
-  });
-
-  // Entrer le pseudo
   startBtn.addEventListener("click", () => {
-    const name = nameInput.value.trim();
-    if (!name) {
-      alert("Entre un pseudo pour commencer !");
-      return;
-    }
+    const name = playerInput.value.trim();
+    if (!name) return alert("Entrez un pseudo !");
     setPlayerName(name);
-    console.log(`✅ Pseudo validé : ${name}`);
+    console.log("✅ Pseudo validé :", name);
     goToScreen("intro");
-    document.getElementById("intro-content").textContent =
-      `Bienvenue ${name}, le royaume t’attend...`;
   });
 
-  // Lancer le jeu après l’intro
   beginBtn.addEventListener("click", () => {
+    console.log("🚀 Début de l’aventure");
     goToScreen("game");
-    console.log("🚪 Début de l’aventure !");
     startNextMiniGame();
   });
+
+  // === Premier clic utilisateur ===
+  let firstClick = false;
+  document.addEventListener("click", () => {
+    if (!firstClick) {
+      firstClick = true;
+      console.log("🖱️ Premier clic -> initAudioOnUserGesture()");
+      initAudioOnUserGesture();
+    }
+  }, { once: true });
+
+  // === Panel admin ===
+  initAdminPanel();
+
 });
