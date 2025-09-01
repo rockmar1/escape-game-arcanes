@@ -1,7 +1,0 @@
-{
-  "runes": ["MAGIE", "SORT", "ARCANE"],
-  "potions": ["rouge+bleu", "jaune+vert"],
-  "etoiles": [3, 5, 7],
-  "labyrinthe": ["gauche", "haut", "droite"],
-  "cristaux": ["triangle", "carré", "cercle"]
-}
