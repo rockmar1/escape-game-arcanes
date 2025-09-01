@@ -1,46 +1,64 @@
-import { dwarn } from "./debug.js";
+import { dlog, dwarn } from "./debug.js";
 
 let currentAudio = null;
+let stressAudio = null;
 
 export function initAudioOnUserGesture() {
-  console.log("[DBG] initAudioOnUserGesture() appelé");
+  dlog("initAudioOnUserGesture() appelé");
+  // Optionnel : déclenchement global sur premier clic
 }
 
-export function playAudioForScreen(screen) {
-  const audios = {
-    pseudo: "assets/audio/pseudo.mp3",
+// Arrête toute musique en cours
+export function stopAllAudio() {
+  if (currentAudio) {
+    currentAudio.pause();
+    currentAudio = null;
+  }
+  if (stressAudio) {
+    stressAudio.pause();
+    stressAudio = null;
+  }
+}
+
+// Joue la musique correspondant à l’écran
+export function playAudioForScreen(screenName) {
+  stopAllAudio();
+  const audioMap = {
     intro: "assets/audio/intro.mp3",
-    game: "assets/audio/ambiance.mp3",
+    game: "assets/audio/game.mp3",
     victory: "assets/audio/victoire.mp3",
     defeat: "assets/audio/defaite.mp3",
   };
-  const src = audios[screen];
-  if (!src) return;
-
-  if (currentAudio) currentAudio.pause();
+  const src = audioMap[screenName];
+  if (!src) {
+    dwarn(`Aucune musique pour l'écran "${screenName}"`);
+    return;
+  }
   currentAudio = new Audio(src);
-  currentAudio.loop = screen === "game";
-  currentAudio.play().catch(e => dwarn(`Impossible de jouer ${src}`, e));
-}
-
-export function stopAllAudio() {
-  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-}
-
-export function switchToStressAmbience() {
-  stopAllAudio();
-  currentAudio = new Audio("assets/audio/ambiance_stress.mp3");
   currentAudio.loop = true;
-  currentAudio.play().catch(e => dwarn("Impossible de jouer ambiance_stress.mp3", e));
+  currentAudio.play().catch(err => dwarn(`Impossible de jouer ${src}`, err));
 }
 
-export function playActionEffect(effect) {
+// Switch vers musique stress
+export function switchToStressAmbience() {
+  if (!currentAudio) return;
+  currentAudio.pause();
+  stressAudio = new Audio("assets/audio/ambiance_stress.mp3");
+  stressAudio.loop = true;
+  stressAudio.play().catch(err => dwarn("Impossible de jouer ambiance_stress.mp3", err));
+}
+
+// Effet ponctuel
+export function playActionEffect(effectName) {
   const effects = {
     bonus: "assets/audio/bonus.mp3",
     error: "assets/audio/error.mp3"
   };
-  const src = effects[effect];
-  if (!src) return dwarn("Effet audio inconnu :", effect);
-  const audio = new Audio(src);
-  audio.play().catch(() => {});
+  const src = effects[effectName];
+  if (!src) {
+    dwarn(`Effet audio inconnu : ${effectName}`);
+    return;
+  }
+  const effectAudio = new Audio(src);
+  effectAudio.play().catch(()=>{});
 }
