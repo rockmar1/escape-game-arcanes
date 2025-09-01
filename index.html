@@ -1,78 +1,50 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Escape Game Magique</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+<meta charset="UTF-8">
+<title>Jeu Magique</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- Écran pseudo -->
-  <section id="screen-pseudo" class="screen active">
-    <h1 class="title">Les Gardiens du Royaume Oublié</h1>
-    <p>Entre ton pseudo pour commencer :</p>
-    <input type="text" id="player-name" placeholder="Ton nom magique...">
-    <button id="start-btn">Commencer</button>
-  </section>
 
-  <!-- Écran intro -->
-  <section id="screen-intro" class="screen hidden">
-    <div class="intro-text">
-      <h2>Prologue</h2>
-      <p id="intro-content">Bienvenue aventurier...</p>
-      <button id="begin-game">Entrer dans le royaume</button>
-    </div>
-  </section>
+<!-- HUD -->
+<div id="hud">
+  <div id="hud-player">👤 Joueur</div>
+  <div id="score">⭐ 0</div>
+  <div id="timer">⏳ 0:00</div>
+</div>
 
-  <!-- Écran jeu -->
-  <section id="screen-game" class="screen hidden">
-    <header>
-      <h2 id="hud-player">👤 Joueur</h2>
-      <div id="hud">
-        <span id="timer">⏳ 300s</span>
-        <span id="score">⭐ 0</span>
-      </div>
-    </header>
-    <main id="game-area">
-      <p>Explore les pièces et résous les énigmes !</p>
-    </main>
-  </section>
+<!-- Screens -->
+<div id="screen-pseudo" class="screen">
+  <h2>Entrez votre pseudo</h2>
+  <input type="text" id="player-name" placeholder="Votre pseudo">
+  <button id="start-btn">Commencer</button>
+</div>
 
-  <!-- Écran victoire -->
-  <section id="screen-victory" class="screen hidden">
-    <h2>🎉 Victoire !</h2>
-    <p id="victory-text">Félicitations, tu as libéré le royaume !</p>
-    <button onclick="location.reload()">Rejouer</button>
-  </section>
+<div id="screen-intro" class="screen hidden">
+  <h2>Introduction</h2>
+  <p id="intro-content"></p>
+  <button id="begin-game">Commencer l'aventure</button>
+</div>
 
-  <!-- Écran défaite -->
-  <section id="screen-defeat" class="screen hidden">
-    <h2>💀 Défaite...</h2>
-    <p id="defeat-text">Le royaume sombre dans les ténèbres...</p>
-    <button onclick="location.reload()">Réessayer</button>
-  </section>
+<div id="screen-game" class="screen hidden">
+  <h2>Enigmes</h2>
+  <div id="game-content"></div>
+</div>
 
-  <!-- Panel Admin -->
-  <div id="admin-wrapper">
-    <button id="admin-toggle">⚙️</button>
-    <div id="admin-panel" class="hidden">
-      <h3>🔮 Panneau Admin</h3>
-      <input type="password" id="admin-password" placeholder="Mot de passe...">
-      <button id="admin-login">Connexion</button>
-      <div id="admin-tools" class="hidden">
-        <button id="force-victory">Forcer Victoire</button>
-        <button id="force-defeat">Forcer Défaite</button>
-        <button id="reset-scoreboard">Reset Scores</button>
-        <label>
-          <input type="checkbox" id="debug-mode"> Mode Debug
-        </label>
-        <pre id="debug-log"></pre>
-      </div>
-    </div>
-  </div>
+<div id="screen-victory" class="screen hidden">
+  <h2>🎉 Victoire !</h2>
+  <button onclick="location.reload()">Rejouer</button>
+</div>
 
-  <!-- Scripts -->
-  <script type="module" src="js/main.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<div id="screen-defeat" class="screen hidden">
+  <h2>💀 Défaite !</h2>
+  <button onclick="location.reload()">Rejouer</button>
+</div>
+
+<!-- Debug -->
+<div id="debug-log"></div>
+
+<script type="module" src="js/main.js"></script>
 </body>
 </html>
