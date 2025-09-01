@@ -1,64 +1,59 @@
 import { dlog, dwarn } from "./debug.js";
 
 let currentAudio = null;
-let stressAudio = null;
+let ambienceNormal = new Audio("assets/audio/ambiance.mp3");
+let ambienceStress = new Audio("assets/audio/ambiance_stress.mp3");
 
 export function initAudioOnUserGesture() {
   dlog("initAudioOnUserGesture() appelé");
-  // Optionnel : déclenchement global sur premier clic
+  ambienceNormal.loop = true;
+  ambienceNormal.volume = 0.5;
+  ambienceStress.loop = true;
+  ambienceStress.volume = 0.6;
+  playAmbience();
 }
 
-// Arrête toute musique en cours
-export function stopAllAudio() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio = null;
-  }
-  if (stressAudio) {
-    stressAudio.pause();
-    stressAudio = null;
-  }
-}
-
-// Joue la musique correspondant à l’écran
 export function playAudioForScreen(screenName) {
   stopAllAudio();
-  const audioMap = {
-    intro: "assets/audio/intro.mp3",
-    game: "assets/audio/game.mp3",
-    victory: "assets/audio/victoire.mp3",
-    defeat: "assets/audio/defaite.mp3",
-  };
-  const src = audioMap[screenName];
-  if (!src) {
-    dwarn(`Aucune musique pour l'écran "${screenName}"`);
-    return;
+  try {
+    let src = null;
+    switch(screenName) {
+      case "intro": src = "assets/audio/intro.mp3"; break;
+      case "game": src = "assets/audio/ambiance.mp3"; break;
+      case "victory": src = "assets/audio/victoire.mp3"; break;
+      case "defeat": src = "assets/audio/defaite.mp3"; break;
+      default: return;
+    }
+    if (src) {
+      currentAudio = new Audio(src);
+      currentAudio.loop = (screenName === "game");
+      currentAudio.play().catch(e => dwarn("Impossible de jouer " + src));
+    }
+  } catch(e) {
+    dwarn("Erreur audio:", e);
   }
-  currentAudio = new Audio(src);
-  currentAudio.loop = true;
-  currentAudio.play().catch(err => dwarn(`Impossible de jouer ${src}`, err));
 }
 
-// Switch vers musique stress
+export function stopAllAudio() {
+  if (currentAudio) currentAudio.pause();
+  currentAudio = null;
+  ambienceNormal.pause();
+  ambienceStress.pause();
+}
+
 export function switchToStressAmbience() {
-  if (!currentAudio) return;
-  currentAudio.pause();
-  stressAudio = new Audio("assets/audio/ambiance_stress.mp3");
-  stressAudio.loop = true;
-  stressAudio.play().catch(err => dwarn("Impossible de jouer ambiance_stress.mp3", err));
+  stopAllAudio();
+  ambienceStress.currentTime = 0;
+  ambienceStress.play().catch(()=>{});
 }
 
-// Effet ponctuel
-export function playActionEffect(effectName) {
-  const effects = {
-    bonus: "assets/audio/bonus.mp3",
-    error: "assets/audio/error.mp3"
-  };
-  const src = effects[effectName];
-  if (!src) {
-    dwarn(`Effet audio inconnu : ${effectName}`);
-    return;
-  }
-  const effectAudio = new Audio(src);
-  effectAudio.play().catch(()=>{});
+export function switchToNormalAmbience() {
+  stopAllAudio();
+  ambienceNormal.currentTime = 0;
+  ambienceNormal.play().catch(()=>{});
+}
+
+function playAmbience() {
+  ambienceNormal.currentTime = 0;
+  ambienceNormal.play().catch(()=>{});
 }
