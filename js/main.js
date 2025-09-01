@@ -1,9 +1,12 @@
 import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
 import { setPlayerName } from "./state.js";
-import { dlog, dwarn } from "./debug.js";
-import "./admin.js";
+import { dlog } from "./debug.js";
+import "./admin.js"; 
 import "./audio.js";
 
+// =====================
+// Initialisation
+// =====================
 document.addEventListener("DOMContentLoaded", () => {
   dlog("🎮 Initialisation du jeu...");
 
@@ -13,37 +16,31 @@ document.addEventListener("DOMContentLoaded", () => {
   const beginBtn = document.getElementById("begin-game");
   const playerInput = document.getElementById("player-name");
 
-  let audioInitialized = false;
+  dlog(`✅ Boutons et input trouvés`);
 
-  // Premier clic utilisateur -> init audio global
-  document.body.addEventListener("click", () => {
-    if (!audioInitialized) {
-      dlog("🖱️ Premier clic utilisateur détecté -> initAudioOnUserGesture()");
-      import("./audio.js").then(m => { m.initAudioOnUserGesture(); audioInitialized = true; });
-    }
-  }, { once: true });
+  // Première interaction utilisateur -> audio global
+  function firstClickHandler(){
+    dlog("🖱️ Premier clic utilisateur détecté -> initAudioOnUserGesture()");
+    document.removeEventListener("click", firstClickHandler);
+    try { initAudioOnUserGesture(); } catch(e){ dlog("Erreur initAudioOnUserGesture()", e); }
+  }
+  document.addEventListener("click", firstClickHandler, {once:true});
 
-  // Entrer le pseudo
+  // Bouton Commencer
   startBtn.addEventListener("click", () => {
     const name = playerInput.value.trim();
-    if (!name) {
+    if(!name){
       alert("Entre un pseudo pour commencer !");
       return;
     }
-    dlog(`🖱️ Clic sur #start-btn\nPseudo saisi: ${name}`);
-
-    // Désactiver bouton pour éviter double clic
-    startBtn.disabled = true;
-
     setPlayerName(name);
+    dlog(`✅ Pseudo validé : ${name}`);
+    document.getElementById("intro-content").textContent =
+      `Bienvenue ${name}, le royaume t’attend...`;
     goToScreen("intro");
-    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
-
-    try { import("./audio.js").then(m => m.playAudioForScreen("intro")); } 
-    catch(e){ dwarn("playAudioForScreen() failed:", e); }
   });
 
-  // Lancer le jeu après l’intro
+  // Bouton Entrer dans le royaume
   beginBtn.addEventListener("click", () => {
     dlog("🖱️ Clic sur #begin-game -> début aventure");
     goToScreen("game");
