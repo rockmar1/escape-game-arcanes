@@ -1,50 +1,59 @@
-// audio.js
-import { dlog, dwarn } from "./debug.js";
+// audio.js : Gestion des musiques et effets
+import { dwarn, dlog } from "./debug.js";
 
-let currentAudio = null;
-
-// Mapping musique par écran
-const screenMusicMap = {
-  intro: "assets/audio/intro.mp3",
-  game: "assets/audio/game.mp3",
-  victory: "assets/audio/victory.mp3",
-  defeat: "assets/audio/defeat.mp3"
+let currentMusic = null;
+let audioMap = {
+  intro: new Audio("assets/audio/intro.mp3"),
+  game: new Audio("assets/audio/ambiance_game.mp3"),
+  stress: new Audio("assets/audio/ambiance_stress.mp3"),
+  victoire: new Audio("assets/audio/victoire.mp3"),
+  defaite: new Audio("assets/audio/defaite.mp3")
 };
 
-// Lecture d’une musique
-export function playMusic(file) {
+export function playMusic(key, loop = true) {
   stopAllAudio();
-  currentAudio = new Audio(file);
-  currentAudio.loop = true;
-  currentAudio.volume = 0.5;
-  currentAudio.play().catch(err => {
-    dwarn("Impossible de jouer " + file, err);
-  });
-  dlog("playMusic(" + file + ") lancé");
+  if (!audioMap[key]) {
+    dwarn(`Impossible de jouer ${key}`);
+    return;
+  }
+  currentMusic = audioMap[key];
+  currentMusic.loop = loop;
+  currentMusic.play().catch(() => {});
+  dlog(`playMusic(${key}) lancé`);
 }
 
-// Stop toute musique
 export function stopAllAudio() {
-  if (currentAudio) {
-    currentAudio.pause();
-    currentAudio.currentTime = 0;
-    currentAudio = null;
-  }
+  Object.values(audioMap).forEach(a => {
+    a.pause();
+    a.currentTime = 0;
+  });
+  currentMusic = null;
   dlog("Toutes les musiques stoppées");
 }
 
-// Jouer la musique liée à l’écran
-export function playAudioForScreen(screen) {
-  const file = screenMusicMap[screen];
-  if (file) {
-    playMusic(file);
-  } else {
-    dwarn("Aucune musique assignée pour l'écran " + screen);
-  }
+export function switchToStressAmbience() {
+  if (!audioMap.stress) return;
+  playMusic("stress");
 }
 
-// Ambiance spéciale "stressante" pour la fin du timer
-export function switchToStressAmbience() {
-  stopAllAudio();
-  playMusic("assets/audio/stress.mp3"); // 🔥 à mettre dans assets/audio
+export function playActionEffect(effect) {
+  // exemples simples, ajouter plus si besoin
+  const effects = {
+    bonus: new Audio("assets/audio/bonus.mp3"),
+    error: new Audio("assets/audio/error.mp3"),
+    collect: new Audio("assets/audio/collect.mp3")
+  };
+  if (!effects[effect]) {
+    dwarn(`Effet audio inconnu : ${effect}`);
+    return;
+  }
+  effects[effect].play().catch(() => {});
+}
+
+// Initialisation audio au premier clic
+export function initAudioOnUserGesture() {
+  dlog("initAudioOnUserGesture() appelé");
+  document.body.addEventListener("click", () => {
+    Object.values(audioMap).forEach(a => a.play().then(()=>a.pause()));
+  }, { once: true });
 }
