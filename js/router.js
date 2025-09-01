@@ -1,14 +1,15 @@
+// router.js
 import { dlog, dwarn, derr } from "./debug.js";
 import { getPlayerName, setScore, getScore } from "./state.js";
-import {
+import { 
   initAudioOnUserGesture,
-  playActionEffect,
+  playAudioForScreen,
   stopAllAudio,
-  switchToStressAmbience,
-  switchToNormalAmbience,
-  playAudioForScreen
+  playActionEffect,
+  switchToStressAmbience
 } from "./audio.js";
 
+// Import des puzzles
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
 import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
@@ -27,91 +28,118 @@ const puzzles = [
   puzzleTextInverse
 ];
 
+// ==========================
+// État
+// ==========================
 let currentPuzzleIndex = 0;
 let timerInterval = null;
-let remaining = 0;
+let remainingTime = 0;
 let timerRunning = false;
 
-const DEFAULT_TOTAL_TIME = 600; // 10 min
-const STRESS_THRESHOLD = 300;   // 5 min
+const DEFAULT_TOTAL_TIME = 600; // 10 minutes
+const STRESS_THRESHOLD = 300;   // 5 minutes
 
 dlog("router.js chargé");
 
-// -----------------------------
-// Gestion écrans
-// -----------------------------
+// ==========================
+// Navigation écrans
+// ==========================
 export function goToScreen(screenName) {
   const id = "screen-" + screenName;
   dlog(`goToScreen("${screenName}") demandé -> #${id}`);
-
+  
   const allScreens = document.querySelectorAll(".screen");
   if (!allScreens || allScreens.length === 0) {
     derr("Aucun élément .screen trouvé !");
     return;
   }
 
-  const target = document.getElementById(id);
-  if (!target) {
+  const screenEl = document.getElementById(id);
+  if (!screenEl) {
     derr(`Écran introuvable : #${id}`);
     return;
   }
 
-  // Masquer tous les écrans
-  allScreens.forEach(s => {
-    s.classList.remove("active");
-    s.classList.add("hidden");
-  });
-
-  // Afficher l'écran cible
-  target.classList.remove("hidden");
-  target.classList.add("active");
+  allScreens.forEach(s => s.classList.add("hidden"));
+  screenEl.classList.remove("hidden");
   dlog(`Écran affiché : #${id}`);
 
-  // Lancer musique selon écran
+  // Audio pour écran
+  try { playAudioForScreen(screenName); } catch (e) { dwarn("playAudioForScreen() failed:", e); }
+
+  // Si écran victoire ou défaite, stop tout
   if (screenName === "victory" || screenName === "defeat") {
-    dlog("Arrêt des musiques + jingle final");
-    try { stopAllAudio(); } catch(e){ dwarn("stopAllAudio() failed:", e); }
-    const jingle = screenName === "victory" ? "victoire" : "defaite";
-    try { playAudioForScreen(jingle); } catch(e){ dwarn("playAudioForScreen() failed:", e); }
-  } else {
-    try { playAudioForScreen(screenName); } catch(e){ dwarn("playAudioForScreen() failed:", e); }
+    try { stopAllAudio(); } catch(e) { dwarn("stopAllAudio() failed:", e); }
   }
 }
 
-// -----------------------------
-// Initialisation router
-// -----------------------------
+// ==========================
+// Initialisation
+// ==========================
 export function initRouter() {
-  dlog("initRouter() -> affichage écran pseudo");
+  dlog("initRouter() -> affichage écran pseudo par défaut");
   goToScreen("pseudo");
+
+  // Associer boutons
+  const startBtn = document.getElementById("start-btn");
+  const beginBtn = document.getElementById("begin-game");
+  const playerInput = document.getElementById("player-name");
+
+  if (!startBtn || !beginBtn || !playerInput) {
+    derr("Éléments #start-btn, #begin-game ou #player-name introuvables !");
+    return;
+  }
+
+  dlog("✅ Boutons et input trouvés");
+
+  // Premier clic utilisateur pour init audio
+  document.body.addEventListener("click", () => {
+    dlog("🖱️ Premier clic utilisateur détecté -> initAudioOnUserGesture()");
+    try { initAudioOnUserGesture(); } catch(e) { dwarn("initAudioOnUserGesture() failed:", e); }
+  }, { once: true });
+
+  // Start bouton pseudo
+  startBtn.addEventListener("click", () => {
+    const name = playerInput.value.trim();
+    if (!name) { alert("Entre un pseudo !"); return; }
+    dlog(`🖱️ Clic sur #start-btn\nPseudo saisi: ${name}`);
+    window.playerName = name;
+    document.getElementById("hud-player").textContent = `👤 ${name}`;
+    goToScreen("intro");
+    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
+  });
+
+  // Begin bouton intro
+  beginBtn.addEventListener("click", () => {
+    dlog("🖱️ Clic sur #begin-game -> début aventure");
+    goToScreen("game");
+    startNextMiniGame();
+  });
 }
 
-// -----------------------------
+// ==========================
 // Timer global
-// -----------------------------
+// ==========================
 export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
-  if (timerRunning) { dlog("Timer déjà en cours"); return; }
-
-  remaining = totalSeconds;
+  if (timerRunning) return;
+  remainingTime = totalSeconds;
   timerRunning = true;
   updateTimerDisplay();
-  dlog(`Timer démarré : ${totalSeconds}s`);
 
   timerInterval = setInterval(() => {
-    remaining--;
+    remainingTime--;
     updateTimerDisplay();
 
-    if (remaining === STRESS_THRESHOLD) {
+    if (remainingTime === STRESS_THRESHOLD) {
       dlog("Seuil stress atteint -> switchToStressAmbience()");
       try { switchToStressAmbience(); } catch(e){ dwarn("switchToStressAmbience() failed:", e); }
       const timerEl = document.getElementById("timer");
       if (timerEl) timerEl.classList.add("stress");
     }
 
-    if (remaining <= 0) {
+    if (remainingTime <= 0) {
       clearInterval(timerInterval);
       timerRunning = false;
-      dlog("Temps écoulé -> fin partie");
       endGame(false);
     }
   }, 1000);
@@ -119,40 +147,25 @@ export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
 
 function updateTimerDisplay() {
   const el = document.getElementById("timer");
-  if (!el) { dwarn("Aucun #timer trouvé"); return; }
-  const min = Math.floor(Math.max(0, remaining)/60);
-  const sec = Math.max(0, remaining)%60;
-  el.textContent = `⏳ ${min}:${String(sec).padStart(2,"0")}`;
+  if (!el) return;
+  const minutes = Math.floor(Math.max(0, remainingTime) / 60);
+  const seconds = Math.max(0, remainingTime) % 60;
+  el.textContent = `⏳ ${minutes}:${String(seconds).padStart(2,"0")}`;
 }
 
-// -----------------------------
+// ==========================
 // Mini-jeux
-// -----------------------------
+// ==========================
 export function startNextMiniGame() {
-  if (!timerRunning) {
-    dlog("Premier mini-jeu : démarrage timer");
-    startTimer(DEFAULT_TOTAL_TIME);
-    try { initAudioOnUserGesture(); } catch(e){ dwarn("initAudioOnUserGesture() failed:", e); }
-  }
+  if (!timerRunning) startTimer(DEFAULT_TOTAL_TIME);
 
-  if (currentPuzzleIndex >= puzzles.length) {
-    dlog("Tous les puzzles terminés -> victoire");
-    return endGame(true);
-  }
+  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
 
   const puzzle = puzzles[currentPuzzleIndex];
   currentPuzzleIndex++;
   dlog(`Lancement puzzle #${currentPuzzleIndex}`);
 
   goToScreen("game");
-  const hud = document.getElementById("hud-player");
-  if (hud) hud.textContent = `👤 ${getPlayerName()}`;
-
-  if (!puzzle || typeof puzzle.mount !== "function") {
-    derr(`Puzzle invalide à l'index ${currentPuzzleIndex-1}`);
-    setTimeout(() => startNextMiniGame(), 300);
-    return;
-  }
 
   try {
     puzzle.mount({
@@ -160,39 +173,34 @@ export function startNextMiniGame() {
       onSolved: ({ score } = {}) => {
         dlog(`Puzzle résolu (+${score||0})`);
         setScore(getScore() + (score||0));
-        try { playActionEffect("bonus"); } catch(e){}
-        setTimeout(() => startNextMiniGame(), 250);
+        playActionEffect("bonus");
+        setTimeout(startNextMiniGame, 250);
       },
       onFail: ({ penalty } = {}) => {
         dlog(`Puzzle échoué (-${penalty||0})`);
-        setScore(Math.max(0,getScore() - (penalty||0)));
-        try { playActionEffect("error"); } catch(e){}
-        setTimeout(() => startNextMiniGame(), 250);
+        setScore(Math.max(0, getScore() - (penalty||0)));
+        playActionEffect("error");
+        setTimeout(startNextMiniGame, 250);
       }
     });
-  } catch(e){
+  } catch(e) {
     derr("Erreur mount puzzle:", e);
-    setTimeout(()=>startNextMiniGame(),500);
+    setTimeout(startNextMiniGame, 500);
   }
 }
 
-// -----------------------------
+// ==========================
 // Fin / reset
-// -----------------------------
-export function endGame(victory=true) {
-  dlog(`endGame(${victory}) appelé`);
-  if (timerInterval) { clearInterval(timerInterval); timerInterval=null; timerRunning=false; }
-  try { stopAllAudio(); } catch(e){}
+// ==========================
+export function endGame(victory = true) {
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; timerRunning = false; }
+  stopAllAudio();
   goToScreen(victory ? "victory" : "defeat");
-  const jingle = victory ? "victoire" : "defaite";
-  try { playAudioForScreen(jingle); } catch(e){}
 }
 
 export function resetGame() {
-  dlog("resetGame() appelé");
-  currentPuzzleIndex=0;
-  if (timerInterval) { clearInterval(timerInterval); timerInterval=null; timerRunning=false; }
+  currentPuzzleIndex = 0;
+  if (timerInterval) { clearInterval(timerInterval); timerInterval = null; timerRunning = false; }
   setScore(0);
-  try { switchToNormalAmbience(); } catch(e){}
   goToScreen("pseudo");
 }
