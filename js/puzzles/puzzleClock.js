@@ -1,49 +1,39 @@
-import { playActionEffect } from "../audio.js";
-import { startNextMiniGame } from "../router.js";
+// puzzleClock.js
+import { dlog, dwarn } from "../debug.js";
 
-export async function mount({onSolved,onFail,meta}) {
-  const overlay = makeOverlay(meta.title, "Régle l'horloge sur MINUIT");
-  const select = document.createElement("select");
-  ["10:00","11:00","12:00"].forEach(v => select.appendChild(new Option(v,v)));
-  overlay.content.appendChild(select);
+export function mount({ meta, onSolved, onFail }) {
+  const container = document.getElementById("puzzle-container");
+  if (!container) {
+    dwarn("Aucun container pour le puzzle !");
+    return;
+  }
 
-  const ok = makeBtn("Valider"), cancel = makeBtn("Abandon");
-  overlay.content.appendChild(ok); overlay.content.appendChild(cancel);
+  // Nettoyer le container avant de créer le puzzle
+  container.innerHTML = "";
+  dlog(`Mount puzzle: ${meta.title}`);
 
-  ok.addEventListener("click", ()=> {
-    if(select.value.startsWith("12")) {
-      playActionEffect("collect", "item"); // son réussite
-      onSolved({score:90});
-      cleanup();
-      startNextMiniGame(); // passe au mini-jeu suivant
-    } else {
-      playActionEffect("error"); // son erreur
-      alert("Ce n'est pas minuit");
-      onFail({penalty:15});
-    }
+  // Création d'un élément puzzle (exemple simple)
+  const puzzleEl = document.createElement("div");
+  puzzleEl.className = "puzzle";
+  puzzleEl.innerHTML = `
+    <p>🕰️ Résolvez l'énigme de l'horloge !</p>
+    <button id="solve-clock">Résoudre</button>
+    <button id="fail-clock">Échouer</button>
+  `;
+  container.appendChild(puzzleEl);
+
+  // Bouton résoudre
+  document.getElementById("solve-clock").addEventListener("click", () => {
+    // Supprime le puzzle du DOM
+    container.innerHTML = "";
+    dlog(`Puzzle résolu: ${meta.title}`);
+    if (onSolved) onSolved({ score: 90 });
   });
 
-  cancel.addEventListener("click", ()=>{
-    playActionEffect("error");
-    onFail({penalty:10});
-    cleanup();
+  // Bouton échouer
+  document.getElementById("fail-clock").addEventListener("click", () => {
+    container.innerHTML = "";
+    dlog(`Puzzle échoué: ${meta.title}`);
+    if (onFail) onFail({ penalty: 50 });
   });
-
-  function cleanup(){ overlay.remove(); }
 }
-
-function makeOverlay(title, subtitle){ 
-  const ov=document.createElement("div");
-  ov.className="puzzle-overlay";
-  ov.style.position="fixed"; ov.style.left=0; ov.style.top=0;
-  ov.style.right=0; ov.style.bottom=0;
-  ov.style.display="flex"; ov.style.alignItems="center"; ov.style.justifyContent="center";
-  const box=document.createElement("div"); box.className="puzzle-container";
-  const h=document.createElement("h3"); h.textContent=title; box.appendChild(h);
-  const s=document.createElement("p"); s.textContent=subtitle; box.appendChild(s);
-  ov.appendChild(box); document.body.appendChild(ov);
-  return {overlay:ov, content:box, remove:()=>ov.remove()};
-}
-
-function makeBtn(txt){ const b=document.createElement("button"); b.textContent=txt; b.style.margin="6px"; return b; }
-export function unmount(){}
