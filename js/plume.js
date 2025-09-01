@@ -1,29 +1,33 @@
-/**
- * Animation plume style écriture
- * @param {HTMLElement} container
- * @param {string} text
- * @param {object} options
- */
-export function animatePlume(container, text, options = {}) {
-  const { speed = 40, caret = true } = options;
-  container.innerHTML = "";
-
-  return new Promise((resolve) => {
-    let i = 0;
-    const caretEl = document.createElement("span");
-    caretEl.classList.add("caret");
-    if (caret) container.appendChild(caretEl);
-
-    function typeNext() {
-      if (i < text.length) {
-        caretEl.insertAdjacentText("beforebegin", text[i]);
-        i++;
-        setTimeout(typeNext, speed);
-      } else {
-        caretEl.remove();
-        resolve();
-      }
+// plume.js : Effets d'écriture type plume dans un grimoire
+export function typeWriterEffect(element, text, speed = 50) {
+  element.textContent = "";
+  let i = 0;
+  const interval = setInterval(() => {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      i++;
+    } else {
+      clearInterval(interval);
     }
-    typeNext();
-  });
+  }, speed);
 }
+
+// Effets d'intro multiples
+export const intros = [
+  "Bienvenue jeune aventurier, le royaume vous attend...",
+  "La nuit tombe sur le royaume oublié, votre destin commence ici...",
+  "Les étoiles s'alignent pour révéler votre chemin..."
+];
+
+// Effets de fin personnalisées
+export const victoryMessages = [
+  "Félicitations, héros ! Le royaume est sauvé !",
+  "Votre courage et votre intelligence ont triomphé !",
+  "Les arcanes du royaume vous remercient !"
+];
+
+export const defeatMessages = [
+  "Le royaume s'effondre... Votre mission échouée.",
+  "Les ténèbres ont vaincu, le royaume est perdu.",
+  "Vous avez échoué, mais l'aventure continue..."
+];
