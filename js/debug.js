@@ -1,4 +1,4 @@
-// Petit utilitaire de debug : affiche dans console ET #debug-log si présent
+// Petit utilitaire de debug : affiche dans console ET #debug-log si présent.
 export let VERBOSE = true;
 
 export function setVerbose(v) {
