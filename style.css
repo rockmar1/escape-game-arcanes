@@ -1,188 +1,117 @@
-/* --- Reset & base --- */
 body {
   margin: 0;
   padding: 0;
   font-family: "Cinzel", serif;
-  background: url("assets/images/decor-magique.jpg") no-repeat center center fixed;
+  background: #1b1b1b url("assets/images/background.jpg") no-repeat center center fixed;
   background-size: cover;
-  color: #f5f5f5;
+  color: #fdf5e6;
   text-align: center;
-  min-height: 100vh;
 }
 
-/* Title look */
-h1, h2, h3 {
-  font-family: "Cinzel", serif;
-  text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
-}
-
-/* Buttons */
-button {
-  background: linear-gradient(90deg,#6a1b9a,#8e24aa);
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  margin-top: 14px;
-  font-size: 16px;
-  cursor: pointer;
-  border-radius: 10px;
-  transition: transform .15s ease, box-shadow .15s;
-}
-button:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.4); }
-
-/* --- Screens --- */
+/* Ecrans */
 .screen {
   display: none;
-  min-height: 100vh;
-  box-sizing: border-box;
-  padding: 60px 20px;
-  position: relative;
-}
-.screen.active, .screen:not(.hidden) { display:block; }
-
-/* Keep content centered */
-.screen > .content {
-  max-width: 960px;
-  margin: 0 auto;
+  padding: 20px;
 }
 
-/* --- HUD (top right) --- */
-#hud {
+.screen.active {
+  display: block;
+}
+
+/* HUD joueur */
+.hud {
   position: fixed;
-  top: 18px;
-  right: 18px;
-  background: rgba(10,10,10,0.6);
-  border: 1px solid rgba(212,175,55,0.18);
-  padding: 10px 14px;
-  border-radius: 12px;
-  z-index: 1200;
-  display: none; /* caché par défaut */
-  align-items: center;
-  gap: 12px;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.2em;
+  padding: 10px;
+  background: rgba(0,0,0,0.6);
+  border: 2px solid #d4af37;
+  border-radius: 8px;
+  z-index: 1000;
 }
-#hud.visible { display:flex; }
-#hud #hud-player { font-weight:600; margin-right:8px; }
-#hud #score { font-weight:600; color: #ffd966; margin-right:8px; }
 
-/* timer */
-#hud-timer {
-  font-size: 18px;
-  font-weight:700;
-  color: #8fe39a;
-  transition: color .2s ease;
+.hud.hidden {
+  display: none;
 }
-#hud-timer.warning { color: orange; }
-#hud-timer.danger { color: #ff4444; animation: blink 1s infinite; }
 
-/* blink */
-@keyframes blink { 50%{opacity:0.15;} }
+/* Timer dynamique */
+#timer.red {
+  color: red;
+}
+#timer.blink {
+  animation: blink 1s step-start infinite;
+}
+@keyframes blink {
+  50% { opacity: 0; }
+}
 
-/* --- Intro / containers (parchemin look) --- */
-.intro-container, .victory-container, .defeat-container {
-  max-width: 880px;
-  margin: 18px auto;
-  padding: 28px;
-  background: linear-gradient(180deg, rgba(10,8,7,0.85), rgba(20,16,12,0.85));
-  border-radius: 12px;
-  border: 1px solid rgba(212,175,55,0.18);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-  color: #f5eedc; /* parchmentish */
+/* Parchment / Intro / Effet plume */
+.parchment {
+  background: url("assets/images/parchment.jpg") no-repeat center center;
+  background-size: cover;
+  padding: 40px;
+  border: 3px solid #d4af37;
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 50px auto;
+  font-family: "Special Elite", cursive;
+  color: #2b1d0e;
   text-align: left;
-  line-height: 1.7;
-  font-size: 20px;
-  white-space: pre-wrap;
+  white-space: pre-line;
 }
 
-/* smaller text on small screens */
-@media (max-width:600px){
-  .intro-container, .victory-container, .defeat-container{ font-size:16px; padding:16px; }
-}
-
-/* --- Effet plume: characters --- */
-/* Each character will be an inline-block with initial invisible state */
-.plume-char {
+/* Effet caret plume */
+.caret {
   display: inline-block;
-  opacity: 0;
-  transform: translateY(-8px) scale(0.98);
-  transition: opacity 120ms ease, transform 130ms ease;
-  white-space: pre-wrap;
+  width: 8px;
+  background: #2b1d0e;
+  animation: blink 1s step-start infinite;
 }
 
-/* When shown, become visible and settle in place */
-.plume-char.visible {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-
-/* caret (optional) */
-.plume-caret {
-  display:inline-block;
-  width: 10px;
-  height: 1.2em;
-  background: linear-gradient(180deg,#d4af37,#a67c1a);
-  margin-left: 6px;
-  vertical-align: bottom;
-  animation: caret-blink 0.8s steps(1) infinite;
-}
-@keyframes caret-blink { 50%{opacity:0;} 100%{opacity:1;} }
-
-/* --- Victory/defeat screen backgrounds --- */
-/* full-screen hero image, dim overlay so text is readable */
-#screen-victory {
-  background-image: url("assets/images/victoire.jpg");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  position: relative;
-  color: #fff;
-}
-#screen-defeat {
-  background-image: url("assets/images/defaite.jpg");
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
-  position: relative;
-  color: #fff;
-}
-
-/* overlay to darken image and show content */
-.screen.hero .overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.6));
-  z-index:1;
-}
-#screen-victory .content, #screen-defeat .content {
-  position: relative;
-  z-index:2;
-}
-
-/* center victory/defeat text nicely */
-#screen-victory .content, #screen-defeat .content {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  min-height: calc(100vh - 120px);
-  flex-direction: column;
-}
-
-/* small responsive tweaks for puzzle container */
-#puzzle-container {
-  max-width: 960px;
-  margin: 20px auto;
-  padding: 12px;
-}
-
-/* --- Admin panel --- */
+/* Panel Admin */
 #admin-panel {
   position: fixed;
-  bottom: 20px;
-  left: 20px;
-  background: rgba(0,0,0,0.85);
-  border: 1px solid rgba(212,175,55,0.12);
-  padding: 12px;
-  border-radius: 10px;
-  z-index: 1300;
+  bottom: 50px;
+  right: 10px;
+  padding: 15px;
+  background: rgba(0,0,0,0.9);
+  color: white;
+  border-radius: 8px;
+  z-index: 1001;
+  max-width: 250px;
 }
-#admin-panel input{ padding:6px; margin:6px 0; width:180px; display:block; }
-#admin-panel button{ margin:4px 2px; padding:6px 8px; }
+
+#admin-toggle {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  z-index: 1002;
+}
+
+/* Images victoire/défaite */
+.ending-image {
+  max-width: 300px;
+  margin: 20px auto;
+  display: block;
+}
+
+/* Boutons */
+button {
+  padding: 8px 12px;
+  margin: 5px;
+  background-color: #d4af37;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  color: #1b1b1b;
+}
+
+button:hover {
+  background-color: #bfa238;
+}
