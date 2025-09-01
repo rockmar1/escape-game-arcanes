@@ -1,35 +1,60 @@
-import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
+import { initRouter, goToScreen, startNextMiniGame, resetGame } from "./router.js";
 import { setPlayerName } from "./state.js";
 import { initAdminPanel } from "./admin.js";
-import { initAudioOnUserGesture } from "./audio.js";
+import { playAudioForScreen } from "./audio.js";
+import { dlog, dwarn } from "./debug.js";
 
+// =====================
+// Initialisation
+// =====================
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[DBG] 🎮 Initialisation du jeu...");
+  dlog("🎮 Initialisation du jeu...");
 
+  // Initialisation router
   initRouter();
-  initAdminPanel(); // panel admin
 
+  // Initialisation panel admin
+  initAdminPanel();
+
+  // Boutons
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
 
-  document.addEventListener("click", firstClickHandler, { once: true });
-
-  function firstClickHandler() {
-    console.log("[DBG] 🖱️ Premier clic -> initAudioOnUserGesture()");
-    try { initAudioOnUserGesture(); } catch (e) { console.warn("initAudioOnUserGesture() failed", e); }
+  if (!startBtn || !beginBtn) {
+    dwarn("Boutons start ou begin non trouvés !");
+    return;
   }
 
-  startBtn?.addEventListener("click", () => {
+  // === Écran pseudo ===
+  startBtn.addEventListener("click", () => {
     const name = document.getElementById("player-name").value.trim();
-    if (!name) { alert("Entre un pseudo pour commencer !"); return; }
+    if (!name) {
+      alert("Entrez un pseudo pour commencer !");
+      return;
+    }
     setPlayerName(name);
-    console.log("[DBG] ✅ Pseudo validé :", name);
+
+    // Passage à l'intro
     goToScreen("intro");
+    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
+
+    // Jouer la musique d'intro
+    playAudioForScreen("intro");
   });
 
-  beginBtn?.addEventListener("click", () => {
-    console.log("[DBG] 🖱️ Clic #begin-game -> startNextMiniGame()");
+  // === Écran intro -> début aventure ===
+  beginBtn.addEventListener("click", () => {
+    // Afficher HUD
+    const hud = document.getElementById("hud");
+    if (hud) hud.classList.remove("hidden");
+
+    // Passage au jeu
     goToScreen("game");
+
+    // Lancer premier mini-jeu
     startNextMiniGame();
+
+    // Jouer musique de jeu
+    playAudioForScreen("game");
   });
 });
