@@ -1,54 +1,69 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escape Game Arcanes</title>
-<link rel="stylesheet" href="style.css">
-<link rel="icon" type="image/vnd.icon" href=" (assets/images/favicon.ico">
+  <meta charset="UTF-8" />
+  <title>Escape Game des Arcanes</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
+  <!-- HUD (masqué par défaut) -->
+  <div id="hud" class="hud hidden">
+    <div id="hud-timer">10:00</div>
+  </div>
 
-<!-- HUD -->
-<div id="hud">
-  <div id="hud-player">👤 Joueur</div>
-  <div id="score">⭐ 0</div>
-  <div id="timer">⏳ 00:00</div>
-</div>
+  <!-- Écran pseudo -->
+  <div id="screen-pseudo" class="screen">
+    <h1>Entrez votre pseudo</h1>
+    <input type="text" id="playerName" placeholder="Votre pseudo" />
+    <button id="btnStart">Commencer</button>
+  </div>
 
-<!-- Écrans -->
-<div id="screen-pseudo" class="screen active">
-  <h1>Entrez votre pseudo</h1>
-  <input id="player-name" type="text" placeholder="Votre pseudo">
-  <button id="start-btn">Commencer</button>
-</div>
+  <!-- Écran intro -->
+  <div id="screen-intro" class="screen hidden">
+    <div class="intro-container">
+      <div id="introText" class="typewriter"></div>
+    </div>
+  </div>
 
-<div id="screen-intro" class="screen">
-  <div id="intro-content"></div>
-  <button id="begin-game">Entrer dans le jeu</button>
-</div>
+  <!-- Écran jeu -->
+  <div id="screen-game" class="screen hidden">
+    <h2>Énigmes</h2>
+    <div id="puzzle-container"></div>
+  </div>
 
-<div id="screen-game" class="screen">
-  <h2>Mini-jeux en cours...</h2>
-  <div id="game-container"></div>
-</div>
+  <!-- Écran victoire -->
+  <div id="screen-victory" class="screen hidden">
+    <h2>Victoire !</h2>
+    <div class="victory-container">
+      <p id="victoryText"></p>
+    </div>
+    <button onclick="restartGame()">Rejouer</button>
+  </div>
 
-<div id="screen-victory" class="screen">
-  <h1>Victoire !</h1>
-  <div id="victory-content"></div>
-  <button id="victory-btn">Voir fin</button>
-</div>
+  <!-- Écran défaite -->
+  <div id="screen-defeat" class="screen hidden">
+    <h2>Défaite...</h2>
+    <div class="defeat-container">
+      <p id="defeatText"></p>
+    </div>
+    <button onclick="restartGame()">Rejouer</button>
+  </div>
 
-<div id="screen-defeat" class="screen">
-  <h1>Défaite...</h1>
-  <div id="defeat-content"></div>
-  <button id="defeat-btn">Voir fin</button>
-</div>
+  <!-- Panel admin -->
+  <div id="admin-panel" class="hidden">
+    <h3>Panel Admin</h3>
+    <input type="password" id="admin-password" placeholder="Mot de passe admin" />
+    <button id="btn-admin-login">Connexion</button>
+    <div id="admin-actions" class="hidden">
+      <button id="btn-skip">Skip puzzle</button>
+      <button id="btn-force-win">Forcer victoire</button>
+      <button id="btn-force-lose">Forcer défaite</button>
+      <button id="btn-reset">Reset</button>
+    </div>
+  </div>
 
-<script type="module" src="js/main.js"></script>
-<script src="js/audio.js" type="module"></script>
-<script src="js/router.js" type="module"></script>
-<script src="js/admin.js" type="module"></script>
-<script src="js/state.js" type="module"></script>
+  <!-- Scripts -->
+  <script type="module" src="main.js"></script>
 </body>
 </html>
