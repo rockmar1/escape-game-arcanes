@@ -1,25 +1,28 @@
-import { dlog } from "./debug.js";
-
 let state = {
   playerName: "",
   score: 0,
-  debug: true
+  debug: false
 };
 
-// Joueur
+// === Gestion joueur ===
 export function setPlayerName(name) {
   state.playerName = name;
-  const el = document.getElementById("hud-player");
-  if (el) el.textContent = `👤 ${name}`;
-  dlog(`Pseudo défini : ${name}`);
+  const hudPlayer = document.getElementById("hud-player");
+  if (hudPlayer) hudPlayer.textContent = `👤 ${name}`;
 }
-export function getPlayerName() { return state.playerName; }
+export function getPlayerName() {
+  return state.playerName;
+}
 
-// Score
+// === Score ===
 export function setScore(value) {
   state.score = value;
-  const el = document.getElementById("score");
-  if (el) el.textContent = `⭐ ${value}`;
+  const scoreEl = document.getElementById("score");
+  if (scoreEl) scoreEl.textContent = `⭐ ${value}`;
 }
-export function addScore(amount) { setScore(state.score + amount); }
-export function getScore() { return state.score; }
+export function addScore(amount) {
+  setScore(state.score + amount);
+}
+export function getScore() {
+  return state.score;
+}
