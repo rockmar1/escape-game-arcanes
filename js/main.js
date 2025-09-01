@@ -1,60 +1,45 @@
-import { initRouter, goToScreen, startNextMiniGame, resetGame } from "./router.js";
+import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
 import { setPlayerName } from "./state.js";
+import { dlog } from "./debug.js";
 import { initAdminPanel } from "./admin.js";
-import { playAudioForScreen } from "./audio.js";
-import { dlog, dwarn } from "./debug.js";
+import { initAudioOnUserGesture } from "./audio.js";
 
-// =====================
-// Initialisation
-// =====================
 document.addEventListener("DOMContentLoaded", () => {
   dlog("🎮 Initialisation du jeu...");
 
   // Initialisation router
   initRouter();
 
-  // Initialisation panel admin
+  // Admin panel
   initAdminPanel();
 
-  // Boutons
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
 
-  if (!startBtn || !beginBtn) {
-    dwarn("Boutons start ou begin non trouvés !");
-    return;
-  }
-
-  // === Écran pseudo ===
-  startBtn.addEventListener("click", () => {
-    const name = document.getElementById("player-name").value.trim();
-    if (!name) {
-      alert("Entrez un pseudo pour commencer !");
-      return;
-    }
-    setPlayerName(name);
-
-    // Passage à l'intro
-    goToScreen("intro");
-    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
-
-    // Jouer la musique d'intro
-    playAudioForScreen("intro");
+  // Premier clic utilisateur -> init audio
+  document.body.addEventListener("click", function firstClickHandler(){
+    initAudioOnUserGesture();
+    document.body.removeEventListener("click", firstClickHandler);
   });
 
-  // === Écran intro -> début aventure ===
+  // Entrer le pseudo
+  startBtn.addEventListener("click", () => {
+    const name = document.getElementById("player-name").value.trim();
+    if (!name) { alert("Entre un pseudo pour commencer !"); return; }
+    setPlayerName(name);
+    dlog("✅ Pseudo validé : "+name);
+    goToScreen("intro");
+  });
+
+  // Lancer le jeu après l’intro
   beginBtn.addEventListener("click", () => {
-    // Afficher HUD
-    const hud = document.getElementById("hud");
-    if (hud) hud.classList.remove("hidden");
-
-    // Passage au jeu
-    goToScreen("game");
-
-    // Lancer premier mini-jeu
+    document.getElementById("hud").classList.remove("hidden");
     startNextMiniGame();
+  });
 
-    // Jouer musique de jeu
-    playAudioForScreen("game");
+  // Recommencer
+  const restartBtns = [document.getElementById("restart-btn"), document.getElementById("restart-btn-2")];
+  restartBtns.forEach(btn => {
+    if(btn) btn.addEventListener("click", () => location.reload());
   });
 });
