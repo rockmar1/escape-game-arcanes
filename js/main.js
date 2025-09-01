@@ -1,70 +1,61 @@
-import { initRouter, goToScreen } from "./router.js";
-import { setPlayerName } from "./state.js";
+import { initRouter, goToScreen, startNextMiniGame, startTimer, resetGame } from "./router.js";
+import { setPlayerName, debugLog } from "./state.js";
 import { dlog, derr, dwarn } from "./debug.js";
-import "./admin.js"; // Active le panneau admin
-import "./audio.js"; // Gère les sons globaux
+import { initAudioOnUserGesture, playAudioForScreen } from "./audio.js";
+import "./admin.js"; // Panel admin
 
-// =====================
-// Initialisation
-// =====================
+dlog("🎮 Initialisation du jeu...");
+
 document.addEventListener("DOMContentLoaded", () => {
-  dlog("🎮 Initialisation du jeu...");
-
+  // --- Initialisation écran pseudo ---
   initRouter();
 
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
+  const playerInput = document.getElementById("player-name");
 
-  if (!startBtn) {
-    derr("⚠️ Bouton #start-btn introuvable dans le DOM !");
-  } else {
-    dlog("✅ Bouton #start-btn trouvé");
+  if (!startBtn || !beginBtn || !playerInput) {
+    derr("Éléments HTML manquants : #start-btn, #begin-game, #player-name");
+    return;
   }
 
-  if (!beginBtn) {
-    dwarn("⚠️ Bouton #begin-game introuvable (intro) !");
-  } else {
-    dlog("✅ Bouton #begin-game trouvé");
+  dlog("✅ Boutons et input trouvés");
+
+  // --- Fonction utilitaire pour init audio + debug ---
+  function firstUserInteraction() {
+    dlog("🖱️ Premier clic utilisateur détecté -> initAudioOnUserGesture()");
+    initAudioOnUserGesture();
+    document.removeEventListener("click", firstUserInteraction);
+    document.removeEventListener("keydown", firstUserInteraction);
   }
 
-  // Entrer le pseudo
-  if (startBtn) {
-    startBtn.addEventListener("click", () => {
-      dlog("🖱️ Clic sur #start-btn");
-      const input = document.getElementById("player-name");
-      if (!input) {
-        derr("Champ #player-name introuvable !");
-        return;
-      }
-      const name = input.value.trim();
-      dlog("Pseudo saisi:", name || "(vide)");
+  document.addEventListener("click", firstUserInteraction);
+  document.addEventListener("keydown", firstUserInteraction);
 
-      if (!name) {
-        alert("Entre un pseudo pour commencer !");
-        return;
-      }
+  // --- Clic sur "Commencer" ---
+  startBtn.addEventListener("click", () => {
+    dlog("🖱️ Clic sur #start-btn");
 
-      setPlayerName(name);
-      dlog("✅ Pseudo validé :", name);
+    const name = playerInput.value.trim();
+    if (!name) {
+      alert("Entre un pseudo pour commencer !");
+      return;
+    }
+    setPlayerName(name);
+    dlog(`✅ Pseudo validé : ${name}`);
 
-      const introContent = document.getElementById("intro-content");
-      if (introContent) {
-        introContent.textContent = `Bienvenue ${name}, le royaume t’attend...`;
-        dlog("Texte intro mis à jour.");
-      } else {
-        dwarn("⚠️ Élément #intro-content manquant.");
-      }
+    // Affichage intro
+    goToScreen("intro");
+    const introContent = document.getElementById("intro-content");
+    if (introContent) introContent.textContent = `Bienvenue ${name}, le royaume t’attend...`;
+    playAudioForScreen("intro");
+  });
 
-      goToScreen("intro");
-    });
-  }
-
-  // Lancer le jeu après l’intro
-  if (beginBtn) {
-    beginBtn.addEventListener("click", () => {
-      dlog("🖱️ Clic sur #begin-game");
-      goToScreen("game");
-      dlog("🚪 Passage à l’écran de jeu !");
-    });
-  }
+  // --- Clic sur "Entrer dans le royaume" ---
+  beginBtn.addEventListener("click", () => {
+    dlog("🖱️ Clic sur #begin-game -> début aventure");
+    goToScreen("game");
+    playAudioForScreen("game");
+    startNextMiniGame(); // Lancer le premier mini-jeu et le timer
+  });
 });
