@@ -1,63 +1,44 @@
-// audio.js
 import { dlog, dwarn } from "./debug.js";
 
-let globalAmbience = null;
+let currentBgAudio = null;
 
 export function initAudioOnUserGesture() {
-    dlog("initAudioOnUserGesture() appelé");
-    if(globalAmbience) return;
-    globalAmbience = new Audio("assets/audio/ambiance_intro.mp3");
-    globalAmbience.loop = true;
-    globalAmbience.volume = 0.5;
-    globalAmbience.play().catch(()=>{});
+  dlog("initAudioOnUserGesture() appelé");
+  if(!currentBgAudio) {
+    currentBgAudio = new Audio("assets/audio/intro.mp3");
+    currentBgAudio.loop = true;
+    currentBgAudio.play().catch(()=>{});
+  }
 }
 
-export function playAudioForScreen(screen) {
-    dlog("playAudioForScreen()", screen);
-    if(globalAmbience){ globalAmbience.pause(); globalAmbience=null; }
-    let src="";
-    switch(screen){
-        case "pseudo":
-        case "intro": src="assets/audio/intro.mp3"; break;
-        case "game": src="assets/audio/ambiance.mp3"; break;
-        case "victory": case "defeat": src=""; break;
-        default: src="assets/audio/ambiance.mp3";
-    }
-    if(src){
-        globalAmbience = new Audio(src);
-        globalAmbience.loop=true;
-        globalAmbience.volume=0.5;
-        globalAmbience.play().catch(()=>{});
-    }
+export function playAudioForScreen(screenName) {
+  dlog(`playAudioForScreen(${screenName})`);
+  if(currentBgAudio) currentBgAudio.pause();
+
+  let src = "";
+  switch(screenName){
+    case "intro": src="assets/audio/intro.mp3"; break;
+    case "game": src="assets/audio/ambiance.mp3"; break;
+    default: return;
+  }
+  currentBgAudio = new Audio(src);
+  currentBgAudio.loop = true;
+  currentBgAudio.play().catch(()=>{ dwarn("playAudio bloqué") });
 }
 
-export function stopAllAudio(){
-    if(globalAmbience){ globalAmbience.pause(); globalAmbience=null; }
+export function stopAllAudio() { if(currentBgAudio){ currentBgAudio.pause(); currentBgAudio=null; } }
+export function switchToStressAmbience() {
+  if(currentBgAudio) currentBgAudio.pause();
+  currentBgAudio = new Audio("assets/audio/ambiance_stress.mp3");
+  currentBgAudio.loop = true;
+  currentBgAudio.play().catch(()=>{ dwarn("Stress audio bloqué") });
 }
-
-export function switchToStressAmbience(){
-    stopAllAudio();
-    globalAmbience = new Audio("assets/audio/ambiance_stress.mp3");
-    globalAmbience.loop=true;
-    globalAmbience.volume=0.5;
-    globalAmbience.play().catch(()=>{});
-}
-
-export function switchToNormalAmbience(){
-    stopAllAudio();
-    globalAmbience = new Audio("assets/audio/ambiance.mp3");
-    globalAmbience.loop=true;
-    globalAmbience.volume=0.5;
-    globalAmbience.play().catch(()=>{});
-}
-
-export function playActionEffect(effect){
-    let src="";
-    switch(effect){
-        case "bonus": src="assets/audio/bonus.mp3"; break;
-        case "error": src="assets/audio/erreur.mp3"; break;
-        default: dwarn("Effet audio inconnu : " + effect); return;
-    }
-    const sfx = new Audio(src);
-    sfx.play().catch(()=>{});
+export function playActionEffect(effect) {
+  let src = "";
+  switch(effect) {
+    case "bonus": src="assets/audio/bonus.mp3"; break;
+    case "error": src="assets/audio/error.mp3"; break;
+    default: dwarn(`Effet audio inconnu : ${effect}`); return;
+  }
+  new Audio(src).play().catch(()=>{});
 }
