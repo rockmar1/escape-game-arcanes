@@ -1,57 +1,146 @@
+// audio.js
 import { dlog, dwarn } from "./debug.js";
 
-let currentAudio = null;
-let introAudio = null;
-let normalAudio = null;
-let stressAudio = null;
+// === État audio global ===
+let audioContextInitialized = false;
+let currentAmbience = null;
+let stressAmbience = null;
+let normalAmbience = null;
+let effectAudios = {};
 
+// Musiques
+const ASSETS = {
+  intro: "assets/audio/intro.mp3",
+  game: "assets/audio/ambiance.mp3",
+  stress: "assets/audio/ambiance_stress.mp3",
+  victory: "assets/audio/victoire.mp3",
+  defeat: "assets/audio/defaite.mp3",
+  effects: {
+    bonus: "assets/audio/bonus.mp3",
+    error: "assets/audio/error.mp3"
+  }
+};
+
+// ==============================
+// Initialisation clic utilisateur
+// ==============================
 export function initAudioOnUserGesture() {
+  if (audioContextInitialized) return;
   dlog("initAudioOnUserGesture() appelé");
-  if (!introAudio) {
-    introAudio = new Audio("assets/audio/intro.mp3");
-    introAudio.loop = true;
-    introAudio.volume = 0.5;
-    introAudio.play().catch(()=>{});
-  }
-}
 
-export function playAudioForScreen(screen) {
-  stopAllAudio(false);
-  dlog(`playAudioForScreen(${screen})`);
-  if (screen==="intro" && introAudio) introAudio.play().catch(()=>{});
-  if (screen==="game") {
-    if (!normalAudio) {
-      normalAudio = new Audio("assets/audio/ambiance.mp3");
-      normalAudio.loop=true; normalAudio.volume=0.5;
+  // créer un objet AudioContext si nécessaire
+  try {
+    normalAmbience = new Audio(ASSETS.game);
+    normalAmbience.loop = true;
+    normalAmbience.volume = 0.5;
+
+    stressAmbience = new Audio(ASSETS.stress);
+    stressAmbience.loop = true;
+    stressAmbience.volume = 0.5;
+
+    currentAmbience = new Audio(ASSETS.intro);
+    currentAmbience.loop = true;
+    currentAmbience.volume = 0.5;
+    currentAmbience.play().catch(() => dwarn("Lecture intro bloquée"));
+
+    // Précharger effets
+    for (const [key, src] of Object.entries(ASSETS.effects)) {
+      effectAudios[key] = new Audio(src);
     }
-    normalAudio.play().catch(()=>{});
+
+    audioContextInitialized = true;
+    dlog("Audio global initialisé");
+  } catch (e) {
+    dwarn("Erreur initAudioOnUserGesture:", e);
   }
-  if (screen==="victory" || screen==="defeat") stopAllAudio();
 }
 
-export function stopAllAudio(stopIntro=true) {
-  [introAudio, normalAudio, stressAudio].forEach(a=>{if(a){a.pause(); a.currentTime=0;}});
-  if(stopIntro) introAudio=null;
+// ==============================
+// Gestion de l’ambiance
+// ==============================
+export function switchToNormalAmbience() {
+  stopCurrentAmbience();
+  if (!normalAmbience) return;
+  currentAmbience = normalAmbience;
+  currentAmbience.play().catch(() => dwarn("Lecture normalAmbience bloquée"));
+  dlog("switchToNormalAmbience()");
 }
 
 export function switchToStressAmbience() {
+  stopCurrentAmbience();
+  if (!stressAmbience) return;
+  currentAmbience = stressAmbience;
+  currentAmbience.play().catch(() => dwarn("Lecture stressAmbience bloquée"));
   dlog("switchToStressAmbience()");
-  if(normalAudio){normalAudio.pause();}
-  if(!stressAudio){
-    stressAudio = new Audio("assets/audio/ambiance_stress.mp3");
-    stressAudio.loop = true; stressAudio.volume=0.6;
+}
+
+export function stopAllAudio() {
+  if (currentAmbience) { currentAmbience.pause(); currentAmbience.currentTime = 0; }
+  if (normalAmbience) { normalAmbience.pause(); normalAmbience.currentTime = 0; }
+  if (stressAmbience) { stressAmbience.pause(); stressAmbience.currentTime = 0; }
+  for (const key in effectAudios) {
+    effectAudios[key].pause();
+    effectAudios[key].currentTime = 0;
   }
-  stressAudio.play().catch(()=>{});
+  dlog("stopAllAudio()");
 }
 
-export function switchToNormalAmbience() {
-  if(stressAudio){ stressAudio.pause(); stressAudio.currentTime=0;}
-  if(normalAudio){ normalAudio.play().catch(()=>{});}
+function stopCurrentAmbience() {
+  if (currentAmbience) currentAmbience.pause();
 }
 
-export function playActionEffect(name) {
-  const valid = ["bonus","error"];
-  if(!valid.includes(name)) return dwarn(`Effet audio inconnu : ${name}`);
-  const audio = new Audio(`assets/audio/${name}.mp3`);
-  audio.play().catch(()=>{});
+// ==============================
+// Effets sonores
+// ==============================
+export function playActionEffect(effectName) {
+  const audio = effectAudios[effectName];
+  if (!audio) {
+    dwarn(`Effet audio inconnu : ${effectName}`);
+    return;
+  }
+  audio.currentTime = 0;
+  audio.play().catch(() => dwarn(`playActionEffect(${effectName}) bloqué`));
+  dlog(`playActionEffect(${effectName})`);
+}
+
+// ==============================
+// Lecture selon écran
+// ==============================
+export function playAudioForScreen(screenName) {
+  dlog(`playAudioForScreen(${screenName})`);
+  if (!audioContextInitialized) return;
+
+  switch (screenName) {
+    case "pseudo":
+      stopCurrentAmbience();
+      currentAmbience = new Audio(ASSETS.intro);
+      currentAmbience.loop = true;
+      currentAmbience.volume = 0.5;
+      currentAmbience.play().catch(() => dwarn("Intro bloquée"));
+      break;
+
+    case "intro":
+      stopCurrentAmbience();
+      currentAmbience = new Audio(ASSETS.intro);
+      currentAmbience.loop = true;
+      currentAmbience.volume = 0.5;
+      currentAmbience.play().catch(() => dwarn("Intro bloquée"));
+      break;
+
+    case "game":
+      stopCurrentAmbience();
+      currentAmbience = normalAmbience;
+      currentAmbience.play().catch(() => dwarn("Ambiance jeu bloquée"));
+      break;
+
+    case "victory":
+    case "defeat":
+      stopAllAudio();
+      const jingle = screenName === "victory" ? ASSETS.victory : ASSETS.defeat;
+      new Audio(jingle).play().catch(()=>dwarn("Jingle final bloqué"));
+      break;
+
+    default:
+      dwarn(`playAudioForScreen(): écran inconnu ${screenName}`);
+  }
 }
