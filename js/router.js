@@ -1,4 +1,4 @@
-// router.js (instrumenté).
+// router.js (instrumenté)
 // Gère navigation écran, timer, enchaînement mini-jeux, et coupe/commute l'audio.
 // Utilise debug.js pour logs visibles dans #debug-log + console.
 
