@@ -1,29 +1,45 @@
 import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
-import { setPlayerName } from "./state.js";
+import { setPlayerName, getPlayerName } from "./state.js";
+import { initAdminPanel } from "./admin.js";
 import { initAudioOnUserGesture } from "./audio.js";
+import { dlog } from "./debug.js";
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener("DOMContentLoaded", () => {
+  dlog("🎮 Initialisation du jeu...");
+
+  // Initialisation router et HUD
   initRouter();
 
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
-  const inputName = document.getElementById("player-name");
+  const playerInput = document.getElementById("player-name");
 
-  const firstClickHandler = ()=>{
+  dlog("✅ Boutons et input trouvés");
+
+  // Initialisation panel admin
+  initAdminPanel();
+
+  // Premier clic utilisateur pour activer audio
+  document.body.addEventListener("click", firstClickHandler, { once: true });
+
+  function firstClickHandler() {
+    dlog("🖱️ Premier clic -> initAudioOnUserGesture()");
     initAudioOnUserGesture();
-    document.removeEventListener("click", firstClickHandler);
-  };
-  document.addEventListener("click", firstClickHandler);
+  }
 
-  startBtn.addEventListener("click", ()=>{
-    const name = inputName.value.trim();
-    if(!name){ alert("Entre un pseudo!"); return; }
+  // Entrer le pseudo
+  startBtn.addEventListener("click", () => {
+    const name = playerInput.value.trim();
+    if (!name) return alert("Entre un pseudo pour commencer !");
     setPlayerName(name);
-    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t'attend...`;
+    dlog(`✅ Pseudo validé : ${name}`);
     goToScreen("intro");
+    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
   });
 
-  beginBtn.addEventListener("click", ()=>{
+  // Lancer le jeu après l’intro
+  beginBtn.addEventListener("click", () => {
+    dlog("🖱️ Clic #begin-game -> startNextMiniGame()");
     goToScreen("game");
     startNextMiniGame();
   });
