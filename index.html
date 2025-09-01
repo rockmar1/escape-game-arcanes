@@ -1,61 +1,56 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Escape Game Arcanes</title>
-  <link rel="stylesheet" href="style.css">
-  <!-- CryptoJS pour hash admin -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape Game Arcanes</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- === HUD === -->
-  <div id="hud" class="hidden">
-    <span id="hud-player">👤 </span>
+  <!-- HUD joueur -->
+  <div id="hud" class="hud">
+    <span id="hud-player">👤 Joueur</span>
     <span id="score">⭐ 0</span>
-    <span id="timer">⏳ 0:00</span>
+    <span id="timer">⏳ 10:00</span>
   </div>
 
-  <!-- === Écran Pseudo === -->
+  <!-- Écran pseudo -->
   <div id="screen-pseudo" class="screen">
-    <h1>Bienvenue dans l'aventure</h1>
-    <input type="text" id="player-name" placeholder="Entrez votre pseudo">
+    <h2>Bienvenue dans l'Escape Game</h2>
+    <input id="player-name" type="text" placeholder="Entrez votre pseudo">
     <button id="start-btn">Commencer</button>
   </div>
 
-  <!-- === Écran Intro === -->
+  <!-- Écran intro -->
   <div id="screen-intro" class="screen hidden">
-    <h2 id="intro-content"></h2>
+    <h2>Introduction</h2>
+    <p id="intro-content"></p>
     <button id="begin-game">Lancer l'aventure</button>
   </div>
 
-  <!-- === Écran Game === -->
+  <!-- Écran jeu -->
   <div id="screen-game" class="screen hidden">
-    <h2>Mini-jeu en cours...</h2>
-    <div id="game"></div>
+    <div id="game" class="game-container"></div>
   </div>
 
-  <!-- === Écran Victoire === -->
+  <!-- Écran victoire -->
   <div id="screen-victory" class="screen hidden">
-    <h1>🎉 Vous avez gagné !</h1>
-    <button onclick="resetGame()">Rejouer</button>
+    <h2>🎉 Victoire !</h2>
+    <button onclick="location.reload()">Rejouer</button>
   </div>
 
-  <!-- === Écran Défaite === -->
+  <!-- Écran défaite -->
   <div id="screen-defeat" class="screen hidden">
-    <h1>😢 Vous avez perdu...</h1>
-    <button onclick="resetGame()">Rejouer</button>
+    <h2>💀 Défaite !</h2>
+    <button onclick="location.reload()">Réessayer</button>
   </div>
 
   <!-- Scripts -->
-  <script type="module">
-    import { initRouter, resetGame } from './js/router.js';
-    import { initAdminPanel } from './js/admin.js';
-    import './js/main.js';
-
-    document.addEventListener('DOMContentLoaded', () => {
-      initRouter();
-      initAdminPanel();
-    });
-  </script>
+  <script type="module" src="js/debug.js"></script>
+  <script type="module" src="js/state.js"></script>
+  <script type="module" src="js/audio.js"></script>
+  <script type="module" src="js/router.js"></script>
+  <script type="module" src="js/admin.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
