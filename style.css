@@ -9,7 +9,7 @@ body {
 }
 
 h1, h2, h3 {
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 8px rgba(255,255,255,0.8);
 }
 
 button {
@@ -32,8 +32,11 @@ button:hover {
   display: none;
   padding: 30px;
 }
-.screen.active {
+.screen.active, .screen:not(.hidden) {
   display: block;
+}
+.hidden {
+  display: none;
 }
 
 /* HUD */
@@ -45,7 +48,19 @@ button:hover {
   margin-top: 10px;
 }
 
-/* Caché par défaut */
-.hidden {
-  display: none;
+/* Puzzle container */
+#puzzle-container {
+  margin-top: 20px;
+}
+
+/* Admin panel */
+#admin-panel {
+  position: fixed;
+  bottom: 50px;
+  right: 10px;
+  background: rgba(0,0,0,0.9);
+  padding: 15px;
+  border-radius: 8px;
+  color: white;
+  z-index: 1000;
 }
