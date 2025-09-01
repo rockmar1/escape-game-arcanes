@@ -4,72 +4,58 @@
   <meta charset="UTF-8">
   <title>Escape Game Arcanes</title>
   <link rel="stylesheet" href="style.css">
+  <!-- CryptoJS pour hash admin -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
+  <!-- === HUD === -->
+  <div id="hud" class="hidden">
+    <span id="hud-player">👤 </span>
+    <span id="score">⭐ 0</span>
+    <span id="timer">⏳ 0:00</span>
+  </div>
 
-  <!-- HUD (masqué au départ) -->
-  <div id="hud">
-  <span id="hud-player">👤</span>
-  <span id="score">⭐ 0</span>
-  <span id="timer">⏳ 10:00</span>
-</div>
-<div id="puzzle-container"></div>
-
-  <!-- Écrans -->
+  <!-- === Écran Pseudo === -->
   <div id="screen-pseudo" class="screen">
-    <h1>Bienvenue dans le Royaume Oublié</h1>
+    <h1>Bienvenue dans l'aventure</h1>
     <input type="text" id="player-name" placeholder="Entrez votre pseudo">
     <button id="start-btn">Commencer</button>
   </div>
 
+  <!-- === Écran Intro === -->
   <div id="screen-intro" class="screen hidden">
-    <h2 id="intro-content">Intro du jeu...</h2>
+    <h2 id="intro-content"></h2>
     <button id="begin-game">Lancer l'aventure</button>
   </div>
 
+  <!-- === Écran Game === -->
   <div id="screen-game" class="screen hidden">
-    <div id="game-container"></div>
+    <h2>Mini-jeu en cours...</h2>
+    <div id="game"></div>
   </div>
 
+  <!-- === Écran Victoire === -->
   <div id="screen-victory" class="screen hidden">
-    <h1>🏆 Victoire !</h1>
+    <h1>🎉 Vous avez gagné !</h1>
     <button onclick="resetGame()">Rejouer</button>
   </div>
 
+  <!-- === Écran Défaite === -->
   <div id="screen-defeat" class="screen hidden">
-    <h1>💀 Défaite...</h1>
-    <button onclick="resetGame()">Réessayer</button>
+    <h1>😢 Vous avez perdu...</h1>
+    <button onclick="resetGame()">Rejouer</button>
   </div>
 
   <!-- Scripts -->
   <script type="module">
-    import { initRouter, goToScreen, startNextMiniGame, resetGame } from "./js/router.js";
-    import { setPlayerName } from "./js/state.js";
-    import { initAdminPanel } from "./js/admin.js";
-    import { dlog } from "./js/debug.js";
+    import { initRouter, resetGame } from './js/router.js';
+    import { initAdminPanel } from './js/admin.js';
+    import './js/main.js';
 
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener('DOMContentLoaded', () => {
       initRouter();
-      initAdminPanel(); // Panel admin
-
-      const startBtn = document.getElementById("start-btn");
-      const beginBtn = document.getElementById("begin-game");
-
-      startBtn.addEventListener("click", () => {
-        const name = document.getElementById("player-name").value.trim();
-        if (!name) return alert("Entrez un pseudo !");
-        setPlayerName(name);
-        dlog(`Pseudo validé : ${name}`);
-        goToScreen("intro");
-      });
-
-      beginBtn.addEventListener("click", () => {
-        // Afficher HUD
-        document.getElementById("hud").classList.remove("hidden");
-        startNextMiniGame();
-      });
+      initAdminPanel();
     });
   </script>
-
 </body>
 </html>
