@@ -1,117 +1,185 @@
-body {
+/* RESET DE BASE */
+* {
   margin: 0;
   padding: 0;
-  font-family: "Cinzel", serif;
-  background: #1b1b1b url("assets/images/background.jpg") no-repeat center center fixed;
+  box-sizing: border-box;
+  font-family: 'Garamond', serif;
+}
+
+body {
+  background: url('assets/images/decor-magique.jpg') no-repeat center center fixed;
   background-size: cover;
-  color: #fdf5e6;
-  text-align: center;
+  color: #fff;
+  overflow: hidden;
+  font-size: 16px;
+  line-height: 1.5;
 }
 
-/* Ecrans */
-.screen {
-  display: none;
-  padding: 20px;
-}
-
-.screen.active {
-  display: block;
-}
-
-/* HUD joueur */
+/* HUD (caché au départ) */
 .hud {
   position: fixed;
   top: 10px;
   left: 10px;
-  right: 10px;
+  z-index: 100;
   display: flex;
-  justify-content: space-between;
-  font-size: 1.2em;
-  padding: 10px;
-  background: rgba(0,0,0,0.6);
-  border: 2px solid #d4af37;
-  border-radius: 8px;
-  z-index: 1000;
+  gap: 15px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .hud.hidden {
   display: none;
 }
 
-/* Timer dynamique */
-#timer.red {
-  color: red;
+.hud span {
+  display: flex;
+  align-items: center;
 }
-#timer.blink {
-  animation: blink 1s step-start infinite;
+
+.hud #timer {
+  color: #ff4500;
+  animation: blink 1s infinite alternate;
 }
+
 @keyframes blink {
+  0% { opacity: 1; }
   50% { opacity: 0; }
+  100% { opacity: 1; }
 }
 
-/* Parchment / Intro / Effet plume */
-.parchment {
-  background: url("assets/images/parchment.jpg") no-repeat center center;
-  background-size: cover;
-  padding: 40px;
-  border: 3px solid #d4af37;
-  border-radius: 10px;
+/* ÉCRANS */
+.screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.screen.active {
+  display: flex;
+}
+
+.screen input,
+.screen button {
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 1.2rem;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  cursor: pointer;
+}
+
+.screen input:focus,
+.screen button:focus {
+  outline: none;
+  border-color: #ff4500;
+}
+
+/* INTRO & FIN */
+#intro-content,
+#victory h2,
+#defeat h2 {
+  font-size: 1.5rem;
+  line-height: 1.8;
   max-width: 600px;
-  margin: 50px auto;
-  font-family: "Special Elite", cursive;
-  color: #2b1d0e;
-  text-align: left;
-  white-space: pre-line;
+  margin: 0 auto;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
 }
 
-/* Effet caret plume */
-.caret {
-  display: inline-block;
-  width: 8px;
-  background: #2b1d0e;
-  animation: blink 1s step-start infinite;
+#intro-content {
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
-/* Panel Admin */
+.ending-image {
+  max-width: 100%;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+/* PANEL ADMIN */
 #admin-panel {
   position: fixed;
-  bottom: 50px;
-  right: 10px;
-  padding: 15px;
-  background: rgba(0,0,0,0.9);
-  color: white;
-  border-radius: 8px;
-  z-index: 1001;
-  max-width: 250px;
+  top: 20px;
+  right: 20px;
+  width: 300px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+  color: #fff;
+  display: none;
+  z-index: 200;
 }
 
-#admin-toggle {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  padding: 5px 10px;
-  z-index: 1002;
+#admin-panel h3 {
+  margin-bottom: 15px;
 }
 
-/* Images victoire/défaite */
-.ending-image {
-  max-width: 300px;
-  margin: 20px auto;
+#admin-panel input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+#admin-panel button {
+  width: 100%;
+  padding: 10px;
+  font-size: 1.2rem;
+  border: 2px solid #fff;
+  border-radius: 5px;
+  background: #ff4500;
+  color: #fff;
+  cursor: pointer;
+}
+
+#admin-panel button:hover {
+  background: #ff6347;
+}
+
+/* PANEL ADMIN VISIBLE */
+#admin-panel.visible {
   display: block;
 }
 
-/* Boutons */
-button {
-  padding: 8px 12px;
-  margin: 5px;
-  background-color: #d4af37;
-  border: none;
-  border-radius: 5px;
-  font-size: 1em;
-  cursor: pointer;
-  color: #1b1b1b;
+/* EFFET PLUME */
+@keyframes typewriter {
+  0% { width: 0; }
+  100% { width: 100%; }
 }
 
-button:hover {
-  background-color: #bfa238;
+.typewriter {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid #fff;
+  animation: typewriter 4s steps(40) 1s 1 normal both;
+}
+
+/* EFFET PLUME POUR INTRO */
+#intro-content {
+  font-family: 'Courier New', Courier, monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  animation: typewriter 4s steps(40) 1s 1 normal both;
 }
