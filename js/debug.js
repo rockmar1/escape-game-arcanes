@@ -1,43 +1,18 @@
-// Petit utilitaire de debug : affiche dans console ET #debug-log si présent.
-export let VERBOSE = true;
-
-export function setVerbose(v) {
-  VERBOSE = !!v;
+// debug.js
+export function dlog(msg) {
+    console.log("[DBG]", msg);
+    const log = document.getElementById("debug-log");
+    if(log) { log.textContent += "[DBG] " + msg + "\n"; log.scrollTop = log.scrollHeight; }
 }
 
-/** debug log (info) */
-export function dlog(...args) {
-  if (!VERBOSE) return;
-  console.log("[DBG]", ...args);
-  const panel = document.getElementById("debug-log");
-  if (panel) {
-    try {
-      panel.textContent += "[DBG] " + args.map(a => String(a)).join(" ") + "\n";
-      panel.scrollTop = panel.scrollHeight;
-    } catch (e) { /* ignore */ }
-  }
+export function derr(msg, err) {
+    console.error("[ERR]", msg, err || "");
+    const log = document.getElementById("debug-log");
+    if(log) { log.textContent += "[ERR] " + msg + " " + (err || "") + "\n"; log.scrollTop = log.scrollHeight; }
 }
 
-/** warning */
-export function dwarn(...args) {
-  console.warn("[WARN]", ...args);
-  const panel = document.getElementById("debug-log");
-  if (panel) {
-    try {
-      panel.textContent += "[WARN] " + args.map(a => String(a)).join(" ") + "\n";
-      panel.scrollTop = panel.scrollHeight;
-    } catch (e) { /* ignore */ }
-  }
-}
-
-/** error */
-export function derr(...args) {
-  console.error("[ERR]", ...args);
-  const panel = document.getElementById("debug-log");
-  if (panel) {
-    try {
-      panel.textContent += "[ERR] " + args.map(a => String(a)).join(" ") + "\n";
-      panel.scrollTop = panel.scrollHeight;
-    } catch (e) { /* ignore */ }
-  }
+export function dwarn(msg) {
+    console.warn("[WARN]", msg);
+    const log = document.getElementById("debug-log");
+    if(log) { log.textContent += "[WARN] " + msg + "\n"; log.scrollTop = log.scrollHeight; }
 }
