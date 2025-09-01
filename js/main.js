@@ -7,6 +7,10 @@ import { initAudioOnUserGesture } from "./audio.js";
 document.addEventListener("DOMContentLoaded", () => {
   dlog("🎮 Initialisation du jeu...");
 
+  // HUD caché au départ
+  const hud = document.getElementById("hud");
+  if(hud) hud.classList.add("hidden");
+
   // Initialisation router
   initRouter();
 
@@ -29,11 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setPlayerName(name);
     dlog("✅ Pseudo validé : "+name);
     goToScreen("intro");
+    // Lancement de l’intro animée
+    animateIntro(name);
   });
 
   // Lancer le jeu après l’intro
   beginBtn.addEventListener("click", () => {
-    document.getElementById("hud").classList.remove("hidden");
+    if(hud) hud.classList.remove("hidden");
     startNextMiniGame();
   });
 
@@ -43,3 +49,17 @@ document.addEventListener("DOMContentLoaded", () => {
     if(btn) btn.addEventListener("click", () => location.reload());
   });
 });
+
+// === Animations Intro ===
+function animateIntro(playerName){
+  const introContent = document.getElementById("intro-content");
+  if(!introContent) return;
+  introContent.textContent = "";
+  const text = `Bienvenue ${playerName}, le royaume des arcanes t’attend...\nPrépare ton grimoire et tes sorts...`;
+  let i=0;
+  const interval = setInterval(()=>{
+    introContent.textContent += text.charAt(i);
+    i++;
+    if(i>=text.length) clearInterval(interval);
+  }, 50); // effet "plume"
+}
