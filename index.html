@@ -1,51 +1,54 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Escape Game Arcanes</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escape Game Arcanes</title>
+<link rel="stylesheet" href="style.css">
+<link rel="icon" type="image/vnd.icon" href=" (assets/images/favicon.ico">
 </head>
 <body>
-  <div id="hud" class="hidden">
-    <span id="hud-player">👤</span>
-    <span id="score">⭐ 0</span>
-    <span id="timer">⏳ 0:00</span>
-  </div>
 
-  <div id="screen-pseudo" class="screen active">
-    <h1>Entrez votre pseudo</h1>
-    <input type="text" id="player-name" placeholder="Votre pseudo">
-    <button id="start-btn">Commencer</button>
-  </div>
+<!-- HUD -->
+<div id="hud">
+  <div id="hud-player">👤 Joueur</div>
+  <div id="score">⭐ 0</div>
+  <div id="timer">⏳ 00:00</div>
+</div>
 
-  <div id="screen-intro" class="screen hidden">
-    <h1 id="intro-title">Le Royaume Oublié</h1>
-    <p id="intro-content" class="typewriter"></p>
-    <button id="begin-game">Commencer l’aventure</button>
-  </div>
+<!-- Écrans -->
+<div id="screen-pseudo" class="screen active">
+  <h1>Entrez votre pseudo</h1>
+  <input id="player-name" type="text" placeholder="Votre pseudo">
+  <button id="start-btn">Commencer</button>
+</div>
 
-  <div id="screen-game" class="screen hidden">
-    <h1>Enigme en cours</h1>
-    <div id="puzzle-container"></div>
-  </div>
+<div id="screen-intro" class="screen">
+  <div id="intro-content"></div>
+  <button id="begin-game">Entrer dans le jeu</button>
+</div>
 
-  <div id="screen-victory" class="screen hidden">
-    <h1 id="victory-title">Victoire !</h1>
-    <p id="victory-msg"></p>
-    <button id="restart-btn">Recommencer</button>
-  </div>
+<div id="screen-game" class="screen">
+  <h2>Mini-jeux en cours...</h2>
+  <div id="game-container"></div>
+</div>
 
-  <div id="screen-defeat" class="screen hidden">
-    <h1 id="defeat-title">Défaite...</h1>
-    <p id="defeat-msg"></p>
-    <button id="restart-btn-2">Réessayer</button>
-  </div>
+<div id="screen-victory" class="screen">
+  <h1>Victoire !</h1>
+  <div id="victory-content"></div>
+  <button id="victory-btn">Voir fin</button>
+</div>
 
-  <script src="js/debug.js" type="module"></script>
-  <script src="js/state.js" type="module"></script>
-  <script src="js/audio.js" type="module"></script>
-  <script src="js/router.js" type="module"></script>
-  <script src="js/admin.js" type="module"></script>
-  <script src="js/main.js" type="module"></script>
+<div id="screen-defeat" class="screen">
+  <h1>Défaite...</h1>
+  <div id="defeat-content"></div>
+  <button id="defeat-btn">Voir fin</button>
+</div>
+
+<script type="module" src="js/main.js"></script>
+<script src="js/audio.js" type="module"></script>
+<script src="js/router.js" type="module"></script>
+<script src="js/admin.js" type="module"></script>
+<script src="js/state.js" type="module"></script>
 </body>
 </html>
