@@ -1,74 +1,51 @@
+/* === Styles généraux === */
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #111;
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.hud {
-  position: fixed;
-  top: 0;
-  width: 100%;
-  background: rgba(0,0,0,0.8);
-  padding: 10px 20px;
-  display: flex;
-  justify-content: space-between;
-  font-size: 16px;
-  z-index: 100;
-}
-
-.screen {
-  width: 100%;
-  max-width: 600px;
-  margin-top: 100px;
+  font-family: 'Cinzel', serif;
+  background: url("assets/images/decor-magique.jpg") no-repeat center center fixed;
+  background-size: cover;
+  color: #f5f5f5;
   text-align: center;
 }
 
-.screen.hidden {
-  display: none;
-}
-
-input[type="text"] {
-  padding: 8px;
-  font-size: 16px;
-  margin-bottom: 10px;
-  width: 80%;
+h1, h2, h3 {
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
 button {
-  padding: 10px 15px;
-  font-size: 16px;
-  margin: 5px;
-  cursor: pointer;
+  background: linear-gradient(90deg, #6a1b9a, #8e24aa);
+  color: white;
   border: none;
-  border-radius: 5px;
-  background: #333;
-  color: #fff;
-  transition: 0.2s;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: transform 0.2s, background 0.3s;
 }
-
 button:hover {
-  background: #555;
+  transform: scale(1.05);
+  background: linear-gradient(90deg, #8e24aa, #ab47bc);
 }
 
-.game-container {
-  min-height: 400px;
-  border: 2px solid #444;
-  margin-top: 20px;
-  padding: 10px;
-  background: #222;
+/* === Écrans === */
+.screen {
+  display: none;
+  padding: 30px;
+}
+.screen.active {
+  display: block;
 }
 
-/* Admin panel */
-#admin-panel {
-  font-size: 14px;
+/* HUD */
+#hud {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 20px;
+  margin-top: 10px;
 }
 
-#admin-panel button {
-  width: 100%;
-  margin: 3px 0;
-  background: #666;
+/* Caché par défaut */
+.hidden {
+  display: none;
 }
