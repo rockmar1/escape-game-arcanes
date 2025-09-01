@@ -1,4 +1,3 @@
-// debug.js : console uniquement
-export function dlog(...args) { console.log("[DBG]", ...args); }
-export function dwarn(...args) { console.warn("[WARN]", ...args); }
-export function derr(...args) { console.error("[ERR]", ...args); }
+export function dlog(msg){ console.log("[DBG]", msg); }
+export function dwarn(msg){ console.warn("[WARN]", msg); }
+export function derr(msg){ console.error("[ERR]", msg); }
