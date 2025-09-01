@@ -3,143 +3,186 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Cinzel", serif;
-  background: #1b1b1b;
+  background: url("assets/images/decor-magique.jpg") no-repeat center center fixed;
+  background-size: cover;
   color: #f5f5f5;
   text-align: center;
-  overflow: hidden;
+  min-height: 100vh;
 }
 
+/* Title look */
 h1, h2, h3 {
-  font-family: "Uncial Antiqua", cursive;
-  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  font-family: "Cinzel", serif;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.7);
 }
 
+/* Buttons */
 button {
-  background: #4a2c2a;
-  border: 2px solid #d4af37;
-  color: #f5f5f5;
-  padding: 10px 20px;
-  margin-top: 20px;
-  font-size: 18px;
+  background: linear-gradient(90deg,#6a1b9a,#8e24aa);
+  color: white;
+  border: none;
+  padding: 10px 18px;
+  margin-top: 14px;
+  font-size: 16px;
   cursor: pointer;
-  border-radius: 8px;
-  transition: 0.3s;
+  border-radius: 10px;
+  transition: transform .15s ease, box-shadow .15s;
 }
-
-button:hover {
-  background: #d4af37;
-  color: #1b1b1b;
-}
+button:hover{ transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0,0,0,.4); }
 
 /* --- Screens --- */
 .screen {
   display: none;
-  height: 100vh;
-  width: 100%;
-  padding: 40px;
+  min-height: 100vh;
   box-sizing: border-box;
+  padding: 60px 20px;
+  position: relative;
+}
+.screen.active, .screen:not(.hidden) { display:block; }
+
+/* Keep content centered */
+.screen > .content {
+  max-width: 960px;
+  margin: 0 auto;
 }
 
-.screen.active {
-  display: block;
-}
-
-.hidden {
-  display: none !important;
-}
-
-/* --- HUD --- */
+/* --- HUD (top right) --- */
 #hud {
   position: fixed;
-  top: 20px;
-  right: 20px;
-  background: rgba(0,0,0,0.6);
-  padding: 10px 20px;
-  border: 2px solid #d4af37;
+  top: 18px;
+  right: 18px;
+  background: rgba(10,10,10,0.6);
+  border: 1px solid rgba(212,175,55,0.18);
+  padding: 10px 14px;
   border-radius: 12px;
-  box-shadow: 0 0 10px #d4af37;
-  z-index: 1000;
+  z-index: 1200;
+  display: none; /* caché par défaut */
+  align-items: center;
+  gap: 12px;
 }
+#hud.visible { display:flex; }
+#hud #hud-player { font-weight:600; margin-right:8px; }
+#hud #score { font-weight:600; color: #ffd966; margin-right:8px; }
 
+/* timer */
 #hud-timer {
-  font-size: 24px;
-  font-weight: bold;
-  color: #00ff88;
-  transition: color 0.5s ease-in-out;
+  font-size: 18px;
+  font-weight:700;
+  color: #8fe39a;
+  transition: color .2s ease;
 }
+#hud-timer.warning { color: orange; }
+#hud-timer.danger { color: #ff4444; animation: blink 1s infinite; }
 
-/* Timer rouge dans les 5 dernières minutes */
-#hud-timer.warning {
-  color: #ff4444;
-}
+/* blink */
+@keyframes blink { 50%{opacity:0.15;} }
 
-/* Timer clignotant dans la dernière minute */
-#hud-timer.danger {
-  color: #ff0000;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0.4; }
-}
-
-/* --- Intro / Victoire / Défaite --- */
+/* --- Intro / containers (parchemin look) --- */
 .intro-container, .victory-container, .defeat-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 40px;
-  font-size: 22px;
-  line-height: 1.6;
-  background: rgba(20,20,20,0.85);
-  border: 2px solid #d4af37;
-  border-radius: 16px;
-  box-shadow: 0 0 20px rgba(212,175,55,0.7);
+  max-width: 880px;
+  margin: 18px auto;
+  padding: 28px;
+  background: linear-gradient(180deg, rgba(10,8,7,0.85), rgba(20,16,12,0.85));
+  border-radius: 12px;
+  border: 1px solid rgba(212,175,55,0.18);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+  color: #f5eedc; /* parchmentish */
   text-align: left;
-  white-space: pre-line;
-  font-family: "Dancing Script", cursive;
+  line-height: 1.7;
+  font-size: 20px;
+  white-space: pre-wrap;
 }
 
-/* --- Effet plume (écriture progressive) --- */
-.typewriter {
+/* smaller text on small screens */
+@media (max-width:600px){
+  .intro-container, .victory-container, .defeat-container{ font-size:16px; padding:16px; }
+}
+
+/* --- Effet plume: characters --- */
+/* Each character will be an inline-block with initial invisible state */
+.plume-char {
   display: inline-block;
-  border-right: 2px solid #d4af37;
-  white-space: nowrap;
-  overflow: hidden;
-  animation: typing 4s steps(50, end), blinkCaret 0.7s step-end infinite;
+  opacity: 0;
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity 120ms ease, transform 130ms ease;
+  white-space: pre-wrap;
 }
 
-@keyframes typing {
-  from { width: 0; }
-  to { width: 100%; }
+/* When shown, become visible and settle in place */
+.plume-char.visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
 }
 
-@keyframes blinkCaret {
-  from, to { border-color: transparent; }
-  50% { border-color: #d4af37; }
+/* caret (optional) */
+.plume-caret {
+  display:inline-block;
+  width: 10px;
+  height: 1.2em;
+  background: linear-gradient(180deg,#d4af37,#a67c1a);
+  margin-left: 6px;
+  vertical-align: bottom;
+  animation: caret-blink 0.8s steps(1) infinite;
+}
+@keyframes caret-blink { 50%{opacity:0;} 100%{opacity:1;} }
+
+/* --- Victory/defeat screen backgrounds --- */
+/* full-screen hero image, dim overlay so text is readable */
+#screen-victory {
+  background-image: url("assets/images/victoire.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: #fff;
+}
+#screen-defeat {
+  background-image: url("assets/images/defaite.jpg");
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  position: relative;
+  color: #fff;
 }
 
-/* --- Panel admin --- */
+/* overlay to darken image and show content */
+.screen.hero .overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.6));
+  z-index:1;
+}
+#screen-victory .content, #screen-defeat .content {
+  position: relative;
+  z-index:2;
+}
+
+/* center victory/defeat text nicely */
+#screen-victory .content, #screen-defeat .content {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height: calc(100vh - 120px);
+  flex-direction: column;
+}
+
+/* small responsive tweaks for puzzle container */
+#puzzle-container {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 12px;
+}
+
+/* --- Admin panel --- */
 #admin-panel {
   position: fixed;
   bottom: 20px;
   left: 20px;
   background: rgba(0,0,0,0.85);
-  border: 2px solid #d4af37;
-  border-radius: 12px;
-  padding: 15px;
-  font-size: 14px;
-  z-index: 2000;
+  border: 1px solid rgba(212,175,55,0.12);
+  padding: 12px;
+  border-radius: 10px;
+  z-index: 1300;
 }
-
-#admin-panel input {
-  padding: 6px;
-  margin: 5px 0;
-  width: 180px;
-}
-
-#admin-panel button {
-  margin: 4px;
-  padding: 6px 10px;
-  font-size: 14px;
-}
+#admin-panel input{ padding:6px; margin:6px 0; width:180px; display:block; }
+#admin-panel button{ margin:4px 2px; padding:6px 8px; }
