@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Jeu Magique</title>
+<title>ESCAPE GAME</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,36 +14,44 @@
   <div id="timer">⏳ 0:00</div>
 </div>
 
-<!-- Screens -->
+<!-- Écran pseudo -->
 <div id="screen-pseudo" class="screen">
   <h2>Entrez votre pseudo</h2>
-  <input type="text" id="player-name" placeholder="Votre pseudo">
+  <input type="text" id="player-name" placeholder="Pseudo">
   <button id="start-btn">Commencer</button>
 </div>
 
+<!-- Écran intro -->
 <div id="screen-intro" class="screen hidden">
-  <h2>Introduction</h2>
-  <p id="intro-content"></p>
-  <button id="begin-game">Commencer l'aventure</button>
+  <div id="intro-content"></div>
+  <button id="begin-game">Lancer l’aventure</button>
 </div>
 
+<!-- Écran jeu -->
 <div id="screen-game" class="screen hidden">
-  <h2>Enigmes</h2>
   <div id="game-content"></div>
 </div>
 
+<!-- Écran victoire -->
 <div id="screen-victory" class="screen hidden">
   <h2>🎉 Victoire !</h2>
-  <button onclick="location.reload()">Rejouer</button>
+  <button onclick="location.reload()">Recommencer</button>
 </div>
 
+<!-- Écran défaite -->
 <div id="screen-defeat" class="screen hidden">
   <h2>💀 Défaite !</h2>
-  <button onclick="location.reload()">Rejouer</button>
+  <button onclick="location.reload()">Recommencer</button>
 </div>
 
-<!-- Debug -->
-<div id="debug-log"></div>
+<!-- Panel Admin -->
+<div id="admin-wrapper">
+  <button id="admin-toggle">⚙</button>
+  <div id="admin-panel" class="hidden">
+    <h3>Admin</h3>
+    <button onclick="resetGame()">Réinitialiser</button>
+  </div>
+</div>
 
 <script type="module" src="js/main.js"></script>
 </body>
