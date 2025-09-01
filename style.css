@@ -8,11 +8,12 @@ body {
   text-align: center;
 }
 
+/* Titres */
 h1, h2, h3 {
   text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
 }
 
-/* === Boutons === */
+/* Boutons */
 button {
   background: linear-gradient(90deg, #6a1b9a, #8e24aa);
   color: white;
@@ -28,7 +29,7 @@ button:hover {
   background: linear-gradient(90deg, #8e24aa, #ab47bc);
 }
 
-/* === Écrans === */
+/* Écrans */
 .screen {
   display: none;
   padding: 30px;
@@ -37,20 +38,31 @@ button:hover {
 .screen:not(.hidden) {
   display: block;
 }
+.hidden {
+  display: none;
+}
 
-/* === HUD === */
+/* HUD */
 #hud {
   display: flex;
   justify-content: center;
   gap: 20px;
   font-size: 20px;
   margin-top: 10px;
+  background: rgba(0,0,0,0.6);
+  padding: 10px;
+  border-radius: 12px;
+  position: fixed;
+  top: 10px;
+  width: 90%;
+  left: 5%;
+  z-index: 1000;
 }
 
-/* Stress timer */
-.stress {
-  color: #ff4444;
-  font-weight: bold;
+/* Game container */
+#game-container {
+  min-height: 300px;
+  margin-top: 20px;
 }
 
 /* === Panel Admin === */
@@ -60,29 +72,26 @@ button:hover {
   right: 10px;
   background: #333;
   color: white;
-  border-radius: 8px;
-  padding: 5px 10px;
-  font-size: 16px;
-  z-index: 1000;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 20px;
   cursor: pointer;
+  z-index: 1000;
 }
 
 #admin-panel {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
   position: fixed;
   bottom: 50px;
   right: 10px;
-  padding: 15px;
   background: rgba(0,0,0,0.9);
-  color: white;
+  padding: 15px;
   border-radius: 8px;
+  color: white;
   max-width: 250px;
   z-index: 1000;
 }
-
-/* Game container pour mini-jeux */
-#game-container {
-  min-height: 300px;
+#admin-panel button {
+  width: 100%;
+  margin-bottom: 8px;
 }
