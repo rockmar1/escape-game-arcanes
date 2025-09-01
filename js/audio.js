@@ -1,70 +1,119 @@
-import { debugLog } from "./state.js";
+import { dlog, dwarn, derr } from "./debug.js";
 
 let ambience = null;
-let ambienceStress = null;
-let currentAmbience = null;
+let currentScreen = null;
+let actionSounds = {};
 
-// Initialiser la musique sur le premier clic utilisateur
+// -----------------------------
+// Initialisation audio après interaction utilisateur
+// -----------------------------
 export function initAudioOnUserGesture() {
   if (!ambience) {
+    dlog("Initialisation de l'audio global");
     ambience = new Audio("assets/audio/ambiance.mp3");
     ambience.loop = true;
     ambience.volume = 0.25;
-  }
-  if (!ambienceStress) {
-    ambienceStress = new Audio("assets/audio/ambiance_stress.mp3");
-    ambienceStress.loop = true;
-    ambienceStress.volume = 0.25;
-  }
-  if (!currentAmbience) {
-    currentAmbience = ambience;
-    currentAmbience.play().catch(e => debugLog("Ambience play blocked: " + e));
+    ambience.play().catch(e => dwarn("Ambience play bloquée", e));
   }
 }
 
-// Arrêter toutes les musiques
+// -----------------------------
+// Jouer la musique associée à un écran
+// -----------------------------
+export function playAudioForScreen(screenName) {
+  dlog(`playAudioForScreen("${screenName}")`);
+
+  stopAllAudio(); // coupe toutes les musiques avant
+
+  switch(screenName) {
+    case "pseudo":
+      // Pas de musique
+      currentScreen = null;
+      break;
+    case "intro":
+      currentScreen = new Audio("assets/audio/intro.mp3");
+      break;
+    case "game":
+      currentScreen = new Audio("assets/audio/ambiance.mp3");
+      currentScreen.loop = true;
+      currentScreen.volume = 0.25;
+      break;
+    case "victory":
+      currentScreen = new Audio("assets/audio/victoire.mp3");
+      break;
+    case "defeat":
+      currentScreen = new Audio("assets/audio/defaite.mp3");
+      break;
+    default:
+      dlog(`Audio inconnu pour l'écran : ${screenName}`);
+      currentScreen = null;
+  }
+
+  if (currentScreen) {
+    currentScreen.play().catch(e => dwarn("playAudioForScreen() bloqué", e));
+  }
+}
+
+// -----------------------------
+// Couper toutes les musiques
+// -----------------------------
 export function stopAllAudio() {
-  [ambience, ambienceStress].forEach(a => {
-    if (a) { a.pause(); a.currentTime = 0; }
-  });
-  currentAmbience = null;
+  if (ambience) { ambience.pause(); ambience.currentTime = 0; }
+  if (currentScreen) { currentScreen.pause(); currentScreen.currentTime = 0; }
 }
 
-// Jouer un son ponctuel (bonus, erreur, potion, rune…)
+// -----------------------------
+// Passer en ambiance stress
+// -----------------------------
+export function switchToStressAmbience() {
+  if (!ambience) return;
+  dlog("switchToStressAmbience()");
+  try {
+    ambience.pause();
+    ambience = new Audio("assets/audio/ambiance_stress.mp3");
+    ambience.loop = true;
+    ambience.volume = 0.25;
+    ambience.play().catch(e => dwarn("switchToStressAmbience() play blocked", e));
+  } catch(e){ derr("Erreur switchToStressAmbience", e); }
+}
+
+// -----------------------------
+// Revenir en ambiance normale
+// -----------------------------
+export function switchToNormalAmbience() {
+  if (!ambience) return;
+  dlog("switchToNormalAmbience()");
+  try {
+    ambience.pause();
+    ambience = new Audio("assets/audio/ambiance.mp3");
+    ambience.loop = true;
+    ambience.volume = 0.25;
+    ambience.play().catch(e => dwarn("switchToNormalAmbience() play blocked", e));
+  } catch(e){ derr("Erreur switchToNormalAmbience", e); }
+}
+
+// -----------------------------
+// Effets sonores ponctuels
+// -----------------------------
 export function playActionEffect(name) {
   let src = null;
-  switch (name) {
-    case "potion": src = "assets/audio/potion.mp3"; break;
-    case "rune": src = "assets/audio/rune.mp3"; break;
-    case "etoile": src = "assets/audio/etoile.mp3"; break;
-    case "item": src = "assets/audio/item.mp3"; break;
+  switch(name) {
     case "bonus": src = "assets/audio/bonus.mp3"; break;
     case "error": src = "assets/audio/erreur.mp3"; break;
-    default: src = null;
+    case "teleport": src = "assets/audio/teleportation.mp3"; break;
+    default: dwarn(`Effet audio inconnu : ${name}`); return;
   }
-  if (src) {
-    const s = new Audio(src);
-    s.volume = 0.5;
-    s.play().catch(() => {});
-  }
+  const a = new Audio(src);
+  a.volume = 0.5;
+  a.play().catch(e => dwarn("playActionEffect() bloqué", e));
 }
 
-// Passer à la musique stress (quand il reste peu de temps)
-export function switchToStressAmbience() {
-  if (!currentAmbience || currentAmbience === ambienceStress) return;
-  const vol = currentAmbience.volume;
-  currentAmbience.pause();
-  ambienceStress.volume = vol;
-  currentAmbience = ambienceStress;
-  currentAmbience.play().catch(() => {});
-}
-
-// Revenir à la musique normale
-export function switchToNormalAmbience() {
-  if (!currentAmbience || currentAmbience === ambience) return;
-  const vol = currentAmbience.volume;
-  currentAmbience.pause();
-  ambience.volume = vol;
-  currentAmbience = ambience;
-  currentAmbience.play().catch(() => {});
+// -----------------------------
+// Jouer un son ponctuel générique
+// -----------------------------
+export function playOne(src, volume = 0.4) {
+  const a = new Audio(src);
+  a.volume = volume;
+  a.play().catch(e => dwarn("playOne() bloqué", e));
+  return a;
 }
