@@ -9,17 +9,17 @@
 <body>
   <!-- Écran pseudo -->
   <section id="screen-pseudo" class="screen active">
-    <h1>Les Gardiens du Royaume Oublié</h1>
+    <h1 class="title">Les Gardiens du Royaume Oublié</h1>
     <p>Entre ton pseudo pour commencer :</p>
     <input type="text" id="player-name" placeholder="Ton nom magique...">
-    <button id="start-btn">Commencer l’aventure</button>
+    <button id="start-btn">Commencer</button>
   </section>
 
   <!-- Écran intro -->
   <section id="screen-intro" class="screen hidden">
     <div class="intro-text">
       <h2>Prologue</h2>
-      <p id="intro-content"></p>
+      <p id="intro-content">Bienvenue aventurier...</p>
       <button id="begin-game">Entrer dans le royaume</button>
     </div>
   </section>
@@ -27,9 +27,9 @@
   <!-- Écran jeu -->
   <section id="screen-game" class="screen hidden">
     <header>
-      <h2 id="hud-player"></h2>
+      <h2 id="hud-player">👤 Joueur</h2>
       <div id="hud">
-        <span id="timer" class="timer">⏳ 5:00</span>
+        <span id="timer">⏳ 300s</span>
         <span id="score">⭐ 0</span>
       </div>
     </header>
@@ -41,17 +41,37 @@
   <!-- Écran victoire -->
   <section id="screen-victory" class="screen hidden">
     <h2>🎉 Victoire !</h2>
-    <p id="victory-text"></p>
+    <p id="victory-text">Félicitations, tu as libéré le royaume !</p>
     <button onclick="location.reload()">Rejouer</button>
   </section>
 
   <!-- Écran défaite -->
   <section id="screen-defeat" class="screen hidden">
     <h2>💀 Défaite...</h2>
-    <p id="defeat-text"></p>
+    <p id="defeat-text">Le royaume sombre dans les ténèbres...</p>
     <button onclick="location.reload()">Réessayer</button>
   </section>
 
+  <!-- Panel Admin -->
+  <div id="admin-wrapper">
+    <button id="admin-toggle">⚙️</button>
+    <div id="admin-panel" class="hidden">
+      <h3>🔮 Panneau Admin</h3>
+      <input type="password" id="admin-password" placeholder="Mot de passe...">
+      <button id="admin-login">Connexion</button>
+      <div id="admin-tools" class="hidden">
+        <button id="force-victory">Forcer Victoire</button>
+        <button id="force-defeat">Forcer Défaite</button>
+        <button id="reset-scoreboard">Reset Scores</button>
+        <label>
+          <input type="checkbox" id="debug-mode"> Mode Debug
+        </label>
+        <pre id="debug-log"></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
   <script type="module" src="js/main.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
 </body>
