@@ -1,46 +1,46 @@
-import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
-import { setPlayerName, getPlayerName } from "./state.js";
+import { initRouter, goToScreen, startNextMiniGame, startTimer } from "./router.js";
+import { setPlayerName } from "./state.js";
 import { initAdminPanel } from "./admin.js";
 import { initAudioOnUserGesture } from "./audio.js";
-import { dlog } from "./debug.js";
 
+// =====================
+// Initialisation
+// =====================
 document.addEventListener("DOMContentLoaded", () => {
-  dlog("🎮 Initialisation du jeu...");
+  console.clear();
+  console.log("🎮 Initialisation du jeu...");
 
-  // Initialisation router et HUD
   initRouter();
+  initAdminPanel();
 
   const startBtn = document.getElementById("start-btn");
   const beginBtn = document.getElementById("begin-game");
-  const playerInput = document.getElementById("player-name");
+  const nameInput = document.getElementById("player-name");
 
-  dlog("✅ Boutons et input trouvés");
-
-  // Initialisation panel admin
-  initAdminPanel();
-
-  // Premier clic utilisateur pour activer audio
-  document.body.addEventListener("click", firstClickHandler, { once: true });
-
-  function firstClickHandler() {
-    dlog("🖱️ Premier clic -> initAudioOnUserGesture()");
+  // Premier clic utilisateur -> activer audio
+  document.body.addEventListener("click", function firstClickHandler() {
     initAudioOnUserGesture();
-  }
+    document.body.removeEventListener("click", firstClickHandler);
+  });
 
   // Entrer le pseudo
   startBtn.addEventListener("click", () => {
-    const name = playerInput.value.trim();
-    if (!name) return alert("Entre un pseudo pour commencer !");
+    const name = nameInput.value.trim();
+    if (!name) {
+      alert("Entre un pseudo pour commencer !");
+      return;
+    }
     setPlayerName(name);
-    dlog(`✅ Pseudo validé : ${name}`);
+    console.log(`✅ Pseudo validé : ${name}`);
     goToScreen("intro");
-    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
+    document.getElementById("intro-content").textContent =
+      `Bienvenue ${name}, le royaume t’attend...`;
   });
 
   // Lancer le jeu après l’intro
   beginBtn.addEventListener("click", () => {
-    dlog("🖱️ Clic #begin-game -> startNextMiniGame()");
     goToScreen("game");
+    console.log("🚪 Début de l’aventure !");
     startNextMiniGame();
   });
 });
