@@ -12,7 +12,7 @@ import {
   switchToNormalAmbience
 } from "./audio.js";
 
-// --- Import des puzzles (attends qu'ils existent dans ./puzzles/) ---
+// --- Import des puzzles (assure-toi qu'ils existent dans ./puzzles/) ---
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
 import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
@@ -37,9 +37,9 @@ let timerInterval = null;
 let remaining = 0;
 let timerRunning = false;
 
-// Par défaut le temps total du jeu (secondes). Si tu veux 10min -> 600
-const DEFAULT_TOTAL_TIME = 300; // 300s = 5 min
-const STRESS_THRESHOLD = 300;   // basculer en ambiance_stress quand il reste <= 300s (5min)
+// Par défaut le temps total du jeu (secondes). Exemple : 600 = 10min
+const DEFAULT_TOTAL_TIME = 600; // tu peux modifier selon ton besoin
+const STRESS_THRESHOLD = 300;   // 5 minutes restantes
 
 dlog("router.js chargé");
 
@@ -70,9 +70,7 @@ export function goToScreen(screenName) {
   // Gestion audio à l'arrivée sur des écrans spéciaux
   if (screenName === "victory" || screenName === "defeat") {
     dlog("Arrêt des musiques (victoire/défaite) et jingle final");
-    // Arrêter ambiances
     try { stopAllAudio(); } catch (e) { derr("stopAllAudio() a échoué:", e); }
-    // jouer jingle victoire/défaite si présent
     const jingleSrc = screenName === "victory" ? "assets/audio/victoire.mp3" : "assets/audio/defaite.mp3";
     try { new Audio(jingleSrc).play().catch(()=>{}); } catch (e) { /* ignore */ }
   }
@@ -87,10 +85,9 @@ export function initRouter() {
 }
 
 // -----------------------------
-// Timer (global pour toute la partie)
+// Timer
 // -----------------------------
 export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
-  // Ne relancer le timer que s'il n'est pas déjà lancé
   if (timerRunning) {
     dlog("startTimer() ignoré : timer déjà en cours");
     return;
@@ -106,8 +103,7 @@ export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
     remaining--;
     updateTimerDisplay();
 
-    // bascule en stress si on est passé sous le seuil et que le jeu était plus long que le seuil
-    if (totalSeconds > STRESS_THRESHOLD && remaining <= STRESS_THRESHOLD) {
+    if (totalSeconds > STRESS_THRESHOLD && remaining === STRESS_THRESHOLD) {
       dlog("Seuil stress atteint -> switchToStressAmbience()");
       try { switchToStressAmbience(); } catch (e) { derr("switchToStressAmbience() failed:", e); }
       const timerEl = document.getElementById("timer");
@@ -138,11 +134,9 @@ function updateTimerDisplay() {
 // Mini-jeux / progression
 // -----------------------------
 export function startNextMiniGame() {
-  // Démarre le timer la première fois que l'on entre dans un mini-jeu
   if (!timerRunning) {
     dlog("Premier mini-jeu : démarrage du timer global");
     startTimer(DEFAULT_TOTAL_TIME);
-    // démarrage de l'ambiance normale (si besoin)
     try { initAudioOnUserGesture(); } catch (e) { dlog("initAudioOnUserGesture() failed:", e); }
   }
 
@@ -155,17 +149,13 @@ export function startNextMiniGame() {
   currentPuzzleIndex++;
   dlog(`Lancement puzzle #${currentPuzzleIndex}`);
 
-  // Affiche l'écran de jeu
   goToScreen("game");
 
-  // Met à jour HUD joueur si possible
   const hud = document.getElementById("hud-player");
   if (hud) hud.textContent = `👤 ${getPlayerName()}`;
 
-  // Monte le puzzle
   if (!puzzleModule || typeof puzzleModule.mount !== "function") {
     derr(`Module puzzle invalide à l'index ${currentPuzzleIndex - 1}`);
-    // passe au suivant pour ne pas bloquer
     setTimeout(() => startNextMiniGame(), 300);
     return;
   }
@@ -177,20 +167,17 @@ export function startNextMiniGame() {
         dlog(`Puzzle résolu (+${score || 0})`);
         setScore(getScore() + (score || 0));
         try { playActionEffect("bonus"); } catch (e) { /* ignore */ }
-        // délai court avant de passer au suivant pour laisser l'overlay de succès se terminer
         setTimeout(() => startNextMiniGame(), 250);
       },
       onFail: ({ penalty } = {}) => {
         dlog(`Puzzle échoué (-${penalty || 0})`);
         setScore(Math.max(0, getScore() - (penalty || 0)));
         try { playActionEffect("error"); } catch (e) { /* ignore */ }
-        // on laisse le puzzle décider s'il faut retenter ; par défaut on enchaîne
         setTimeout(() => startNextMiniGame(), 250);
       }
     });
   } catch (e) {
     derr("Erreur lors du mount du puzzle:", e);
-    // éviter de bloquer la progression
     setTimeout(() => startNextMiniGame(), 500);
   }
 }
@@ -205,13 +192,8 @@ export function endGame(victory = true) {
     timerInterval = null;
     timerRunning = false;
   }
-  // Arrêter les ambiances
   try { stopAllAudio(); } catch (e) { dlog("stopAllAudio error:", e); }
-
-  // Afficher écran final
   goToScreen(victory ? "victory" : "defeat");
-
-  // jouer jingle de fin si dispo
   const jingle = victory ? "assets/audio/victoire.mp3" : "assets/audio/defaite.mp3";
   try { new Audio(jingle).play().catch(()=>{}); } catch(e){}
 }
