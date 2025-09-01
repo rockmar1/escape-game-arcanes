@@ -4,13 +4,13 @@ import { playActionEffect, stopAllAudio, switchToStressAmbience, switchToNormalA
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
 
-const puzzles = [puzzleClock, puzzleCrystals /*... autres puzzles */];
-
+const puzzles = [puzzleClock, puzzleCrystals /* autres puzzles */];
 let currentPuzzleIndex = 0;
 let timerInterval = null;
 let remaining = 0;
 const DEFAULT_TOTAL_TIME = 600;
-const STRESS_THRESHOLD = 300;
+const STRESS_THRESHOLD = 300; // 5 min
+const LAST_MINUTE = 60;
 
 export function goToScreen(screenName){
   const all = document.querySelectorAll(".screen");
@@ -19,7 +19,7 @@ export function goToScreen(screenName){
   if(!screenEl){ derr("Écran introuvable: "+screenName); return; }
   all.forEach(s=>s.classList.add("hidden"));
   screenEl.classList.remove("hidden");
-  dlog("Écran affiché: #screen-"+screenName);
+  dlog(`goToScreen(${screenName}) -> #screen-${screenName}`);
 }
 
 export function initRouter(){
@@ -29,11 +29,23 @@ export function initRouter(){
 
 export function startTimer(totalSeconds=DEFAULT_TOTAL_TIME){
   remaining = totalSeconds;
+  const timerEl = document.getElementById("timer");
+
   timerInterval = setInterval(()=>{
     remaining--;
-    const el = document.getElementById("timer");
-    if(el) el.textContent=`⏳ ${Math.floor(remaining/60)}:${String(remaining%60).padStart(2,"0")}`;
-    if(remaining===STRESS_THRESHOLD) switchToStressAmbience();
+    if(!timerEl) return;
+    let minutes = Math.floor(remaining/60);
+    let seconds = remaining%60;
+    timerEl.textContent = `⏳ ${minutes}:${String(seconds).padStart(2,"0")}`;
+
+    // Timer styling
+    timerEl.classList.remove("stress","last-minute","blink");
+    if(remaining<=LAST_MINUTE){
+      timerEl.classList.add("last-minute","blink");
+    } else if(remaining<=STRESS_THRESHOLD){
+      timerEl.classList.add("stress");
+    }
+
     if(remaining<=0){ clearInterval(timerInterval); endGame(false); }
   },1000);
 }
@@ -69,7 +81,6 @@ export function endGame(victory=true){
   clearInterval(timerInterval);
   stopAllAudio();
   goToScreen(victory?"victory":"defeat");
-  // Musique finale
   const jingle=new Audio(`assets/audio/${victory?"victoire":"defaite"}.mp3`);
   jingle.play().catch(()=>{});
 }
