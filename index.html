@@ -2,53 +2,66 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escape Game Arcanes</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="assets/images/favicon.ico">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
+
+  <!-- CryptoJS pour hash admin -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-  <!-- HUD joueur -->
+  <!-- HUD joueur (caché au départ) -->
   <div id="hud" class="hud hidden">
-    <div id="timer">10:00</div>
-    <div id="player-name"></div>
+    <span id="hud-player">👤 Joueur</span>
+    <span id="score">⭐ 0</span>
+    <span id="timer">⏳ 10:00</span>
   </div>
 
-  <!-- Ecran pseudo -->
-  <section id="screen-pseudo" class="screen active">
-    <h1>Entre ton nom d’aventurier</h1>
+  <!-- Écrans -->
+  <div id="screen-pseudo" class="screen active">
     <form id="pseudo-form">
-      <input type="text" id="pseudo-input" placeholder="Ton pseudo" required>
+      <h1>Bienvenue dans le Royaume Oublié</h1>
+      <input type="text" id="pseudo-input" placeholder="Entrez votre pseudo" required>
       <button type="submit">Commencer</button>
     </form>
-  </section>
+  </div>
 
-  <!-- Ecran intro -->
-  <section id="screen-intro" class="screen">
-    <div class="intro-container parchment"></div>
-  </section>
+  <div id="screen-intro" class="screen">
+    <div class="parchment" id="intro-content"></div>
+    <button id="begin-game">Entrer dans l'aventure</button>
+  </div>
 
-  <!-- Ecran jeu -->
-  <section id="screen-game" class="screen">
-    <div id="game-container">
-      <h2>Les énigmes commencent !</h2>
-      <div id="puzzle-container"></div>
-    </div>
-  </section>
+  <div id="screen-game" class="screen">
+    <div id="puzzle-container"></div>
+  </div>
 
-  <!-- Ecran victoire -->
-  <section id="screen-victory" class="screen">
-    <div class="victory-container parchment"></div>
-    <img src="assets/images/victoire.jpg" alt="Victoire" class="ending-image">
-    <button onclick="location.reload()">Rejouer</button>
-  </section>
+  <div id="screen-victory" class="screen">
+    <img class="ending-image" src="assets/images/victory.png" alt="Victoire">
+    <h2>Félicitations ! Vous avez sauvé le royaume !</h2>
+    <button onclick="resetGame()">Rejouer</button>
+  </div>
 
-  <!-- Ecran défaite -->
-  <section id="screen-defeat" class="screen">
-    <div class="defeat-container parchment"></div>
-    <img src="assets/images/defaite.jpg" alt="Défaite" class="ending-image">
-    <button onclick="location.reload()">Réessayer</button>
-  </section>
+  <div id="screen-defeat" class="screen">
+    <img class="ending-image" src="assets/images/defeat.png" alt="Défaite">
+    <h2>Le royaume est perdu...</h2>
+    <button onclick="resetGame()">Recommencer</button>
+  </div>
 
-  <script type="module" src="main.js"></script>
+  <!-- Panel Admin -->
+  <button id="admin-toggle">⚙️ Admin</button>
+  <div id="admin-panel" style="display:none;"></div>
+
+  <!-- JS -->
+  <script type="module" src="js/debug.js"></script>
+  <script type="module" src="js/audio.js"></script>
+  <script type="module" src="js/router.js"></script>
+  <script type="module" src="js/admin.js"></script>
+  <script type="module" src="js/main.js"></script>
+  <script type="module" src="js/plume.js"></script>
 </body>
 </html>
