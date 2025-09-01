@@ -1,49 +1,29 @@
-import { initRouter, goToScreen } from "./router.js";
+import { initRouter, goToScreen, startNextMiniGame, startTimer } from "./router.js";
+import { setPlayerName } from "./state.js";
+import { initAdminPanel } from "./admin.js";
+import { typeWriterEffect, intros } from "./plume.js";
 
-let totalTime = 600; // 10 min
-let remainingTime = totalTime;
-let timerInterval = null;
+document.addEventListener("DOMContentLoaded", ()=>{
+  initRouter();
+  initAdminPanel();
 
-document.addEventListener("DOMContentLoaded", () => {
   const pseudoForm = document.getElementById("pseudo-form");
-
-  pseudoForm.addEventListener("submit", (e) => {
+  const pseudoInput = document.getElementById("pseudo-input");
+  pseudoForm.addEventListener("submit",(e)=>{
     e.preventDefault();
-    const pseudo = document.getElementById("pseudo-input").value.trim();
-    if (!pseudo) return;
-    localStorage.setItem("playerName", pseudo);
-    document.getElementById("player-name").textContent = pseudo;
-    document.getElementById("hud").classList.remove("hidden");
+    const name = pseudoInput.value.trim();
+    if(!name) return alert("Entrez un pseudo !");
+    setPlayerName(name);
+
     goToScreen("intro");
-    startTimer();
+    const introContent = document.getElementById("intro-content");
+    const randomIntro = intros[Math.floor(Math.random()*intros.length)];
+    typeWriterEffect(introContent, `Bienvenue ${name} !\n${randomIntro}`, 50);
   });
 
-  initRouter();
+  document.getElementById("begin-game").addEventListener("click",()=>{
+    goToScreen("game");
+    startTimer();
+    startNextMiniGame();
+  });
 });
-
-// === Timer dynamique ===
-function startTimer() {
-  const timerEl = document.getElementById("timer");
-  remainingTime = totalTime;
-  timerInterval = setInterval(() => {
-    remainingTime--;
-
-    let minutes = Math.floor(remainingTime / 60);
-    let seconds = remainingTime % 60;
-    timerEl.textContent = `${minutes}:${String(seconds).padStart(2, "0")}`;
-
-    // Couleurs et clignotement
-    if (remainingTime <= 60) {
-      timerEl.classList.add("blink");
-      timerEl.classList.add("red");
-    } else if (remainingTime <= 300) {
-      timerEl.classList.add("red");
-    }
-
-    if (remainingTime <= 0) {
-      clearInterval(timerInterval);
-      timerEl.textContent = "0:00";
-      goToScreen("defeat");
-    }
-  }, 1000);
-}
