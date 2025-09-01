@@ -1,50 +1,53 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Escape Game Arcanes</title>
-<link rel="stylesheet" href="style.css">
-<script type="module" src="js/main.js"></script>
-<script type="module" src="js/admin.js"></script>
+  <meta charset="UTF-8">
+  <title>Escape Game Arcanes</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <!-- HUD -->
+  <div id="hud">
+    <div id="hud-player">👤 -</div>
+    <div id="score">⭐ 0</div>
+    <div id="timer">⏳ 0:00</div>
+  </div>
 
-<!-- === HUD visible dès le début === -->
-<div id="hud">
-  <span id="hud-player">👤 Joueur</span>
-  <span id="score">⭐ 0</span>
-  <span id="timer">⏳ 0:00</span>
-</div>
+  <!-- Écrans -->
+  <div id="screen-pseudo" class="screen active">
+    <h1>Bienvenue Aventurier</h1>
+    <input type="text" id="player-name" placeholder="Ton pseudo">
+    <button id="start-btn">Commencer</button>
+  </div>
 
-<!-- === Écrans === -->
-<div id="screen-pseudo" class="screen active">
-  <h1>Bienvenue dans les Arcanes !</h1>
-  <input id="player-name" type="text" placeholder="Entrez votre pseudo" />
-  <button id="start-btn">Commencer</button>
-</div>
+  <div id="screen-intro" class="screen">
+    <h1 id="intro-content">Bienvenue...</h1>
+    <button id="begin-game">Lancer l'aventure</button>
+  </div>
 
-<div id="screen-intro" class="screen">
-  <h2 id="intro-content">Introduction...</h2>
-  <button id="begin-game">Lancer l’aventure</button>
-</div>
+  <div id="screen-game" class="screen">
+    <h2>Mini-Jeu</h2>
+    <div id="game-container"></div>
+  </div>
 
-<div id="screen-game" class="screen">
-  <h2>🧩 Mini-jeu en cours</h2>
-  <div id="puzzle-container"></div>
-</div>
+  <div id="screen-victory" class="screen">
+    <h1>🎉 Victoire !</h1>
+    <button onclick="resetGame()">Recommencer</button>
+  </div>
 
-<div id="screen-victory" class="screen">
-  <h2>🎉 Victoire !</h2>
-  <p>Bravo, vous avez terminé tous les puzzles !</p>
-  <button onclick="resetGame()">Rejouer</button>
-</div>
+  <div id="screen-defeat" class="screen">
+    <h1>💀 Défaite...</h1>
+    <button onclick="resetGame()">Réessayer</button>
+  </div>
 
-<div id="screen-defeat" class="screen">
-  <h2>💀 Défaite...</h2>
-  <p>Le temps est écoulé ou vous avez échoué.</p>
-  <button onclick="resetGame()">Réessayer</button>
-</div>
+  <!-- Panel Admin sera injecté dynamiquement par admin.js -->
 
+  <!-- Scripts -->
+  <script type="module" src="js/debug.js"></script>
+  <script type="module" src="js/state.js"></script>
+  <script type="module" src="js/audio.js"></script>
+  <script type="module" src="js/router.js"></script>
+  <script type="module" src="js/admin.js"></script>
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
