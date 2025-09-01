@@ -1,100 +1,62 @@
-import { dlog, dwarn, derr } from "./debug.js";
+import { dlog, dwarn } from "./debug.js";
 import { getPlayerName, setScore, getScore } from "./state.js";
-import {
+import { 
   initAudioOnUserGesture,
   playActionEffect,
   stopAllAudio,
   switchToStressAmbience,
-  switchToNormalAmbience,
-  playAudioForScreen
+  switchToNormalAmbience
 } from "./audio.js";
 
-// Import des puzzles
 import * as puzzleClock from "./puzzles/puzzleClock.js";
 import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
-import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
-import * as puzzlePotions from "./puzzles/puzzlePotions.js";
-import * as puzzleRunes from "./puzzles/puzzleRunes.js";
-import * as puzzleStars from "./puzzles/puzzleStars.js";
-import * as puzzleTextInverse from "./puzzles/puzzleTextInverse.js";
+// ... autres puzzles
 
-const puzzles = [
-  puzzleClock,
-  puzzleCrystals,
-  puzzleLabyrinth,
-  puzzlePotions,
-  puzzleRunes,
-  puzzleStars,
-  puzzleTextInverse
-];
+const puzzles = [puzzleClock, puzzleCrystals]; // ... complète la liste
 
 let currentPuzzleIndex = 0;
 let timerInterval = null;
 let remaining = 0;
 let timerRunning = false;
 
-const DEFAULT_TOTAL_TIME = 600; // 10 min
-const STRESS_THRESHOLD = 300;   // 5 min
-
-dlog("router.js chargé");
-
-// -----------------------------
-// Navigation d'écrans
-// -----------------------------
 export function goToScreen(screenName) {
-  const id = "screen-" + screenName;
-  dlog(`goToScreen("${screenName}") -> #${id}`);
-
   const all = document.querySelectorAll(".screen");
-  if (!all || all.length === 0) return derr("Aucun élément .screen trouvé");
-
-  const screenEl = document.getElementById(id);
-  if (!screenEl) return derr(`Écran introuvable : #${id}`);
-
   all.forEach(s => s.classList.add("hidden"));
+
+  const screenEl = document.getElementById("screen-" + screenName);
+  if (!screenEl) {
+    dwarn("Écran introuvable :", screenName);
+    return;
+  }
   screenEl.classList.remove("hidden");
 
-  // Jouer musique adaptée
-  try { playAudioForScreen(screenName); } catch(e){ dwarn("Erreur playAudioForScreen:", e); }
-
-  // Si victoire/défaite, arrêter toutes musiques
-  if (screenName === "victory" || screenName === "defeat") {
+  // Audio selon écran
+  if (screenName === "intro") {
+    if (currentPuzzleIndex === 0) {
+      initAudioOnUserGesture();
+    }
+  } else if (screenName === "game") {
+    switchToNormalAmbience();
+  } else if (screenName === "victory" || screenName === "defeat") {
     stopAllAudio();
-    const jingle = screenName === "victory" ? "assets/audio/victoire.mp3" : "assets/audio/defaite.mp3";
-    try { new Audio(jingle).play().catch(()=>{}); } catch(e){ }
+    new Audio(screenName==="victory"?"assets/audio/victoire.mp3":"assets/audio/defaite.mp3").play().catch(()=>{});
   }
 }
 
-// -----------------------------
-// Initialisation
-// -----------------------------
 export function initRouter() {
-  dlog("initRouter() -> écran pseudo");
+  document.getElementById("hud").style.display = "none";
   goToScreen("pseudo");
 }
 
-// -----------------------------
-// Timer
-// -----------------------------
-export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
+export function startTimer(totalSeconds = 600) {
   if (timerRunning) return;
-
   remaining = totalSeconds;
   timerRunning = true;
   updateTimerDisplay();
-
-  dlog(`Timer démarré (${totalSeconds}s)`);
-
   timerInterval = setInterval(() => {
     remaining--;
     updateTimerDisplay();
-
-    if (totalSeconds > STRESS_THRESHOLD && remaining === STRESS_THRESHOLD) {
-      switchToStressAmbience();
-      const timerEl = document.getElementById("timer");
-      if (timerEl) timerEl.classList.add("stress");
-    }
-
+    if (remaining === 300) switchToStressAmbience();
     if (remaining <= 0) {
       clearInterval(timerInterval);
       timerRunning = false;
@@ -106,71 +68,44 @@ export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
 function updateTimerDisplay() {
   const el = document.getElementById("timer");
   if (!el) return;
-  const minutes = Math.floor(Math.max(0, remaining) / 60);
-  const seconds = Math.max(0, remaining) % 60;
-  el.textContent = `⏳ ${minutes}:${String(seconds).padStart(2,"0")}`;
+  const m = Math.floor(remaining/60);
+  const s = remaining % 60;
+  el.textContent = `⏳ ${m}:${s.toString().padStart(2,"0")}`;
 }
 
-// -----------------------------
-// Mini-jeux / progression
-// -----------------------------
-let currentPuzzleModule = null;
-
 export function startNextMiniGame() {
-  if (!timerRunning) startTimer(DEFAULT_TOTAL_TIME);
-
-  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
-
-  // Nettoyer l'écran de jeu avant de lancer le prochain
-  const gameScreen = document.getElementById("screen-game");
-  if (gameScreen) gameScreen.innerHTML = '<div id="hud"></div>'; // reset contenu
-
-  const puzzleModule = puzzles[currentPuzzleIndex];
-  currentPuzzleIndex++;
-  currentPuzzleModule = puzzleModule;
-
-  goToScreen("game");
-  const hud = document.getElementById("hud-player");
-  if (hud) hud.textContent = `👤 ${getPlayerName()}`;
-
-  if (!puzzleModule || typeof puzzleModule.mount !== "function") {
-    dwarn(`Puzzle invalide à l'index ${currentPuzzleIndex-1}`);
-    setTimeout(() => startNextMiniGame(), 300);
+  if (!document.getElementById("puzzle-container")) {
+    dwarn("Aucun container pour le puzzle !");
     return;
   }
+  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
 
+  const puzzleModule = puzzles[currentPuzzleIndex++];
   puzzleModule.mount({
-    meta: { title: `Énigme ${currentPuzzleIndex}` },
-    onSolved: ({ score } = {}) => {
-      setScore(getScore() + (score || 0));
-      playActionEffect("bonus");
-      currentPuzzleModule = null;
-      setTimeout(() => startNextMiniGame(), 250);
+    container: document.getElementById("puzzle-container"),
+    onSolved: ({score}= {}) => {
+      setScore(getScore() + (score||0));
+      document.getElementById("puzzle-container").innerHTML = "";
+      startNextMiniGame();
     },
-    onFail: ({ penalty } = {}) => {
+    onFail: ({penalty}={})=>{
       setScore(Math.max(0,getScore()-(penalty||0)));
-      playActionEffect("error");
-      currentPuzzleModule = null;
-      setTimeout(() => startNextMiniGame(), 250);
+      document.getElementById("puzzle-container").innerHTML = "";
+      startNextMiniGame();
     }
   });
 }
 
-// -----------------------------
-// Fin / reset
-// -----------------------------
 export function endGame(victory=true) {
-  if (timerInterval) clearInterval(timerInterval);
-  timerRunning = false;
+  clearInterval(timerInterval);
   stopAllAudio();
-  goToScreen(victory ? "victory" : "defeat");
+  goToScreen(victory?"victory":"defeat");
 }
 
 export function resetGame() {
   currentPuzzleIndex = 0;
-  if (timerInterval) clearInterval(timerInterval);
-  timerRunning = false;
   setScore(0);
-  switchToNormalAmbience();
+  document.getElementById("hud").style.display = "none";
+  document.getElementById("puzzle-container").innerHTML = "";
   goToScreen("pseudo");
 }
