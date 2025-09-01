@@ -1,40 +1,29 @@
-// main.js
 import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
 import { setPlayerName } from "./state.js";
-import { dlog } from "./debug.js";
-import { initAudioOnUserGesture } from "./audio.js";
-import "./admin.js";
 
-document.addEventListener("DOMContentLoaded",()=>{
-    dlog("🎮 Initialisation du jeu...");
+document.addEventListener("DOMContentLoaded", ()=>{
+  initRouter();
 
-    initRouter();
+  const startBtn = document.getElementById("start-btn");
+  const beginBtn = document.getElementById("begin-game");
 
-    const startBtn = document.getElementById("start-btn");
-    const beginBtn = document.getElementById("begin-game");
-    const nameInput = document.getElementById("player-name");
+  startBtn.addEventListener("click", ()=>{
+    const name = document.getElementById("player-name").value.trim();
+    if(!name){ alert("Entrez un pseudo !"); return; }
+    setPlayerName(name);
+    document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
+    goToScreen("intro");
+  });
 
-    // --- Premier clic utilisateur pour lever la restriction audio ---
-    function firstClickHandler(){
-        dlog("🖱️ Premier clic -> initAudioOnUserGesture()");
-        document.removeEventListener("click", firstClickHandler);
-        try{ initAudioOnUserGesture(); }catch(e){ dlog("Erreur initAudioOnUserGesture()",e); }
-    }
-    document.addEventListener("click", firstClickHandler, {once:true});
+  beginBtn.addEventListener("click", ()=>{
+    goToScreen("game");
+    startNextMiniGame();
+  });
 
-    // --- Bouton pseudo ---
-    startBtn.addEventListener("click",()=>{
-        const name = nameInput.value.trim();
-        if(!name){ alert("Entre un pseudo !"); return; }
-        setPlayerName(name);
-        dlog("✅ Pseudo validé : "+name);
-        document.getElementById("intro-content").textContent = `Bienvenue ${name}, le royaume t’attend...`;
-        goToScreen("intro");
-    });
-
-    // --- Bouton début aventure ---
-    beginBtn.addEventListener("click",()=>{
-        dlog("🖱️ Clic #begin-game -> startNextMiniGame()");
-        startNextMiniGame();
-    });
+  // Admin toggle
+  const adminToggle = document.getElementById("admin-toggle");
+  const adminPanel = document.getElementById("admin-panel");
+  if(adminToggle && adminPanel){
+    adminToggle.addEventListener("click", ()=> adminPanel.classList.toggle("hidden"));
+  }
 });
