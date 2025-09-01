@@ -115,3 +115,21 @@ button:hover {
   height: 100px;
   overflow-y: auto;
 }
+
+/* Timer stress 5min */
+
+#hud-timer.red {
+  color: red;
+  font-weight: bold;
+}
+
+#hud-timer.blink {
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
