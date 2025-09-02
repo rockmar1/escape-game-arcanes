@@ -1,185 +1,86 @@
-/* RESET DE BASE */
+/* === RESET GLOBAL === */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Garamond', serif;
 }
 
 body {
-  background: url('assets/images/decor-magique.jpg') no-repeat center center fixed;
+  background: url('assets/images/background-castle.jpg') no-repeat center center fixed;
   background-size: cover;
-  color: #fff;
-  overflow: hidden;
-  font-size: 16px;
-  line-height: 1.5;
-}
-
-/* HUD (caché au départ) */
-.hud {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  z-index: 100;
-  display: flex;
-  gap: 15px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: #fff;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-.hud.hidden {
-  display: none;
-}
-
-.hud span {
-  display: flex;
-  align-items: center;
-}
-
-.hud #timer {
-  color: #ff4500;
-  animation: blink 1s infinite alternate;
-}
-
-@keyframes blink {
-  0% { opacity: 1; }
-  50% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-/* ÉCRANS */
-.screen {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none;
-  justify-content: center;
-  align-items: center;
+  font-family: 'MedievalSharp', cursive, sans-serif;
+  color: #fdf4d3;
   text-align: center;
-  padding: 20px;
+  cursor: url('assets/images/plume-cursor.png'), auto;
 }
 
-.screen.active {
-  display: flex;
-}
-
-.screen input,
-.screen button {
-  padding: 10px;
-  margin-top: 20px;
-  font-size: 1.2rem;
-  border: 2px solid #fff;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-  cursor: pointer;
-}
-
-.screen input:focus,
-.screen button:focus {
-  outline: none;
-  border-color: #ff4500;
-}
-
-/* INTRO & FIN */
-#intro-content,
-#victory h2,
-#defeat h2 {
-  font-size: 1.5rem;
-  line-height: 1.8;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-}
-
-#intro-content {
-  font-family: 'Courier New', Courier, monospace;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-.ending-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-}
-
-/* PANEL ADMIN */
-#admin-panel {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  width: 300px;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
-  color: #fff;
+/* === PANNEAUX / ECRANS === */
+.screen {
   display: none;
-  z-index: 200;
+  padding: 20px;
 }
 
-#admin-panel h3 {
-  margin-bottom: 15px;
-}
-
-#admin-panel input {
-  width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  font-size: 1rem;
-  border: 2px solid #fff;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
-
-#admin-panel button {
-  width: 100%;
-  padding: 10px;
-  font-size: 1.2rem;
-  border: 2px solid #fff;
-  border-radius: 5px;
-  background: #ff4500;
-  color: #fff;
-  cursor: pointer;
-}
-
-#admin-panel button:hover {
-  background: #ff6347;
-}
-
-/* PANEL ADMIN VISIBLE */
-#admin-panel.visible {
+.active {
   display: block;
 }
 
-/* EFFET PLUME */
-@keyframes typewriter {
-  0% { width: 0; }
-  100% { width: 100%; }
+/* === PARCHEMIN === */
+.parchment {
+  background: url('assets/images/parchment.png') no-repeat center center;
+  background-size: cover;
+  padding: 20px;
+  border: 3px solid #b38b5d;
+  border-radius: 10px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.6), 0 0 15px rgba(0,0,0,0.5);
+  font-family: 'Uncial Antiqua', cursive;
+  color: #2e1c05;
 }
 
-.typewriter {
-  display: inline-block;
-  overflow: hidden;
-  white-space: nowrap;
-  border-right: 3px solid #fff;
-  animation: typewriter 4s steps(40) 1s 1 normal both;
+/* === GRIMOIRE INTRO === */
+@keyframes openBook {
+  0% { transform: scaleX(0); opacity: 0; }
+  100% { transform: scaleX(1); opacity: 1; }
 }
 
-/* EFFET PLUME POUR INTRO */
-#intro-content {
-  font-family: 'Courier New', Courier, monospace;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  animation: typewriter 4s steps(40) 1s 1 normal both;
+.book-intro {
+  animation: openBook 1.5s ease forwards;
+  transform-origin: left center;
+}
+
+/* === TIMER RUNIQUE === */
+#timer {
+  font-family: 'MedievalSharp', cursive;
+  font-size: 2rem;
+  color: #f4d35e;
+  text-shadow: 0 0 10px #ff4500, 0 0 20px #ff0000;
+  margin: 10px 0;
+}
+
+.timer-warning {
+  color: red !important;
+}
+
+.timer-flash {
+  animation: flash 1s infinite alternate;
+}
+
+@keyframes flash {
+  from { color: red; text-shadow: 0 0 20px red; }
+  to { color: yellow; text-shadow: 0 0 5px yellow; }
+}
+
+/* === PANEL ADMIN === */
+#admin-panel {
+  display: none;
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 280px;
+  background: rgba(0,0,0,0.8);
+  border: 2px solid #ffcc00;
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 9999;
+  color: white;
+  font-size: 14px;
 }
