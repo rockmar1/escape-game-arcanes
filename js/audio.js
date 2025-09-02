@@ -1,59 +1,107 @@
-// audio.js : Gestion des musiques et effets
-import { dwarn, dlog } from "./debug.js";
+// js/audio.js - BGM & SFX manager (no overlapping), tolerant when files missing
+import { dlog, dwarn } from "./debug.js";
 
-let currentMusic = null;
-let audioMap = {
-  intro: new Audio("assets/audio/intro.mp3"),
-  game: new Audio("assets/audio/ambiance_game.mp3"),
-  stress: new Audio("assets/audio/ambiance_stress.mp3"),
-  victoire: new Audio("assets/audio/victoire.mp3"),
-  defaite: new Audio("assets/audio/defaite.mp3")
+const MUSIC_MAP = {
+  intro: "assets/audio/intro.mp3",
+  game: "assets/audio/game.mp3",
+  stress: "assets/audio/stress.mp3",
+  victory: "assets/audio/victory.mp3",
+  defeat: "assets/audio/defeat.mp3"
 };
 
-export function playMusic(key, loop = true) {
-  stopAllAudio();
-  if (!audioMap[key]) {
-    dwarn(`Impossible de jouer ${key}`);
-    return;
+const SFX_MAP = {
+  quill: "assets/audio/sfx-quill.mp3",
+  correct: "assets/audio/sfx-correct.mp3",
+  error: "assets/audio/sfx-error.mp3",
+  portal: "assets/audio/sfx-portal.mp3"
+};
+
+let bgm = null;
+let currentKey = null;
+let preloaded = { bgm:{}, sfx:{} };
+
+function _makeAudio(src, { loop=false, volume=0.7 } = {}){
+  try {
+    const a = new Audio(src);
+    a.loop = loop;
+    a.volume = volume;
+    a.preload = "auto";
+    return a;
+  } catch(e){
+    dwarn("audio create failed", src, e);
+    return null;
   }
-  currentMusic = audioMap[key];
-  currentMusic.loop = loop;
-  currentMusic.play().catch(() => {});
-  dlog(`playMusic(${key}) lancé`);
 }
 
-export function stopAllAudio() {
-  Object.values(audioMap).forEach(a => {
-    a.pause();
-    a.currentTime = 0;
+// Preload when possible (non-blocking)
+function _preload(){
+  Object.entries(MUSIC_MAP).forEach(([k, src])=>{
+    try { preloaded.bgm[k] = _makeAudio(src, { loop: k==="game", volume: 0.6 }); } catch(e){}
   });
-  currentMusic = null;
-  dlog("Toutes les musiques stoppées");
+  Object.entries(SFX_MAP).forEach(([k, src])=>{
+    try { preloaded.sfx[k] = _makeAudio(src, { loop:false, volume: 0.85 }); } catch(e){}
+  });
 }
+_preload();
 
-export function switchToStressAmbience() {
-  if (!audioMap.stress) return;
-  playMusic("stress");
-}
-
-export function playActionEffect(effect) {
-  // exemples simples, ajouter plus si besoin
-  const effects = {
-    bonus: new Audio("assets/audio/bonus.mp3"),
-    error: new Audio("assets/audio/error.mp3"),
-    collect: new Audio("assets/audio/collect.mp3")
-  };
-  if (!effects[effect]) {
-    dwarn(`Effet audio inconnu : ${effect}`);
-    return;
+export function initAudioOnUserGesture(){
+  // call on first user click
+  try {
+    // play & pause quickly to prime browsers
+    Object.values(preloaded.bgm).forEach(a => {
+      if(!a) return;
+      const p = a.play();
+      if(p && p.catch) p.then(()=>a.pause()).catch(()=>a.pause());
+    });
+    if(preloaded.sfx.quill) { preloaded.sfx.quill.play().then(()=>preloaded.sfx.quill.pause()).catch(()=>{}); }
+    dlog("initAudioOnUserGesture() attempted");
+  } catch(e){
+    dwarn("initAudioOnUserGesture failed", e);
   }
-  effects[effect].play().catch(() => {});
 }
 
-// Initialisation audio au premier clic
-export function initAudioOnUserGesture() {
-  dlog("initAudioOnUserGesture() appelé");
-  document.body.addEventListener("click", () => {
-    Object.values(audioMap).forEach(a => a.play().then(()=>a.pause()));
-  }, { once: true });
+export function playMusic(key, { loop=true, volume=0.6 } = {}){
+  try {
+    const src = MUSIC_MAP[key];
+    if(!src){ dwarn("Unknown music key", key); return; }
+    // already playing same
+    if(currentKey === key && bgm && !bgm.paused) return;
+    // stop previous
+    if(bgm){ try { bgm.pause(); bgm.currentTime = 0; } catch(e){} bgm=null; currentKey=null; }
+    // use preloaded if exists
+    let a = preloaded.bgm[key] || _makeAudio(src, { loop, volume });
+    if(!a){ dwarn("music unavailable", key); return; }
+    a.loop = loop;
+    a.volume = volume;
+    bgm = a; currentKey = key;
+    const p = bgm.play();
+    if(p && p.catch) p.catch(()=>{ /* ignore */ });
+    dlog("playMusic", key);
+  } catch(e){
+    dwarn("playMusic error", e);
+  }
 }
+
+export function stopAllMusic(){
+  try {
+    if(bgm){ bgm.pause(); try{ bgm.currentTime=0; }catch(e){} bgm=null; currentKey=null; }
+    dlog("stopAllMusic");
+  } catch(e){ dwarn("stopAllMusic err", e); }
+}
+
+export function playSfx(key, vol=0.85){
+  try {
+    const src = SFX_MAP[key];
+    if(!src){ dwarn("Unknown sfx", key); return; }
+    // create transient audio so multiple SFX can overlap
+    const s = _makeAudio(src, { loop:false, volume: vol });
+    if(!s) return;
+    s.play().catch(()=>{});
+    dlog("playSfx", key);
+  } catch(e){ dwarn("playSfx err", e); }
+}
+
+export function switchToStressAmbience(){ playMusic("stress", { loop: true, volume: 0.65 }); dlog("switchToStressAmbience"); }
+export function switchToNormalAmbience(){ playMusic("game", { loop: true, volume: 0.55 }); dlog("switchToNormalAmbience"); }
+
+export function getCurrentTrack(){ return currentKey; }
