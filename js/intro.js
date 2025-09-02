@@ -1,16 +1,15 @@
-import { debugLog } from "./debug.js";
+// js/intro.js - set of intro strings and helper
+import { dlog } from "./debug.js";
 
-// Liste des intros aléatoires
-const intros = [
-  "Une prophétie oubliée surgit des flammes d’un vieux grimoire...",
-  "Le roi vous confie une mission périlleuse, sauvez le royaume !",
-  "Dans vos rêves, une vision mystérieuse apparaît, annonçant l’apocalypse...",
-  "Les esprits anciens murmurent à votre oreille : le temps est compté..."
+const INTROS = [
+  "Dans un grimoire poussiéreux, une prophétie renaît de l’oubli...",
+  "Le roi te confie une mission périlleuse: rallumer la Flamme Primordiale.",
+  "Une brise glacée murmure : « le temps est compté... »",
+  "Les pages s’animent et montrent un chemin hors des ténèbres."
 ];
 
-// Fonction pour choisir une intro au hasard
-export function getRandomIntro() {
-  const index = Math.floor(Math.random() * intros.length);
-  debugLog("Intro choisie : " + intros[index]);
-  return intros[index];
+export function getRandomIntro(){
+  const t = INTROS[Math.floor(Math.random()*INTROS.length)];
+  dlog("Intro choisie:", t);
+  return t;
 }
