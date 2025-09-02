@@ -1,3 +1,12 @@
-export function dlog(msg){ console.log("[DBG]", msg); }
-export function dwarn(msg){ console.warn("[WARN]", msg); }
-export function derr(msg){ console.error("[ERR]", msg); }
+export function logDebug(message) {
+  const panel = document.getElementById("debug-panel");
+  const log = document.getElementById("debug-log");
+  if (!panel || !log) return;
+
+  const entry = document.createElement("div");
+  entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+  log.appendChild(entry);
+  log.scrollTop = log.scrollHeight;
+
+  panel.classList.remove("hidden");
+}
