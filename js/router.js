@@ -1,115 +1,55 @@
-// router.js : navigation écran, mini-jeux, timer
-import { dlog, dwarn } from "./debug.js";
-import { getPlayerName, setScore, getScore } from "./state.js";
-import { playMusic, stopAllAudio, switchToStressAmbience, playActionEffect } from "./audio.js";
-import { typeWriterEffect, intros, victoryMessages, defeatMessages } from "./plume.js";
+import { debugLog } from "./debug.js";
+import { playMusic, stopAllMusic } from "./audio.js";
+import { getRandomIntro } from "./intro.js";
+import { startTimer } from "./timer.js";
 
-// mini-jeux fictifs
-import * as puzzleClock from "./puzzles/puzzleClock.js";
-import * as puzzleCrystals from "./puzzles/puzzleCrystals.js";
-import * as puzzleLabyrinth from "./puzzles/puzzleLabyrinth.js";
-import * as puzzlePotions from "./puzzles/puzzlePotions.js";
-import * as puzzleRunes from "./puzzles/puzzleRunes.js";
-import * as puzzleStars from "./puzzles/puzzleStars.js";
-import * as puzzleTextInverse from "./puzzles/puzzleTextInverse.js";
+export function goToScreen(screen) {
+  debugLog("goToScreen -> " + screen);
 
-const puzzles = [
-  puzzleClock,
-  puzzleCrystals,
-  puzzleLabyrinth,
-  puzzlePotions,
-  puzzleRunes,
-  puzzleStars,
-  puzzleTextInverse
-];
+  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  const target = document.getElementById("screen-" + screen);
+  if (target) target.classList.add("active");
 
-let currentPuzzleIndex = 0;
-let timerInterval = null;
-let remaining = 0;
-let timerRunning = false;
+  stopAllMusic();
+  playMusic(screen);
 
-const DEFAULT_TOTAL_TIME = 600;
-const STRESS_THRESHOLD = 300;
+  if (screen === "intro") {
+    const introText = document.getElementById("intro-text");
+    if (introText) introText.textContent = getRandomIntro();
+  }
 
-export function goToScreen(screenName) {
-  const all = document.querySelectorAll(".screen");
-  all.forEach(s => s.classList.add("hidden"));
-  const screen = document.getElementById(`screen-${screenName}`);
-  if (!screen) return dwarn(`Écran introuvable : ${screenName}`);
-  screen.classList.remove("hidden");
-  dlog(`goToScreen -> ${screenName}`);
+  if (screen === "game") {
+    startTimer(600, () => goToScreen("defeat"));
+  }
 
-  // Gestion audio
-  if(screenName === "intro") playMusic("intro");
-  else if(screenName === "game") playMusic("game");
-  else if(screenName === "victory") playMusic("victoire", false);
-  else if(screenName === "defeat") playMusic("defaite", false);
+  if (screen === "victory") {
+    showRandomEnding(true);
+  }
 
-  // HUD visible sauf pseudo
-  const hud = document.getElementById("hud");
-  if (screenName !== "pseudo") hud.classList.remove("hidden");
+  if (screen === "defeat") {
+    showRandomEnding(false);
+  }
 }
 
-export function initRouter() {
-  dlog("initRouter -> écran pseudo");
-  goToScreen("pseudo");
-}
+function showRandomEnding(victory) {
+  const endingsVictory = [
+    "Le royaume est sauvé, votre légende sera chantée pour l’éternité.",
+    "La lumière triomphe, mais une ombre persiste au loin...",
+    "Vous êtes acclamés héros, statues élevées à votre gloire."
+  ];
 
-export function startTimer(totalSeconds = DEFAULT_TOTAL_TIME) {
-  if (timerRunning) return;
-  remaining = totalSeconds;
-  timerRunning = true;
-  const timerEl = document.getElementById("timer");
-  timerInterval = setInterval(() => {
-    remaining--;
-    let min = Math.floor(remaining/60);
-    let sec = remaining % 60;
-    timerEl.textContent = `⏳ ${min}:${sec.toString().padStart(2,'0')}`;
+  const endingsDefeat = [
+    "Les ténèbres engloutissent le royaume...",
+    "Votre sacrifice restera gravé, mais la nuit l’emporte.",
+    "Le royaume s’effondre, et vos noms sombrent dans l’oubli."
+  ];
 
-    // stress / dernière minute
-    if(remaining === STRESS_THRESHOLD) switchToStressAmbience();
-    if(remaining <= 60) timerEl.classList.toggle("blink");
+  const text = victory
+    ? endingsVictory[Math.floor(Math.random() * endingsVictory.length)]
+    : endingsDefeat[Math.floor(Math.random() * endingsDefeat.length)];
 
-    if(remaining <=0){
-      clearInterval(timerInterval);
-      timerRunning = false;
-      endGame(false);
-    }
-  },1000);
-}
+  const element = document.getElementById("ending-text");
+  if (element) element.textContent = text;
 
-export function startNextMiniGame() {
-  if(currentPuzzleIndex >= puzzles.length) return endGame(true);
-  const puzzle = puzzles[currentPuzzleIndex];
-  currentPuzzleIndex++;
-  const container = document.getElementById("puzzle-container");
-  if(!container) return dwarn("Aucun container pour mini-jeu");
-  container.innerHTML = "";
-  if(!puzzle || typeof puzzle.mount!=="function") return dwarn("Mini-jeu invalide");
-
-  dlog(`Mount puzzle: Énigme ${currentPuzzleIndex}`);
-  puzzle.mount({
-    container,
-    meta:{title:`Énigme ${currentPuzzleIndex}`},
-    onSolved:({score}= {})=>{
-      setScore(getScore()+ (score||0));
-      startNextMiniGame();
-    },
-    onFail:({penalty}= {})=>{
-      setScore(Math.max(0,getScore()-(penalty||0)));
-      startNextMiniGame();
-    }
-  });
-}
-
-export function endGame(victory=true) {
-  stopAllAudio();
-  goToScreen(victory?"victory":"defeat");
-}
-
-export function resetGame() {
-  currentPuzzleIndex=0;
-  setScore(0);
-  if(timerInterval){ clearInterval(timerInterval); timerInterval=null; timerRunning=false;}
-  goToScreen("pseudo");
+  debugLog("Fin affichée : " + text);
 }
