@@ -1,8 +1,37 @@
-let state = { playerName:"", score:0, debug:true };
+// js/state.js
+// lightweight game state (player name, score, debug flag)
+import { dlog } from "./debug.js";
 
-export function setPlayerName(name){ state.playerName=name; const el=document.getElementById("hud-player"); if(el) el.textContent=`👤 ${name}`;}
-export function getPlayerName(){ return state.playerName;}
-export function setScore(val){ state.score=val; const el=document.getElementById("score"); if(el) el.textContent=`⭐ ${state.score}`;}
-export function addScore(val){ setScore(state.score+val);}
-export function getScore(){ return state.score;}
-export function toggleDebug(on){ state.debug=on; console.log("[DBG] Mode debug",on);}
+const STATE = {
+  playerName: "",
+  score: 0,
+  debug: true
+};
+
+export function setPlayerName(name){
+  STATE.playerName = name;
+  dlog("Player name set:", name);
+  const el = document.getElementById("hud-player");
+  if (el) el.textContent = `👤 ${name}`;
+}
+export function getPlayerName(){ return STATE.playerName; }
+
+export function setScore(val){
+  STATE.score = val;
+  _renderScore();
+}
+export function addScore(n){
+  STATE.score += n;
+  _renderScore();
+}
+export function getScore(){ return STATE.score; }
+
+export function resetScore(){
+  STATE.score = 0;
+  _renderScore();
+}
+
+function _renderScore(){
+  const el = document.getElementById("score");
+  if (el) el.textContent = `⭐ ${STATE.score}`;
+}
