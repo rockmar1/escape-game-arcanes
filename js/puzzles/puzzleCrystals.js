@@ -1,30 +1,24 @@
-// puzzleCrystals.js
-import { dlog, dwarn } from "../debug.js";
-
-export function mount({ meta, onSolved, onFail }) {
-  const container = document.getElementById("puzzle-container");
-  if (!container) { dwarn("Aucun container pour puzzleCrystals"); return; }
-  container.innerHTML = "";
-  dlog(`Mount puzzle: ${meta.title}`);
-
-  const puzzleEl = document.createElement("div");
-  puzzleEl.className = "puzzle";
-  puzzleEl.innerHTML = `
-    <p💎 Alignez les cristaux magiques !</p>
-    <button id="solve-crystals">Résoudre</button>
-    <button id="fail-crystals">Échouer</button>
-  `;
-  container.appendChild(puzzleEl);
-
-  document.getElementById("solve-crystals").addEventListener("click", () => {
-    container.innerHTML = "";
-    dlog(`Puzzle résolu: ${meta.title}`);
-    if (onSolved) onSolved({ score: 80 });
+export async function mount({ container, onSolved, onFail, meta }){
+  const overlay = document.createElement("div"); overlay.className="puzzle-overlay";
+  const box = document.createElement("div"); box.className="puzzle-container";
+  box.innerHTML = `<h3>${meta.title}</h3><p>Reproduis la séquence</p>`;
+  const area = document.createElement("div"); area.style.display="flex"; area.style.gap="10px"; box.appendChild(area);
+  const pads = [];
+  ["Rouge","Vert","Bleu","Jaune"].forEach((c,i)=>{
+    const d=document.createElement("div"); d.style.width="60px"; d.style.height="60px"; d.style.background=["#e74c3c","#2ecc71","#3498db","#f1c40f"][i]; d.style.borderRadius="8px"; d.style.cursor="pointer";
+    area.appendChild(d); pads.push(d);
   });
+  const seq = Array.from({length:5}, ()=> Math.floor(Math.random()*4));
+  // play sequence visually
+  seq.forEach((v,i)=> setTimeout(()=>{ pads[v].style.opacity=0.4; setTimeout(()=> pads[v].style.opacity=1,300); }, i*600));
+  let user = [];
+  pads.forEach((p, idx)=> p.addEventListener("click", ()=> { user.push(idx); if(user.length===seq.length) check(); }));
+  const cancel=document.createElement("button"); cancel.textContent="Abandon"; box.appendChild(cancel);
+  cancel.addEventListener("click", ()=> { onFail && onFail({ penalty:10 }); cleanup(); });
 
-  document.getElementById("fail-crystals").addEventListener("click", () => {
-    container.innerHTML = "";
-    dlog(`Puzzle échoué: ${meta.title}`);
-    if (onFail) onFail({ penalty: 40 });
-  });
+  function check(){ if(seq.every((v,i)=> v===user[i])){ onSolved && onSolved({ score:160 }); cleanup(); } else { alert("Erreur"); onFail && onFail({ penalty:20 }); cleanup(); } }
+  overlay.appendChild(box); (container||document.body).appendChild(overlay);
+  function cleanup(){ overlay.remove(); }
 }
+export function getAnswer(){ return "Séquence aléatoire — reproduire la séquence affichée"; }
+export function unmount(){}
