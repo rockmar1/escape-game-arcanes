@@ -1,30 +1,21 @@
-// puzzleTextInverse.js
-import { dlog, dwarn } from "../debug.js";
+export async function mount({ container, onSolved, onFail, meta }){
+  const overlay = document.createElement("div"); overlay.className="puzzle-overlay";
+  const box = document.createElement("div"); box.className="puzzle-container";
+  const phrase = "EGIAM";
+  box.innerHTML = `<h3>${meta.title}</h3><p>Décodage : remets le texte à l'endroit.</p>`;
+  const p = document.createElement("div"); p.textContent = phrase; p.style.fontWeight="700"; p.style.margin="10px";
+  const input = document.createElement("input"); input.placeholder="Ta réponse";
+  const ok = document.createElement("button"); ok.textContent="Vérifier"; const cancel=document.createElement("button"); cancel.textContent="Annuler";
+  box.appendChild(p); box.appendChild(input); box.appendChild(ok); box.appendChild(cancel);
+  overlay.appendChild(box); (container||document.body).appendChild(overlay);
 
-export function mount({ meta, onSolved, onFail }) {
-  const container = document.getElementById("puzzle-container");
-  if (!container) { dwarn("Aucun container pour puzzleTextInverse"); return; }
-  container.innerHTML = "";
-  dlog(`Mount puzzle: ${meta.title}`);
-
-  const puzzleEl = document.createElement("div");
-  puzzleEl.className = "puzzle";
-  puzzleEl.innerHTML = `
-    <p>🔤 Inversez le texte magique correctement !</p>
-    <button id="solve-text">Résoudre</button>
-    <button id="fail-text">Échouer</button>
-  `;
-  container.appendChild(puzzleEl);
-
-  document.getElementById("solve-text").addEventListener("click", () => {
-    container.innerHTML = "";
-    dlog(`Puzzle résolu: ${meta.title}`);
-    if (onSolved) onSolved({ score: 30 });
+  ok.addEventListener("click", ()=> {
+    if(input.value.trim().toUpperCase() === phrase.split("").reverse().join("")){ onSolved && onSolved({ score:80 }); cleanup(); }
+    else { alert("Non"); onFail && onFail({ penalty:10 }); }
   });
+  cancel.addEventListener("click", ()=> { onFail && onFail({ penalty:5 }); cleanup(); });
 
-  document.getElementById("fail-text").addEventListener("click", () => {
-    container.innerHTML = "";
-    dlog(`Puzzle échoué: ${meta.title}`);
-    if (onFail) onFail({ penalty: 15 });
-  });
+  function cleanup(){ overlay.remove(); }
 }
+export function getAnswer(){ return "MAGIE"; }
+export function unmount(){}
