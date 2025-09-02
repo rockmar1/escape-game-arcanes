@@ -1,29 +1,22 @@
-import { initRouter, goToScreen, startNextMiniGame, startTimer } from "./router.js";
-import { setPlayerName } from "./state.js";
-import { initAdminPanel } from "./admin.js";
-import { typeWriterEffect, intros } from "./plume.js";
+import { goToScreen } from "./router.js";
+import { logDebug } from "./debug.js";
 
-document.addEventListener("DOMContentLoaded", ()=>{
-  initRouter();
-  initAdminPanel();
+document.addEventListener("DOMContentLoaded", () => {
+  logDebug("🚀 Main init");
 
-  const pseudoForm = document.getElementById("pseudo-form");
+  const pseudoBtn = document.getElementById("pseudo-btn");
   const pseudoInput = document.getElementById("pseudo-input");
-  pseudoForm.addEventListener("submit",(e)=>{
-    e.preventDefault();
-    const name = pseudoInput.value.trim();
-    if(!name) return alert("Entrez un pseudo !");
-    setPlayerName(name);
 
+  pseudoBtn.addEventListener("click", () => {
+    const pseudo = pseudoInput.value.trim();
+    if (!pseudo) return alert("Entrez un pseudo !");
+    document.getElementById("player-pseudo").textContent = pseudo;
     goToScreen("intro");
-    const introContent = document.getElementById("intro-content");
-    const randomIntro = intros[Math.floor(Math.random()*intros.length)];
-    typeWriterEffect(introContent, `Bienvenue ${name} !\n${randomIntro}`, 50);
   });
 
-  document.getElementById("begin-game").addEventListener("click",()=>{
+  document.getElementById("skip-intro").addEventListener("click", () => {
     goToScreen("game");
-    startTimer();
-    startNextMiniGame();
   });
+
+  goToScreen("pseudo");
 });
