@@ -1,4 +1,4 @@
-// js/timer.js - global timer with hooks
+// js/timer.js - global timer with hooks.
 import { dlog } from "./debug.js";
 import { switchToStressAmbience } from "./audio.js";
 
