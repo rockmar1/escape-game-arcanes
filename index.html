@@ -2,66 +2,61 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escape Game Arcanes</title>
-
-  <!-- Favicon -->
-  <link rel="icon" href="assets/images/favicon.ico">
-
-  <!-- CSS -->
+  <title>Escape Game - Arcanes</title>
   <link rel="stylesheet" href="style.css">
-
-  <!-- CryptoJS pour hash admin -->
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-  <!-- HUD joueur (caché au départ) -->
-  <div id="hud" class="hud hidden">
-    <span id="hud-player">👤 Joueur</span>
-    <span id="score">⭐ 0</span>
-    <span id="timer">⏳ 10:00</span>
-  </div>
 
-  <!-- Écrans -->
+  <!-- Pseudo -->
   <div id="screen-pseudo" class="screen active">
-    <form id="pseudo-form">
-      <h1>Bienvenue dans le Royaume Oublié</h1>
-      <input type="text" id="pseudo-input" placeholder="Entrez votre pseudo" required>
-      <button type="submit">Commencer</button>
-    </form>
+    <h1>Entrez votre pseudo</h1>
+    <input id="pseudo-input" type="text" placeholder="Votre nom...">
+    <button id="pseudo-btn">Commencer</button>
   </div>
 
-  <div id="screen-intro" class="screen">
-    <div class="parchment" id="intro-content"></div>
-    <button id="begin-game">Entrer dans l'aventure</button>
+  <!-- Intro -->
+  <div id="screen-intro" class="screen hidden">
+    <div id="intro-text" class="typewriter"></div>
+    <button id="skip-intro">Passer l’intro</button>
   </div>
 
-  <div id="screen-game" class="screen">
-    <div id="puzzle-container"></div>
+  <!-- Jeu -->
+  <div id="screen-game" class="screen hidden">
+    <div id="hud">
+      <span id="timer"></span>
+      <span id="player-pseudo"></span>
+      <button id="btn-hint">💡 Indice</button>
+    </div>
+    <div id="game-container"></div>
   </div>
 
-  <div id="screen-victory" class="screen">
-    <img class="ending-image" src="assets/images/victory.png" alt="Victoire">
-    <h2>Félicitations ! Vous avez sauvé le royaume !</h2>
-    <button onclick="resetGame()">Rejouer</button>
+  <!-- Victoire -->
+  <div id="screen-victory" class="screen hidden ending victory-bg">
+    <h2 id="victory-text"></h2>
+    <button onclick="resetGame()">🔄 Rejouer</button>
   </div>
 
-  <div id="screen-defeat" class="screen">
-    <img class="ending-image" src="assets/images/defeat.png" alt="Défaite">
-    <h2>Le royaume est perdu...</h2>
-    <button onclick="resetGame()">Recommencer</button>
+  <!-- Défaite -->
+  <div id="screen-defeat" class="screen hidden ending defeat-bg">
+    <h2 id="defeat-text"></h2>
+    <button onclick="resetGame()">🔄 Rejouer</button>
   </div>
 
-  <!-- Panel Admin -->
-  <button id="admin-toggle">⚙️ Admin</button>
-  <div id="admin-panel" style="display:none;"></div>
+  <!-- Scoreboard -->
+  <div id="screen-scoreboard" class="screen hidden">
+    <h2>🏆 Tableau des Scores</h2>
+    <ul id="scoreboard-list"></ul>
+    <button onclick="resetGame()">🔄 Rejouer</button>
+  </div>
 
-  <!-- JS -->
-  <script type="module" src="js/debug.js"></script>
-  <script type="module" src="js/audio.js"></script>
-  <script type="module" src="js/router.js"></script>
-  <script type="module" src="js/admin.js"></script>
+  <!-- Debug log -->
+  <div id="debug-panel" class="hidden">
+    <h3>Debug Log</h3>
+    <div id="debug-log"></div>
+  </div>
+
   <script type="module" src="js/main.js"></script>
-  <script type="module" src="js/plume.js"></script>
 </body>
 </html>
