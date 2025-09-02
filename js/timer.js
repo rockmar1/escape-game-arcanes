@@ -1,46 +1,47 @@
-import { debugLog } from "./debug.js";
-import { switchToStressAmbience } from "./audio.js";
+import { logDebug } from "./debug.js";
+import { goToScreen } from "./router.js";
+import { stopAllMusic, playMusic } from "./audio.js";
 
 let timerInterval;
-let timeLeft = 600; // 10 min
+let timeLeft = 600;
 
-export function startTimer(duration, onDefeat) {
+export function startTimer(duration = 600) {
   clearInterval(timerInterval);
   timeLeft = duration;
-  updateDisplay();
-
-  debugLog("Timer démarré (" + duration + "s)");
+  updateTimerDisplay();
+  logDebug("⏳ Timer démarré (" + duration + "s)");
 
   timerInterval = setInterval(() => {
     timeLeft--;
-
-    // Timer dynamique
-    if (timeLeft === 300) {
-      debugLog("⚠️ Changement d'ambiance : 5 min restantes !");
-      switchToStressAmbience();
-      document.getElementById("timer").classList.add("timer-warning");
-    }
-
-    if (timeLeft === 60) {
-      debugLog("⏳ Dernière minute !");
-      document.getElementById("timer").classList.add("timer-flash");
-    }
-
+    updateTimerDisplay();
     if (timeLeft <= 0) {
       clearInterval(timerInterval);
-      debugLog("💀 Temps écoulé -> Défaite !");
-      onDefeat();
+      logDebug("⏰ Temps écoulé -> défaite");
+      stopAllMusic();
+      playMusic("defeat");
+      goToScreen("defeat");
     }
-
-    updateDisplay();
   }, 1000);
 }
 
-export function updateDisplay() {
-  const timerElement = document.getElementById("timer");
-  if (timerElement) {
-    const minutes = Math.floor(timeLeft / 60);
-    const seconds = timeLeft % 60;
-    timerElement.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+export function resetTimer() {
+  clearInterval(timerInterval);
+  document.getElementById("timer").textContent = "";
+}
+
+function updateTimerDisplay() {
+  const el = document.getElementById("timer");
+  if (!el) return;
+
+  const minutes = Math.floor(timeLeft / 60);
+  const seconds = timeLeft % 60;
+  el.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+  el.classList.remove("warning", "blink");
+
+  if (timeLeft <= 300 && timeLeft > 60) {
+    el.classList.add("warning");
+  } else if (timeLeft <= 60) {
+    el.classList.add("blink");
   }
 }
