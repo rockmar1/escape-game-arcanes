@@ -1,79 +1,70 @@
-// js/audio.js
 import { dlog, dwarn } from "./debug.js";
 
+const musics = {
+  intro: "assets/audio/intro.mp3",
+  game: "assets/audio/game.mp3",
+  stress: "assets/audio/stress.mp3",
+  victory: "assets/audio/victory.mp3",
+  defeat: "assets/audio/defeat.mp3"
+};
+
+const sfx = {
+  quill: "assets/audio/sfx-quill.mp3",
+  correct: "assets/audio/sfx-correct.mp3",
+  error: "assets/audio/sfx-error.mp3",
+  portal: "assets/audio/sfx-portal.mp3"
+};
+
 let currentMusic = null;
-const sfxMap = {};
 
-// --- Gestion musique ---
-export function playMusic(name, loop = true) {
-  stopAllMusic();
-  const src = `assets/audio/${name}.mp3`;
-  const audio = new Audio(src);
-  audio.loop = loop;
-  audio.play()
-    .then(() => {
-      dlog(`playMusic(${name}) lancé`);
-    })
-    .catch(err => {
-      dwarn(`Impossible de jouer ${src}`, err);
-    });
-  currentMusic = audio;
-}
-
+/**
+ * Stop toutes les musiques
+ */
 export function stopAllMusic() {
+  dlog("stopAllMusic");
   if (currentMusic) {
     currentMusic.pause();
     currentMusic.currentTime = 0;
-    dlog("stopAllMusic");
-    currentMusic = null;
   }
+  currentMusic = null;
 }
 
-// --- Gestion effets ---
-export function loadSfx(name, file) {
-  const audio = new Audio(file);
-  sfxMap[name] = audio;
-}
+/**
+ * Joue une musique de fond
+ */
+export function playMusic(name) {
+  stopAllMusic();
 
-export function playSfx(name) {
-  const audio = sfxMap[name];
-  if (!audio) {
-    dwarn(`Effet audio inconnu : ${name}`);
+  const src = musics[name];
+  if (!src) {
+    dwarn(`Aucune musique assignée pour ${name}`);
     return;
   }
-  audio.currentTime = 0;
-  audio.play().catch(err => {
-    dwarn(`Impossible de jouer l'effet ${name}`, err);
+
+  const audio = new Audio(src);
+  audio.loop = true;
+  audio.volume = 0.5;
+  audio.play().catch(() => {
+    dwarn(`Impossible de jouer ${src}`);
   });
+
+  currentMusic = audio;
+  dlog(`playMusic ${name}`);
 }
 
-// --- Initialisation audio sur interaction utilisateur ---
-let userGestureInitDone = false;
-export function initAudioOnUserGesture() {
-  if (userGestureInitDone) return;
-  document.addEventListener("click", firstClickHandler, { once: true });
-}
-
-function firstClickHandler() {
-  dlog("initAudioOnUserGesture done");
-  // Précharger les effets
-  loadSfx("quill", "assets/audio/sfx-quill.mp3");
-  loadSfx("correct", "assets/audio/sfx-correct.mp3");
-  loadSfx("error", "assets/audio/sfx-error.mp3");
-  loadSfx("portal", "assets/audio/sfx-portal.mp3");
-  userGestureInitDone = true;
-}
-
-// --- Fonctions pour changer ambiance stress/normal ---
-export function switchToStressAmbience() {
-  playMusic("stress");
-}
-export function switchToNormalAmbience() {
-  playMusic("game");
-}
-
-// --- Fonction utilitaire pour arrêter tout (musique + effets si besoin) ---
-export function stopAllAudio() {
-  stopAllMusic();
-  Object.values(sfxMap).forEach(a => { a.pause(); a.currentTime = 0; });
+/**
+ * Joue un effet sonore
+ */
+export function playSfx(name) {
+  const src = sfx[name];
+  if (!src) {
+    dwarn(`Effet sonore inconnu: ${name}`);
+    return;
+  }
+  const audio = new Audio(src);
+  audio.volume = 0.7;
+  audio.play().catch(() => {
+    dwarn(`Impossible de jouer sfx ${name}`);
+  });
+  dlog(`playSfx ${name}`);
 }
