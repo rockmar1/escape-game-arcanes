@@ -1,77 +1,52 @@
-import { dlog } from "./debug.js";
-import { playMusic, stopAllMusic } from "./audio.js";
-import { startIntro } from "./intro.js";
-import { resetGameState, gameState } from "./state.js";
+// === router.js ===
+import { stopAllMusic, playMusic } from "./audio.js";
+import { gameState, resetState } from "./state.js";
 import { startTimer, resetTimer } from "./timer.js";
 
-let currentScreen = null;
+export function goToScreen(name) {
+  console.log(`[DBG] Écran affiché : #screen-${name}`);
 
-/**
- * Change d’écran (affiche un <div class="screen"> et cache les autres)
- */
-export function goToScreen(id) {
-  dlog(`Écran affiché : #screen-${id}`);
+  // cacher tous les écrans
+  document.querySelectorAll(".screen").forEach(el => el.classList.add("hidden"));
 
-  // Cache tout
-  document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+  // afficher l'écran choisi
+  const screen = document.getElementById(`screen-${name}`);
+  if (screen) screen.classList.remove("hidden");
 
-  // Affiche l'écran voulu
-  const screen = document.getElementById(`screen-${id}`);
-  if (screen) {
-    screen.classList.add("active");
-    currentScreen = id;
-  }
-
-  // Musique
+  // gérer musiques
   stopAllMusic();
-  playMusic(id);
+  if (name === "intro") playMusic("intro");
+  if (name === "game") playMusic("game");
+  if (name === "victory") playMusic("victory");
+  if (name === "defeat") playMusic("defeat");
 
-  // Cas particuliers
-  if (id === "intro") {
-    startIntro(() => {
-      // Quand l'intro est finie -> HUD visible + démarrer timer
-      document.getElementById("hud").style.visibility = "visible";
-      goToScreen("game");
-      startTimer(600); // 10 minutes par défaut
-    });
+  // logique spécifique
+  if (name === "game") {
+    resetTimer();
+    startTimer(600); // 10 minutes
+    document.getElementById("hud").classList.remove("hidden"); // afficher HUD
   }
 
-  if (id === "victory" || id === "defeat") {
-    // HUD masqué à la fin
-    document.getElementById("hud").style.visibility = "hidden";
+  if (name === "pseudo") {
+    document.getElementById("hud").classList.add("hidden"); // cacher HUD
   }
 }
 
-/**
- * Lance une nouvelle partie
- */
-export function startGame(playerName) {
-  dlog(`startGame -> joueur: ${playerName}`);
-  resetGameState(playerName);
+export function resetGame() {
+  console.log("[DBG] resetGame appelé");
+  resetState();
   resetTimer();
-  goToScreen("intro");
+  goToScreen("pseudo");
 }
 
-/**
- * Fin du jeu
- */
-export function endGame(victory) {
-  dlog(`endGame appelé — victory: ${victory}`);
+export function endGame(victory = true) {
+  console.log("[DBG] endGame appelé — victory:", victory);
   stopAllMusic();
   if (victory) {
+    playMusic("victory");
     goToScreen("victory");
   } else {
+    playMusic("defeat");
     goToScreen("defeat");
   }
-}
-
-/**
- * Reset complet
- */
-export function resetGame() {
-  dlog("resetGame appelé");
-  resetGameState();
-  resetTimer();
-  document.getElementById("hud").style.visibility = "hidden";
-  goToScreen("pseudo");
 }
