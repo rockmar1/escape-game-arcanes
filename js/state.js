@@ -1,29 +1,7 @@
-// === state.js ===
-// Contient l’état global du jeu
+// state.js
 export const gameState = {
-  playerName: "",
+  playerName: '',
   score: 0,
-  puzzlesDone: [],
-  timer: null,
-  debug: false,
+  currentPuzzle: 0,
+  timer: 600 // secondes
 };
-
-export function setPlayerName(name) {
-  gameState.playerName = name;
-}
-
-export function addScore(points) {
-  gameState.score += points;
-}
-
-export function resetState() {
-  gameState.playerName = "";
-  gameState.score = 0;
-  gameState.puzzlesDone = [];
-  gameState.timer = null;
-}
-
-export function toggleDebug() {
-  gameState.debug = !gameState.debug;
-  console.log("[DBG] Mode debug:", gameState.debug);
-}
