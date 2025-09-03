@@ -1,118 +1,62 @@
-/* style.css */
-
-/* Reset et base */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
 body {
+  margin: 0;
   font-family: "Cinzel", serif;
   background: url('assets/images/background-castle.jpg') no-repeat center center fixed;
   background-size: cover;
   color: #fff;
 }
 
-/* Screens */
-.screen {
-  display: none;
-  width: 100%;
-  height: 100vh;
-  position: relative;
-}
+.screen { display: none; padding: 20px; }
+.screen.active { display: block; }
 
-.screen.active {
-  display: block;
-}
-
-/* HUD */
 #hud {
   position: fixed;
   top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(0,0,0,0.7);
-  padding: 8px 15px;
-  border-radius: 8px;
-  font-size: 18px;
+  left: 10px;
   display: flex;
-  gap: 20px;
+  gap: 15px;
+  background: rgba(0,0,0,0.6);
+  padding: 5px 10px;
+  border-radius: 5px;
   z-index: 1000;
 }
 
-/* Intro avec plume */
 .plume-text {
+  font-family: 'Cursive', serif;
+  font-size: 24px;
+  line-height: 1.5;
+  background: url('assets/images/parchment.png') no-repeat center;
+  background-size: cover;
+  padding: 20px;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.plume-cursor {
+  width: 32px;
+  height: 32px;
+  background: url('assets/images/plume-cursor.png') no-repeat center;
   position: absolute;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: 28px;
-  max-width: 80%;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  font-family: 'Cormorant Garamond', serif;
-  color: #fdf6e3;
+  pointer-events: none;
 }
 
-/* Effet plume cursor */
-body.plume-cursor {
-  cursor: url('../assets/images/plume-cursor.png'), auto;
-}
-
-/* Timer dynamique */
-#timer {
-  font-weight: bold;
-  transition: color 0.5s;
-}
-
-#timer.stress {
-  color: orange;
-}
-
-#timer.final-minute {
-  color: red;
-  animation: blink 1s infinite;
-}
-
-@keyframes blink {
-  0%, 50%, 100% { opacity: 1; }
-  25%, 75% { opacity: 0; }
-}
-
-/* Admin panel */
 #admin-panel {
   position: fixed;
   bottom: 50px;
   right: 10px;
   padding: 15px;
   background: rgba(0,0,0,0.9);
-  color: #fff;
-  z-index: 2000;
+  color: white;
+  z-index: 1000;
   border-radius: 8px;
-  max-width: 300px;
+  max-width: 250px;
 }
 
 #admin-panel button {
   display: block;
-  width: 100%;
   margin: 5px 0;
-  padding: 5px 10px;
-  font-size: 14px;
-  cursor: pointer;
 }
 
-/* Victoire / Défaite */
-.screen-victory, .screen-defeat {
-  background-size: cover;
-  background-position: center;
-  text-align: center;
-}
-
-.screen-victory {
-  background-image: url('assets/images/victory.jpg');
-}
-
-.screen-defeat {
-  background-image: url('assets/images/defeat.jpg');
-}
+.timer-warning { color: orange; }
+.timer-critical { color: red; animation: blink 1s infinite; }
+@keyframes blink { 0%,100% {opacity:1;} 50% {opacity:0;} }
