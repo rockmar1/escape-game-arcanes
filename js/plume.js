@@ -1,24 +1,31 @@
 // plume.js
-import { dlog, dwarn } from "./debug.js";
-
-export async function initPlumeAnimations() {
-  const container = document.querySelector(".plume-text");
+export function initPlumeAnimations(callback) {
+  const container = document.querySelector('.plume-text');
   if (!container) {
-    dwarn("Aucune plume text container");
+    console.warn('[WARN] Aucun container plume trouvé');
+    if (callback) callback();
     return;
   }
 
-  const text = container.dataset.text;
-  container.textContent = "";
-  for (let i=0; i<text.length; i++) {
-    container.textContent += text[i];
-    await new Promise(r => setTimeout(r, 50));
-    playQuillSfx();
-  }
-  dlog("Intro terminée (effet plume fini)");
-}
+  const text = container.dataset.text || '';
+  container.textContent = '';
+  document.body.classList.add('plume-cursor');
 
-function playQuillSfx() {
-  const audio = new Audio("assets/audio/sfx-quill.mp3");
-  audio.play().catch(()=>{});
+  let index = 0;
+  const speed = 50;
+
+  const interval = setInterval(() => {
+    if (index < text.length) {
+      container.textContent += text[index];
+      index++;
+      // Son plume à chaque lettre
+      const sfx = new Audio('assets/audio/sfx-quill.mp3');
+      sfx.volume = 0.2;
+      sfx.play().catch(()=>{});
+    } else {
+      clearInterval(interval);
+      document.body.classList.remove('plume-cursor');
+      if (callback) callback();
+    }
+  }, speed);
 }
