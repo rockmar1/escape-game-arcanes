@@ -1,41 +1,38 @@
-// audio.js
-import { dlog, dwarn } from "./debug.js";
+import { dlog, dwarn } from './debug.js';
 
-const musics = {
-  intro: new Audio("assets/audio/intro.mp3"),
-  game: new Audio("assets/audio/game.mp3"),
-  stress: new Audio("assets/audio/stress.mp3"),
-  victory: new Audio("assets/audio/victory.mp3"),
-  defeat: new Audio("assets/audio/defeat.mp3")
+let currentMusic = null;
+const audios = {
+  intro: 'assets/audio/intro.mp3',
+  game: 'assets/audio/game.mp3',
+  victory: 'assets/audio/victory.mp3',
+  defeat: 'assets/audio/defeat.mp3',
+  sfx_quill: 'assets/audio/sfx-quill.mp3',
+  sfx_correct: 'assets/audio/sfx-correct.mp3',
+  sfx_error: 'assets/audio/sfx-error.mp3',
+  sfx_portal: 'assets/audio/sfx-portal.mp3'
 };
 
-const sfx = {
-  quill: new Audio("assets/audio/sfx-quill.mp3"),
-  correct: new Audio("assets/audio/sfx-correct.mp3"),
-  error: new Audio("assets/audio/sfx-error.mp3"),
-  portal: new Audio("assets/audio/sfx-portal.mp3")
-};
-
-export async function initAudioOnUserGesture() {
-  for (let key in musics) musics[key].play().catch(() => musics[key].pause());
-  for (let key in sfx) sfx[key].play().catch(() => sfx[key].pause());
-  dlog("initAudioOnUserGesture done");
+export function playMusic(key) {
+  stopAllMusic();
+  if (!audios[key]) return dwarn(`Aucune musique pour ${key}`);
+  currentMusic = new Audio(audios[key]);
+  currentMusic.loop = true;
+  currentMusic.play().catch(()=>{});
+  dlog(`playMusic ${key}`);
 }
 
-export function playMusic(name) {
-  stopAllMusic();
-  if (!musics[name]) return dwarn(`Aucune musique pour ${name}`);
-  musics[name].loop = true;
-  musics[name].play().catch(()=>{});
-  dlog(`playMusic ${name} lancé`);
+export function playSfx(key) {
+  if (!audios[key]) return dwarn(`Aucun sfx pour ${key}`);
+  const sfx = new Audio(audios[key]);
+  sfx.play().catch(()=>{});
+  dlog(`playSfx ${key}`);
 }
 
 export function stopAllMusic() {
-  for (let key in musics) musics[key].pause();
-  dlog("stopAllMusic");
-}
-
-export function playSfx(name) {
-  if (!sfx[name]) return dwarn(`SFX inconnu: ${name}`);
-  sfx[name].play();
+  if (currentMusic) {
+    currentMusic.pause();
+    currentMusic.currentTime = 0;
+    currentMusic = null;
+    dlog('stopAllMusic');
+  }
 }
