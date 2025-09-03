@@ -1,37 +1,45 @@
 // main.js
-import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
-import { initAdminPanel } from "./admin.js";
+import { gameState } from "./state.js";
+import { goToScreen } from "./router.js";
+import { playMusic } from "./audio.js";
 import { initPlumeAnimations } from "./plume.js";
-import { dlog } from "./debug.js";
-import { initAudioOnUserGesture } from "./audio.js";
+import { startNextMiniGame } from "./main.js"; // si startNextMiniGame est ici
 
-document.addEventListener("DOMContentLoaded", () => {
-  dlog("App start");
+document.addEventListener('DOMContentLoaded', () => {
+  const hud = document.getElementById('hud');
+  if (hud) hud.style.display = 'none'; // Masqué par défaut
 
-  initRouter();
-  initAdminPanel();
+  goToScreen('pseudo');
 
-  // Initialiser HUD masqué
-  const hud = document.getElementById("hud");
-  if (hud) hud.style.display = "none";
+  const startBtn = document.getElementById('start-btn');
+  startBtn.addEventListener('click', () => {
+    const pseudoInput = document.getElementById('pseudo-input');
+    const pseudo = pseudoInput.value.trim();
 
-  // Premier clic -> activer audio
-  document.body.addEventListener("click", async () => {
-    await initAudioOnUserGesture();
-    dlog("initAudioOnUserGesture done");
-  }, { once: true });
+    if (!pseudo) {
+      alert("Veuillez entrer votre pseudo !");
+      return;
+    }
 
-  // Pseudo form
-  const startBtn = document.getElementById("start-btn");
-  const pseudoInput = document.getElementById("pseudo-input");
-  startBtn?.addEventListener("click", () => {
-    const name = pseudoInput.value.trim();
-    if (!name) return alert("Entrez votre pseudo !");
-    goToScreen("intro");
+    // Stocker le pseudo
+    gameState.playerName = pseudo;
+    console.log(`[DBG] player name ${gameState.playerName}`);
 
-    // Lancer intro plume
-    initPlumeAnimations().then(() => {
-      hud.style.display = "block";
+    // Passer à l'intro
+    goToScreen('intro');
+
+    // Stop toutes les musiques précédentes
+    stopAllMusic();
+
+    // Lancer musique intro
+    playMusic('intro');
+
+    // Lancer animation plume
+    initPlumeAnimations(() => {
+      console.log('[DBG] Intro terminée');
+      // Afficher HUD
+      if (hud) hud.style.display = 'block';
+      // Démarrer le premier mini-jeu
       startNextMiniGame();
     });
   });
