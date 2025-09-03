@@ -1,70 +1,81 @@
 import { dlog, dwarn } from "./debug.js";
 
-const musics = {
+let currentMusic = null;
+const audioCache = {};
+
+// 🎵 Mapping des musiques de fond
+const screenMusic = {
   intro: "assets/audio/intro.mp3",
   game: "assets/audio/game.mp3",
-  stress: "assets/audio/stress.mp3",
   victory: "assets/audio/victory.mp3",
-  defeat: "assets/audio/defeat.mp3"
+  defeat: "assets/audio/defeat.mp3",
+  stress: "assets/audio/stress.mp3",
 };
 
+// 🔊 Mapping des effets sonores
 const sfx = {
   quill: "assets/audio/sfx-quill.mp3",
   correct: "assets/audio/sfx-correct.mp3",
   error: "assets/audio/sfx-error.mp3",
-  portal: "assets/audio/sfx-portal.mp3"
+  portal: "assets/audio/sfx-portal.mp3",
 };
 
-let currentMusic = null;
-
-/**
- * Stop toutes les musiques
- */
-export function stopAllMusic() {
-  dlog("stopAllMusic");
-  if (currentMusic) {
-    currentMusic.pause();
-    currentMusic.currentTime = 0;
-  }
-  currentMusic = null;
-}
-
-/**
- * Joue une musique de fond
- */
+// === Gestion musique ===
 export function playMusic(name) {
   stopAllMusic();
 
-  const src = musics[name];
+  const src = screenMusic[name];
   if (!src) {
     dwarn(`Aucune musique assignée pour ${name}`);
     return;
   }
 
-  const audio = new Audio(src);
-  audio.loop = true;
-  audio.volume = 0.5;
-  audio.play().catch(() => {
-    dwarn(`Impossible de jouer ${src}`);
-  });
+  if (!audioCache[src]) {
+    audioCache[src] = new Audio(src);
+    audioCache[src].loop = true;
+  }
 
-  currentMusic = audio;
-  dlog(`playMusic ${name}`);
+  currentMusic = audioCache[src];
+  currentMusic.volume = 0.6;
+
+  currentMusic.play().then(() => {
+    dlog(`🎵 playMusic ${name}`);
+  }).catch(err => {
+    dwarn(`Impossible de jouer ${src}`, err);
+  });
 }
 
-/**
- * Joue un effet sonore
- */
+export function stopAllMusic() {
+  Object.values(audioCache).forEach(a => {
+    a.pause();
+    a.currentTime = 0;
+  });
+  currentMusic = null;
+  dlog("🔇 stopAllMusic");
+}
+
+// === Switch musique stress (quand timer < 5min) ===
+export function switchToStressAmbience() {
+  if (currentMusic) {
+    currentMusic.pause();
+  }
+  playMusic("stress");
+  dlog("⚡ switchToStressAmbience lancé");
+}
+
+// === Effets sonores ===
 export function playSfx(name) {
   const src = sfx[name];
   if (!src) {
-    dwarn(`Effet sonore inconnu: ${name}`);
+    dwarn(`Effet audio inconnu : ${name}`);
     return;
   }
-  const audio = new Audio(src);
-  audio.volume = 0.7;
-  audio.play().catch(() => {
-    dwarn(`Impossible de jouer sfx ${name}`);
+
+  const sfxAudio = new Audio(src);
+  sfxAudio.volume = 0.8;
+  sfxAudio.play().then(() => {
+    dlog(`🔊 playSfx ${name}`);
+  }).catch(err => {
+    dwarn(`Impossible de jouer SFX ${src}`, err);
   });
-  dlog(`playSfx ${name}`);
 }
