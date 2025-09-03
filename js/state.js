@@ -1,10 +1,29 @@
-// js/state.js
-import { dlog } from "./debug.js";
-const STATE = { playerName:"", score:0 };
-export function setPlayerName(n){ STATE.playerName = n; dlog("player name",n); const el = document.getElementById("hud-player"); if(el) el.textContent = `👤 ${n}`; }
-export function getPlayerName(){ return STATE.playerName; }
-export function setScore(v){ STATE.score = v; _render(); }
-export function addScore(n){ STATE.score += n; _render(); }
-export function getScore(){ return STATE.score; }
-export function resetScore(){ STATE.score = 0; _render(); }
-function _render(){ const el=document.getElementById("score"); if(el) el.textContent = `⭐ ${STATE.score}`; }
+// === state.js ===
+// Contient l’état global du jeu
+export const gameState = {
+  playerName: "",
+  score: 0,
+  puzzlesDone: [],
+  timer: null,
+  debug: false,
+};
+
+export function setPlayerName(name) {
+  gameState.playerName = name;
+}
+
+export function addScore(points) {
+  gameState.score += points;
+}
+
+export function resetState() {
+  gameState.playerName = "";
+  gameState.score = 0;
+  gameState.puzzlesDone = [];
+  gameState.timer = null;
+}
+
+export function toggleDebug() {
+  gameState.debug = !gameState.debug;
+  console.log("[DBG] Mode debug:", gameState.debug);
+}
