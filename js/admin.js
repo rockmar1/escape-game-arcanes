@@ -1,11 +1,9 @@
-// admin.js
-import { endGame, goToScreen, stopAllMusic, startNextMiniGame } from "./router.js";
-import { dlog, dwarn, derr } from "./debug.js";
-import { resetScores, renderScores, revealAnswers } from "./scoreboard.js";
-import { getGameState, setGameState } from "./state.js";
+import { endGame, startNextMiniGame, goToScreen } from './router.js';
+import { stopAllMusic } from './audio.js';
+import { dlog, dwarn } from './debug.js';
+import { puzzles } from './state.js'; // tableau de tous les puzzles
 
-// Hash MD5 du mot de passe "admin"
-const ADMIN_PASSWORD_HASH = "21232f297a57a5a743894a0e4a801fc3"; 
+const ADMIN_PASSWORD_HASH = "21232f297a57a5a743894a0e4a801fc3"; // "admin" en MD5
 
 export function initAdminPanel() {
   const btn = document.createElement("button");
@@ -18,16 +16,16 @@ export function initAdminPanel() {
   btn.style.padding = "5px 10px";
   document.body.appendChild(btn);
 
-  btn.addEventListener("click", async () => {
+  btn.addEventListener("click", () => {
     const pass = prompt("🔑 Entrez le mot de passe admin :");
     if (!pass) return;
-
-    if (hashString(pass) === ADMIN_PASSWORD_HASH) {
+    const hash = CryptoJS.MD5(pass).toString();
+    if (hash === ADMIN_PASSWORD_HASH) {
       dlog("Admin auth ok");
       openAdminMenu();
     } else {
       alert("⛔ Mot de passe incorrect");
-      dwarn("Tentative admin échouée");
+      dwarn("Mot de passe admin incorrect");
     }
   });
 }
@@ -37,67 +35,41 @@ function openAdminMenu() {
   if (!panel) {
     panel = document.createElement("div");
     panel.id = "admin-panel";
-    panel.style.position = "fixed";
-    panel.style.bottom = "50px";
-    panel.style.right = "10px";
-    panel.style.padding = "15px";
-    panel.style.background = "rgba(0,0,0,0.9)";
-    panel.style.color = "white";
-    panel.style.zIndex = "1000";
-    panel.style.borderRadius = "8px";
-    panel.style.maxWidth = "250px";
-
     panel.innerHTML = `
       <h4>⚙️ Panneau Admin</h4>
       <button id="force-victory">✅ Forcer Victoire</button>
       <button id="force-defeat">❌ Forcer Défaite</button>
-      <button id="skip-puzzle">⏭️ Skip Mini-Jeu</button>
-      <button id="reveal-answers">📖 Voir Réponses</button>
-      <button id="reset-scores">🗑️ Reset Scores</button>
+      <button id="skip-mini">⏭️ Skip Mini-Jeu</button>
+      <button id="show-answers">💡 Voir Réponses</button>
       <button id="close-admin">❌ Fermer</button>
     `;
     document.body.appendChild(panel);
 
-    // Boutons actions
     document.getElementById("force-victory").addEventListener("click", () => {
-      dlog("Admin: Forcer victoire");
       stopAllMusic();
       endGame(true);
+      dlog("Admin: Forcé victoire");
     });
 
     document.getElementById("force-defeat").addEventListener("click", () => {
-      dlog("Admin: Forcer défaite");
       stopAllMusic();
       endGame(false);
+      dlog("Admin: Forcé défaite");
     });
 
-    document.getElementById("skip-puzzle").addEventListener("click", () => {
-      dlog("Admin: Skip mini-jeu");
-      const state = getGameState();
-      state.skipNextPuzzle = true;
-      setGameState(state);
+    document.getElementById("skip-mini").addEventListener("click", () => {
+      stopAllMusic();
       startNextMiniGame();
+      dlog("Admin: Mini-jeu suivant lancé");
     });
 
-    document.getElementById("reveal-answers").addEventListener("click", () => {
-      dlog("Admin: Revealing answers");
-      revealAnswers();
+    document.getElementById("show-answers").addEventListener("click", () => {
+      dlog("Admin: Réponses des puzzles:");
+      puzzles.forEach((p, i) => {
+        dlog(`Puzzle #${i+1}: ${p.meta?.answer || "Pas de réponse"}`);
+      });
     });
 
-    document.getElementById("reset-scores").addEventListener("click", () => {
-      dlog("Admin: Reset scores");
-      resetScores();
-      alert("✅ Scores réinitialisés");
-    });
-
-    document.getElementById("close-admin").addEventListener("click", () => {
-      panel.remove();
-      dlog("Admin panel closed");
-    });
+    document.getElementById("close-admin").addEventListener("click", () => panel.remove());
   }
-}
-
-// Fonction de hash MD5 (CryptoJS nécessaire)
-function hashString(str) {
-  return CryptoJS.MD5(str).toString();
 }
