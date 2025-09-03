@@ -1,101 +1,35 @@
-/* style.css - thème médiéval / parchemin, HUD, admin, debug */
-
-/* Reset */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html,body { height: 100%; }
-
-/* Body background */
-body {
+/* style.css - compacté, thème médiéval/parchemin */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
   font-family: 'Cinzel', serif;
-  color: #f5f0e6;
+  color:#f5f0e6;
   background: url("assets/images/background-castle.jpg") center/cover no-repeat fixed;
-  min-height: 100vh;
+  min-height:100vh;
 }
-
-/* Generic layout */
-.screen { display: none; width:100%; height:100vh; padding: 40px; }
-.screen .content { max-width: 1000px; margin: 0 auto; text-align: center; }
-.screen.active { display: block; }
-.hidden { display: none !important; }
-
-.row { margin-top: 12px; display:flex; justify-content:center; gap:10px; }
-
-/* Buttons */
-button {
-  background: linear-gradient(90deg,#6a1b9a,#8e24aa);
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-}
-button:hover { transform: translateY(-2px); }
-
-/* Parchemin effect (intro) */
-.parchment {
-  background: url("assets/images/parchment.png") no-repeat center/center;
-  background-size: cover;
-  padding: 28px;
-  border-radius: 12px;
-  box-shadow: 0 10px 50px rgba(0,0,0,0.6);
-  color: #2b1d0e;
-}
-
-/* Book open animation */
-.book-intro { animation: openBook 800ms ease both; transform-origin: left center; }
-@keyframes openBook { from { transform: scaleX(0); opacity: 0 } to { transform: scaleX(1); opacity: 1; } }
-
-/* Intro text (plume effect handled via JS) */
-.intro-text { font-size: 20px; line-height: 1.6; white-space: pre-wrap; text-align:left; margin: 10px auto; }
-
-/* HUD */
-.hud {
-  position: fixed; top: 18px; left: 18px; right: 18px;
-  display:flex; justify-content:space-between; align-items:center;
-  padding: 8px 14px; border-radius:10px;
-  background: rgba(8,6,5,0.55); border: 1px solid rgba(212,175,55,0.12);
-  z-index: 1000;
-}
-.hud.hidden { display: none !important; }
-
-#hud-player { font-weight:700; margin-right:8px; }
-#score { color:#ffd966; font-weight:700; margin-left:8px; }
-
-/* Timer runique */
-#timer { font-size:18px; font-weight:700; color:#8fe39a; transition: color .25s; }
-#timer.warning { color: #ff8a00; font-weight:800; }
-#timer.danger { color: #ff4444; animation: blink 1s infinite; }
-@keyframes blink { 50% { opacity: 0.2; } }
-
-/* Endings background */
-.ending.victory-bg { background: url("assets/images/victory.jpg") center/cover no-repeat; color: #fff; }
-.ending.defeat-bg { background: url("assets/images/defeat.jpg") center/cover no-repeat; color: #fff; }
-
-/* Scoreboard */
-#scoreboard-list { list-style: none; text-align:left; margin-top:20px; padding:0 20px; }
-#scoreboard-list li { padding:8px 6px; border-bottom:1px dashed rgba(255,255,255,0.08); }
-
-/* Debug panel */
-.debug-panel {
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: rgba(0,0,0,0.9); color: #9aff9a; font-family: monospace;
-  max-height: 28vh; overflow:auto; z-index: 2000; padding:6px;
-}
-.debug-panel.hidden { display:none; }
-.debug-header { display:flex; gap:10px; align-items:center; justify-content:flex-end; margin-bottom:6px; }
-.debug-log { white-space: pre-wrap; font-size:12px; max-height:22vh; overflow:auto; }
-
-/* Admin toggle button styles (will be created by admin.js) */
-#admin-toggle-btn { position: fixed; bottom: 12px; right: 12px; z-index: 3000; }
-
-/* Puzzle overlay small tweaks */
-.puzzle-overlay { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; z-index:4000; }
-.puzzle-container { background: rgba(10,8,6,0.9); padding:18px; border-radius:10px; color:#fff; min-width:280px; max-width:640px; }
-
-/* small screens */
-@media (max-width:600px) {
-  .content { padding: 12px; }
-  .intro-text { font-size:16px; }
-  button { padding:8px 12px; font-size:14px; }
-}
+/* screens */
+.screen{display:none;width:100%;height:100vh;padding:40px}
+.screen .content{max-width:1000px;margin:0 auto;text-align:center}
+.screen.active{display:block}
+.hidden{display:none!important}
+.row{margin-top:12px;display:flex;justify-content:center;gap:10px}
+button{background:linear-gradient(90deg,#6a1b9a,#8e24aa);color:#fff;border:none;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:16px}
+button:hover{transform:translateY(-2px)}
+.parchment{background:url("assets/images/parchment.png") no-repeat center/center;background-size:cover;padding:28px;border-radius:12px;box-shadow:0 10px 50px rgba(0,0,0,0.6);color:#2b1d0e}
+.book-intro{animation:openBook .8s ease both;transform-origin:left center}
+@keyframes openBook{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+.intro-text{font-size:20px;line-height:1.6;white-space:pre-wrap;text-align:left;margin:10px auto}
+.hud{position:fixed;top:18px;left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-radius:10px;background:rgba(8,6,5,0.55);border:1px solid rgba(212,175,55,0.12);z-index:1000}
+.hud.hidden{display:none!important}
+#timer{font-size:18px;font-weight:700;color:#8fe39a;transition:color .25s}
+#timer.warning{color:#ff8a00;font-weight:800}
+#timer.danger{color:#ff4444;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:0.2}}
+.ending.victory-bg{background:url("assets/images/victory.jpg") center/cover no-repeat;color:#fff}
+.ending.defeat-bg{background:url("assets/images/defeat.jpg") center/cover no-repeat;color:#fff}
+#scoreboard-list{list-style:none;text-align:left;margin-top:20px;padding:0 20px}
+#scoreboard-list li{padding:8px 6px;border-bottom:1px dashed rgba(255,255,255,0.08)}
+/* puzzle overlay */
+.puzzle-overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:4000}
+.puzzle-container{background:rgba(10,8,6,0.95);padding:18px;border-radius:10px;color:#fff;min-width:280px;max-width:700px}
+@media(max-width:600px){.content{padding:12px}.intro-text{font-size:16px}button{padding:8px 12px;font-size:14px}}
