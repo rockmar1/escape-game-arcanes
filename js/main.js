@@ -1,31 +1,45 @@
-import { initRouter, startAdventure } from "./router.js";
-import { initAdminPanel } from "./admin.js";
+import { dlog } from "./debug.js";
+import { goToScreen, startGame, resetGame, endGame } from "./router.js";
+import { initAdmin } from "./admin.js";
 import { initAudioOnUserGesture } from "./audio.js";
-import { log } from "./debug.js";
 
-// === Initialisation de l'app ===
-document.addEventListener("DOMContentLoaded", () => {
-  log("App start");
+// === Initialisation générale ===
+window.addEventListener("DOMContentLoaded", () => {
+  dlog("App start");
 
-  // Init router & boutons
-  initRouter();
+  // Affiche l'écran pseudo par défaut
+  goToScreen("pseudo");
 
-  // Init panel admin
-  initAdminPanel();
+  // Init admin panel
+  initAdmin();
 
-  // Première interaction utilisateur pour l'audio
-  const firstClickHandler = () => {
-    log("Premier clic -> initAudioOnUserGesture");
-    initAudioOnUserGesture();
-    document.removeEventListener("click", firstClickHandler);
-  };
-  document.addEventListener("click", firstClickHandler);
+  // Forcer activation audio sur interaction
+  initAudioOnUserGesture();
 
-  // Bouton "Commencer l’aventure" après intro
-  const btnBegin = document.getElementById("begin-game");
-  if (btnBegin) {
-    btnBegin.addEventListener("click", () => {
-      startAdventure();
+  // Bouton pseudo
+  const pseudoForm = document.getElementById("pseudo-form");
+  if (pseudoForm) {
+    pseudoForm.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("pseudo-input").value.trim();
+      if (name) {
+        dlog(`player name ${name}`);
+        startGame(name);
+      }
     });
   }
+
+  // Boutons rejouer
+  document.querySelectorAll(".btn-restart").forEach(btn => {
+    btn.addEventListener("click", () => {
+      resetGame();
+    });
+  });
+
+  // Boutons fin forcée (exemple debug)
+  const forceWin = document.getElementById("btn-force-victory");
+  if (forceWin) forceWin.addEventListener("click", () => endGame(true));
+
+  const forceLose = document.getElementById("btn-force-defeat");
+  if (forceLose) forceLose.addEventListener("click", () => endGame(false));
 });
