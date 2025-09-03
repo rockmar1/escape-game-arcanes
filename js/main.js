@@ -1,71 +1,31 @@
-// js/main.js - boots everything and wires UI
+// js/admin.js
 import { dlog } from "./debug.js";
-import { initAdminPanel } from "./admin.js";
-import { initRouter, goToIntro, startAdventure } from "./router.js"; // note: router exports functions
-import { initAudioOnUserGesture } from "./audio.js";
-import { renderScoreboardTo, loadScores, clearScores } from "./scoreboard.js";
-
-// Initialize
-document.addEventListener("DOMContentLoaded", ()=>{
-  dlog("App DOMContentLoaded");
-
-  // init admin button
-  initAdminPanel();
-
-  // init router
-  initRouter();
-
-  // bind UI
-  const startBtn = document.getElementById("start-btn");
-  const pseudoInput = document.getElementById("pseudo-input");
-  const beginBtn = document.getElementById("begin-game");
-  const skipIntro = document.getElementById("skip-intro");
-  const replayV = document.getElementById("btn-replay-v");
-  const replayD = document.getElementById("btn-replay-d");
-  const gotoScore = document.getElementById("goto-scoreboard");
-  const gotoScoreD = document.getElementById("goto-scoreboard-d");
-  const replayScore = document.getElementById("btn-replay-score");
-  const clearBtn = document.getElementById("btn-clear-scores");
-  const debugToggle = document.getElementById("debug-toggle");
-
-  // first user gesture audio prime
-  document.body.addEventListener("click", ()=> initAudioOnUserGesture(), { once: true });
-
-  // start button
-  startBtn?.addEventListener("click", ()=>{
-    const name = pseudoInput.value.trim() || "Aventurier";
-    // set name with router helper (router exported sets window.setPlayerName? we use global state setter defined in state.js)
-    try { const { setPlayerName } = awaitImportState(); setPlayerName(name); } catch(e){ console.debug("state import fallback", e); }
-    document.getElementById("hud-player").textContent = `👤 ${name}`;
-    goToIntro();
+const ADMIN_HASH = "21232f297a57a5a743894a0e4a801fc3"; // MD5("admin")
+function md5(s){ try{ return CryptoJS.MD5(String(s)).toString(); }catch(e){ return null; } }
+export function initAdminPanel(){
+  if(document.getElementById("admin-toggle-btn")) return;
+  const btn=document.createElement("button"); btn.id="admin-toggle-btn"; btn.textContent="⚙️"; btn.style.position="fixed"; btn.style.bottom="12px"; btn.style.right="12px"; btn.style.zIndex=3000; document.body.appendChild(btn);
+  btn.addEventListener("click", ()=>{
+    const pass = prompt("Mot de passe admin :");
+    if(!pass) return;
+    const h = md5(pass);
+    if(!h){ alert("CryptoJS manquant"); return; }
+    if(h === ADMIN_HASH){ dlog("Admin auth ok"); openPanel(); } else { alert("Mot de passe incorrect"); }
   });
-
-  // begin game after reading intro
-  beginBtn?.addEventListener("click", ()=> {
-    startAdventure();
-  });
-
-  skipIntro?.addEventListener("click", ()=> { startAdventure(); });
-
-  // scoreboard controls
-  gotoScore?.addEventListener("click", ()=> { renderScoreboardTo("scoreboard-list"); document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); document.getElementById("screen-scoreboard").classList.add("active"); });
-  gotoScoreD?.addEventListener("click", ()=> { renderScoreboardTo("scoreboard-list"); document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active")); document.getElementById("screen-scoreboard").classList.add("active"); });
-  replayV?.addEventListener("click", ()=> { window.resetGame && window.resetGame(); });
-  replayD?.addEventListener("click", ()=> { window.resetGame && window.resetGame(); });
-  replayScore?.addEventListener("click", ()=> { window.resetGame && window.resetGame(); });
-  clearBtn?.addEventListener("click", ()=> { if(confirm("Effacer scores locaux ?")) { localStorage.removeItem("eg_scores_v1"); alert("Scores effacés"); }});
-
-  debugToggle?.addEventListener("click", ()=>{
-    const panel = document.getElementById("debug-panel");
-    panel.classList.toggle("hidden");
-  });
-
-  // initial scoreboard render
-  loadScores();
-  renderScoreboardTo("scoreboard-list");
-});
-
-// helper to dynamic import state.js (avoid circular import in top-level)
-function awaitImportState(){
-  return import("./state.js");
+}
+function openPanel(){
+  let panel=document.getElementById("admin-panel-ui");
+  if(!panel){
+    panel=document.createElement("div"); panel.id="admin-panel-ui"; panel.style.position="fixed"; panel.style.top="10px"; panel.style.right="10px"; panel.style.zIndex=4000; panel.style.background="rgba(0,0,0,0.85)"; panel.style.color="#fff"; panel.style.padding="10px"; panel.style.borderRadius="8px";
+    panel.innerHTML=`<h4 style="margin:6px 0">🔮 Admin</h4><div style="display:flex;flex-direction:column;gap:6px"><button id="admin-skip">⏭ Skip</button><button id="admin-reveal">🗝 Reveal</button><button id="admin-nightmare">😈 Cauchemar</button><button id="admin-victory">🏆 Victoire</button><button id="admin-defeat">💀 Défaite</button><button id="admin-reset">🔁 Reset</button><button id="admin-stop">🔇 Stop music</button><button id="admin-clear-scores">🧹 Clear scores</button></div><pre id="admin-debug" style="display:none;"></pre>`;
+    document.body.appendChild(panel);
+    panel.querySelector("#admin-skip").onclick = ()=> window.skipCurrentPuzzle && window.skipCurrentPuzzle();
+    panel.querySelector("#admin-reveal").onclick = ()=> window.revealCurrentAnswer && window.revealCurrentAnswer();
+    panel.querySelector("#admin-nightmare").onclick = ()=> window.toggleNightmare && window.toggleNightmare();
+    panel.querySelector("#admin-victory").onclick = ()=> window.endGame && window.endGame(true);
+    panel.querySelector("#admin-defeat").onclick = ()=> window.endGame && window.endGame(false);
+    panel.querySelector("#admin-reset").onclick = ()=> window.resetGame && window.resetGame();
+    panel.querySelector("#admin-stop").onclick = ()=> window.stopAllMusic && window.stopAllMusic();
+    panel.querySelector("#admin-clear-scores").onclick = ()=> { if(confirm("Effacer scores locaux ?")){ localStorage.removeItem("eg_scores_v1"); alert("Scores effacés"); } };
+  } else { panel.style.display = (panel.style.display === "none") ? "block" : "none"; }
 }
