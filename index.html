@@ -1,87 +1,64 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Escape Game - Arcanes</title>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Escape Game Arcanes</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
-  <!-- CryptoJS nécessaire pour admin -->
+  <link rel="icon" href="assets/images/favicon.ico">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-  <!-- PSEUDO -->
-  <section id="screen-pseudo" class="screen active">
-    <div class="content">
-      <h1>Les Gardiens du Royaume Oublié</h1>
-      <p>Entre ton pseudo pour commencer :</p>
-      <input id="pseudo-input" placeholder="Ton nom magique..." />
-      <div class="row">
-        <button id="start-btn">Commencer l’aventure</button>
-      </div>
-    </div>
-  </section>
+  <!-- HUD joueur, masqué au début -->
+  <div id="hud" class="hidden">
+    <span id="player-name">👤 Player</span>
+    <span id="player-score">💎 0</span>
+    <span id="timer">⏳ 10:00</span>
+  </div>
 
-  <!-- INTRO -->
-  <section id="screen-intro" class="screen hidden">
-    <div class="content parchment book-intro">
-      <div id="intro-text" class="intro-text"></div>
-      <div class="intro-controls row">
-        <button id="skip-intro">Passer l’intro</button>
-        <button id="begin-game">Entrer dans le royaume</button>
-      </div>
-    </div>
-  </section>
+  <!-- Écrans -->
+  <div id="screen-pseudo" class="screen">
+    <h2>Entrez votre pseudo :</h2>
+    <input id="pseudo-input" type="text" placeholder="Votre pseudo">
+    <button id="start-btn">Commencer</button>
+  </div>
 
-  <!-- GAME -->
-  <section id="screen-game" class="screen hidden">
-    <div id="hud" class="hud hidden">
-      <div id="hud-left"><span id="hud-player">👤 —</span></div>
-      <div id="hud-center"><span id="timer">⏳ 10:00</span></div>
-      <div id="hud-right"><span id="score">⭐ 0</span></div>
-    </div>
-    <main id="game-area" class="game-area">
-      <h2>Explore les pièces et résous les énigmes !</h2>
-      <div id="puzzle-container"></div>
-    </main>
-  </section>
+  <div id="screen-intro" class="screen hidden">
+    <div class="plume-text" data-text=""></div>
+    <button id="begin-game" class="hidden">Commencer l’aventure</button>
+  </div>
 
-  <!-- VICTORY -->
-  <section id="screen-victory" class="screen hidden ending victory-bg">
-    <div class="content">
-      <div id="victory-text" class="ending-text"></div>
-      <div class="ending-controls row">
-        <button id="goto-scoreboard">Voir le tableau des scores</button>
-        <button id="btn-replay-v">Rejouer</button>
-      </div>
-    </div>
-  </section>
+  <div id="screen-game" class="screen hidden">
+    <div id="puzzle-container"></div>
+  </div>
 
-  <!-- DEFEAT -->
-  <section id="screen-defeat" class="screen hidden ending defeat-bg">
-    <div class="content">
-      <div id="defeat-text" class="ending-text"></div>
-      <div class="ending-controls row">
-        <button id="goto-scoreboard-d">Voir le tableau des scores</button>
-        <button id="btn-replay-d">Réessayer</button>
-      </div>
-    </div>
-  </section>
+  <div id="screen-victory" class="screen hidden">
+    <img src="assets/images/victory.jpg" alt="Victoire">
+    <h2>Félicitations !</h2>
+    <button onclick="resetGame()">Rejouer</button>
+  </div>
 
-  <!-- SCOREBOARD -->
-  <section id="screen-scoreboard" class="screen hidden">
-    <div class="content">
-      <h2>🏆 Tableau des Scores</h2>
-      <ul id="scoreboard-list"></ul>
-      <div class="row">
-        <button id="btn-replay-score">Rejouer</button>
-        <button id="btn-clear-scores">Effacer scores</button>
-      </div>
-    </div>
-  </section>
+  <div id="screen-defeat" class="screen hidden">
+    <img src="assets/images/defeat.jpg" alt="Défaite">
+    <h2>Vous avez échoué !</h2>
+    <button onclick="resetGame()">Réessayer</button>
+  </div>
 
-  <!-- Admin toggle created by admin.js -->
+  <div id="screen-scoreboard" class="screen hidden">
+    <h2>Scores</h2>
+    <div id="scoreboard-table"></div>
+    <button onclick="resetGame()">Retour</button>
+  </div>
+
+  <!-- Scripts JS -->
+  <script type="module" src="js/debug.js"></script>
+  <script type="module" src="js/state.js"></script>
+  <script type="module" src="js/audio.js"></script>
+  <script type="module" src="js/plume.js"></script>
+  <script type="module" src="js/intro.js"></script>
+  <script type="module" src="js/scoreboard.js"></script>
+  <script type="module" src="js/router.js"></script>
+  <script type="module" src="js/admin.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
