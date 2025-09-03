@@ -1,94 +1,118 @@
 /* style.css */
 
-/* Reset global */
-body, html {
+/* Reset et base */
+* {
   margin: 0;
   padding: 0;
-  font-family: 'Georgia', serif;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Cinzel", serif;
   background: url('assets/images/background-castle.jpg') no-repeat center center fixed;
   background-size: cover;
   color: #fff;
 }
 
+/* Screens */
 .screen {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: none;
+  width: 100%;
   height: 100vh;
-  text-align: center;
+  position: relative;
 }
 
-.hidden { display: none; }
+.screen.active {
+  display: block;
+}
 
-.hud {
+/* HUD */
+#hud {
   position: fixed;
   top: 10px;
-  left: 10px;
-  background: rgba(0,0,0,0.5);
-  padding: 5px 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.7);
+  padding: 8px 15px;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 18px;
+  display: flex;
+  gap: 20px;
   z-index: 1000;
 }
 
+/* Intro avec plume */
 .plume-text {
-  font-family: 'Cursive', Georgia;
-  font-size: 1.8em;
-  line-height: 2em;
-  max-width: 600px;
-  background: url('assets/images/parchment.png') no-repeat center;
-  background-size: contain;
-  padding: 40px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #000;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 28px;
+  max-width: 80%;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  font-family: 'Cormorant Garamond', serif;
+  color: #fdf6e3;
 }
 
-.end-image {
-  width: 60%;
-  border: 5px solid #fff;
-  border-radius: 10px;
-  margin-bottom: 20px;
+/* Effet plume cursor */
+body.plume-cursor {
+  cursor: url('../assets/images/plume-cursor.png'), auto;
 }
 
-button {
-  font-family: 'Georgia', serif;
-  font-size: 1.2em;
-  padding: 8px 16px;
-  margin: 10px;
-  cursor: pointer;
-  border-radius: 5px;
-  border: none;
-  background-color: #444;
-  color: #fff;
-  transition: all 0.3s;
+/* Timer dynamique */
+#timer {
+  font-weight: bold;
+  transition: color 0.5s;
 }
 
-button:hover {
-  background-color: #666;
+#timer.stress {
+  color: orange;
 }
 
+#timer.final-minute {
+  color: red;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0; }
+}
+
+/* Admin panel */
 #admin-panel {
   position: fixed;
   bottom: 50px;
   right: 10px;
   padding: 15px;
   background: rgba(0,0,0,0.9);
-  color: white;
-  z-index: 1000;
+  color: #fff;
+  z-index: 2000;
   border-radius: 8px;
-  max-width: 250px;
+  max-width: 300px;
 }
 
-#admin-panel h4 {
-  margin: 0 0 10px 0;
+#admin-panel button {
+  display: block;
+  width: 100%;
+  margin: 5px 0;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
 }
 
-#debug-log {
-  max-height: 100px;
-  overflow: auto;
-  margin-top: 10px;
-  background: #222;
-  padding: 5px;
-  font-size: 12px;
+/* Victoire / Défaite */
+.screen-victory, .screen-defeat {
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+}
+
+.screen-victory {
+  background-image: url('assets/images/victory.jpg');
+}
+
+.screen-defeat {
+  background-image: url('assets/images/defeat.jpg');
 }
