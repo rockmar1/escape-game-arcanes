@@ -1,31 +1,85 @@
-// js/admin.js
-import { dlog } from "./debug.js";
-const ADMIN_HASH = "21232f297a57a5a743894a0e4a801fc3"; // MD5("admin")
-function md5(s){ try{ return CryptoJS.MD5(String(s)).toString(); }catch(e){ return null; } }
-export function initAdminPanel(){
-  if(document.getElementById("admin-toggle-btn")) return;
-  const btn=document.createElement("button"); btn.id="admin-toggle-btn"; btn.textContent="⚙️"; btn.style.position="fixed"; btn.style.bottom="12px"; btn.style.right="12px"; btn.style.zIndex=3000; document.body.appendChild(btn);
-  btn.addEventListener("click", ()=>{
-    const pass = prompt("Mot de passe admin :");
-    if(!pass) return;
-    const h = md5(pass);
-    if(!h){ alert("CryptoJS manquant"); return; }
-    if(h === ADMIN_HASH){ dlog("Admin auth ok"); openPanel(); } else { alert("Mot de passe incorrect"); }
+import { endGame, goToScreen, startAdventure } from "./router.js";
+import { resetScores } from "./scoreboard.js";
+import { stopAllMusic } from "./audio.js";
+import { log } from "./debug.js";
+
+// Hash MD5 de "admin"
+const ADMIN_HASH = "21232f297a57a5a743894a0e4a801fc3";
+
+export function initAdminPanel() {
+  const btn = document.createElement("button");
+  btn.id = "admin-toggle";
+  btn.textContent = "⚙️ Admin";
+  btn.style.position = "fixed";
+  btn.style.bottom = "10px";
+  btn.style.right = "10px";
+  btn.style.zIndex = "1000";
+  btn.style.padding = "5px 10px";
+  document.body.appendChild(btn);
+
+  btn.addEventListener("click", () => {
+    const pass = prompt("🔑 Mot de passe admin ?");
+    if (CryptoJS.MD5(pass).toString() === ADMIN_HASH) {
+      log("Admin auth ok");
+      openAdminMenu();
+    } else {
+      alert("⛔ Mot de passe incorrect");
+    }
   });
 }
-function openPanel(){
-  let panel=document.getElementById("admin-panel-ui");
-  if(!panel){
-    panel=document.createElement("div"); panel.id="admin-panel-ui"; panel.style.position="fixed"; panel.style.top="10px"; panel.style.right="10px"; panel.style.zIndex=4000; panel.style.background="rgba(0,0,0,0.85)"; panel.style.color="#fff"; panel.style.padding="10px"; panel.style.borderRadius="8px";
-    panel.innerHTML=`<h4 style="margin:6px 0">🔮 Admin</h4><div style="display:flex;flex-direction:column;gap:6px"><button id="admin-skip">⏭ Skip</button><button id="admin-reveal">🗝 Reveal</button><button id="admin-nightmare">😈 Cauchemar</button><button id="admin-victory">🏆 Victoire</button><button id="admin-defeat">💀 Défaite</button><button id="admin-reset">🔁 Reset</button><button id="admin-stop">🔇 Stop music</button><button id="admin-clear-scores">🧹 Clear scores</button></div><pre id="admin-debug" style="display:none;"></pre>`;
-    document.body.appendChild(panel);
-    panel.querySelector("#admin-skip").onclick = ()=> window.skipCurrentPuzzle && window.skipCurrentPuzzle();
-    panel.querySelector("#admin-reveal").onclick = ()=> window.revealCurrentAnswer && window.revealCurrentAnswer();
-    panel.querySelector("#admin-nightmare").onclick = ()=> window.toggleNightmare && window.toggleNightmare();
-    panel.querySelector("#admin-victory").onclick = ()=> window.endGame && window.endGame(true);
-    panel.querySelector("#admin-defeat").onclick = ()=> window.endGame && window.endGame(false);
-    panel.querySelector("#admin-reset").onclick = ()=> window.resetGame && window.resetGame();
-    panel.querySelector("#admin-stop").onclick = ()=> window.stopAllMusic && window.stopAllMusic();
-    panel.querySelector("#admin-clear-scores").onclick = ()=> { if(confirm("Effacer scores locaux ?")){ localStorage.removeItem("eg_scores_v1"); alert("Scores effacés"); } };
-  } else { panel.style.display = (panel.style.display === "none") ? "block" : "none"; }
+
+function openAdminMenu() {
+  let panel = document.getElementById("admin-panel");
+  if (panel) panel.remove();
+
+  panel = document.createElement("div");
+  panel.id = "admin-panel";
+  panel.classList.add("admin-panel");
+
+  panel.innerHTML = `
+    <h4>⚙️ Panneau Admin</h4>
+    <button id="force-victory">✅ Forcer Victoire</button>
+    <button id="force-defeat">❌ Forcer Défaite</button>
+    <button id="skip-puzzle">⏭️ Skip Puzzle</button>
+    <button id="reset-scores">🗑️ Reset Scores</button>
+    <button id="show-scores">📊 Voir Scores</button>
+    <button id="stop-music">🔇 Stop Music</button>
+    <button id="close-admin">❌ Fermer</button>
+  `;
+  document.body.appendChild(panel);
+
+  // === Actions ===
+  document.getElementById("force-victory").addEventListener("click", () => {
+    log("Admin → Forcer Victoire");
+    endGame(true);
+  });
+
+  document.getElementById("force-defeat").addEventListener("click", () => {
+    log("Admin → Forcer Défaite");
+    endGame(false);
+  });
+
+  document.getElementById("skip-puzzle").addEventListener("click", () => {
+    log("Admin → Skip Puzzle");
+    startAdventure();
+  });
+
+  document.getElementById("reset-scores").addEventListener("click", () => {
+    resetScores();
+    alert("✅ Scores réinitialisés");
+  });
+
+  document.getElementById("show-scores").addEventListener("click", () => {
+    log("Admin → Affiche scores");
+    goToScreen("scoreboard");
+  });
+
+  document.getElementById("stop-music").addEventListener("click", () => {
+    log("Admin → stopAllMusic");
+    stopAllMusic();
+  });
+
+  document.getElementById("close-admin").addEventListener("click", () => {
+    panel.remove();
+  });
 }
