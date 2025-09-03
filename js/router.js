@@ -4,7 +4,7 @@ import { startTimer } from './timer.js';
 import { initPlumeAnimations } from './plume.js';
 
 let currentPuzzleIndex = 0;
-let puzzles = []; // à remplir avec vos modules puzzles
+let puzzles = []; // à remplir avec vos modules puzzles.
 let hud = null;
 
 export function initRouter() {
