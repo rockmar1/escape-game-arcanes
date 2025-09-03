@@ -9,61 +9,40 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
+  <!-- HUD -->
+  <div id="hud" class="hud">
+    <span id="hud-player">👤</span>
+    <span id="hud-score">0 pts</span>
+    <span id="hud-timer">⏳ 10:00</span>
+  </div>
 
-<!-- HUD -->
-<div id="hud" class="hud">
-  <span id="player-name">Pseudo</span> |
-  <span id="score">0 pts</span> |
-  <span id="timer">⏳ 10:00</span>
-</div>
+  <!-- Screens -->
+  <div id="screen-pseudo" class="screen">
+    <input type="text" id="pseudo-input" placeholder="Entrez votre pseudo">
+    <button id="start-btn">Commencer</button>
+  </div>
 
-<!-- Écran pseudo -->
-<div id="screen-pseudo" class="screen">
-  <h1>Bienvenue dans les Arcanes</h1>
-  <input type="text" id="pseudo-input" placeholder="Entrez votre pseudo">
-  <button id="start-btn">Commencer</button>
-</div>
+  <div id="screen-intro" class="screen screen-intro">
+    <div class="plume-text" data-text=""></div>
+  </div>
 
-<!-- Écran intro -->
-<div id="screen-intro" class="screen hidden">
-  <div id="intro-container" class="plume-text" data-text="Dans un grimoire poussiéreux, une prophétie renaît de l’oubli..."></div>
-</div>
+  <div id="screen-game" class="screen">
+    <div id="puzzle-container"></div>
+  </div>
 
-<!-- Écran game -->
-<div id="screen-game" class="screen hidden">
-  <div id="puzzle-container"></div>
-</div>
+  <div id="screen-victory" class="screen">
+    <img src="assets/images/victory.jpg" alt="Victoire">
+  </div>
 
-<!-- Écran victoire -->
-<div id="screen-victory" class="screen hidden">
-  <img src="assets/images/victory.jpg" alt="Victoire" class="end-image">
-  <h2>Félicitations !</h2>
-  <button onclick="location.reload()">Rejouer</button>
-</div>
+  <div id="screen-defeat" class="screen">
+    <img src="assets/images/defeat.jpg" alt="Défaite">
+  </div>
 
-<!-- Écran défaite -->
-<div id="screen-defeat" class="screen hidden">
-  <img src="assets/images/defeat.jpg" alt="Défaite" class="end-image">
-  <h2>Vous avez échoué...</h2>
-  <button onclick="location.reload()">Réessayer</button>
-</div>
+  <div id="screen-scoreboard" class="screen">
+    <div id="scoreboard"></div>
+  </div>
 
-<!-- Écran scoreboard -->
-<div id="screen-scoreboard" class="screen hidden">
-  <h2>Table des scores</h2>
-  <div id="scoreboard-list"></div>
-</div>
-
-<!-- Scripts JS -->
-<script type="module" src="js/debug.js"></script>
-<script type="module" src="js/state.js"></script>
-<script type="module" src="js/audio.js"></script>
-<script type="module" src="js/timer.js"></script>
-<script type="module" src="js/plume.js"></script>
-<script type="module" src="js/scoreboard.js"></script>
-<script type="module" src="js/admin.js"></script>
-<script type="module" src="js/router.js"></script>
-<script type="module" src="js/main.js"></script>
-
+  <!-- JS -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
