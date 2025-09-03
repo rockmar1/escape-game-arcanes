@@ -1,35 +1,38 @@
-// === main.js ===
-import { goToScreen, resetGame } from "./router.js";
-import { setPlayerName } from "./state.js";
+// main.js
+import { initRouter, goToScreen, startNextMiniGame } from "./router.js";
 import { initAdminPanel } from "./admin.js";
+import { initPlumeAnimations } from "./plume.js";
+import { dlog } from "./debug.js";
 import { initAudioOnUserGesture } from "./audio.js";
 
-console.log("[DBG] App start");
-
-// Initialisation
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("[DBG] initRouter -> affichage écran pseudo");
-  goToScreen("pseudo");
+  dlog("App start");
 
+  initRouter();
   initAdminPanel();
-  initAudioOnUserGesture();
 
-  // pseudo
-  const form = document.getElementById("pseudo-form");
-  if (form) {
-    form.addEventListener("submit", e => {
-      e.preventDefault();
-      const name = document.getElementById("pseudo-input").value.trim();
-      if (name) {
-        setPlayerName(name);
-        console.log("[DBG] player name", name);
-        goToScreen("intro");
-      }
+  // Initialiser HUD masqué
+  const hud = document.getElementById("hud");
+  if (hud) hud.style.display = "none";
+
+  // Premier clic -> activer audio
+  document.body.addEventListener("click", async () => {
+    await initAudioOnUserGesture();
+    dlog("initAudioOnUserGesture done");
+  }, { once: true });
+
+  // Pseudo form
+  const startBtn = document.getElementById("start-btn");
+  const pseudoInput = document.getElementById("pseudo-input");
+  startBtn?.addEventListener("click", () => {
+    const name = pseudoInput.value.trim();
+    if (!name) return alert("Entrez votre pseudo !");
+    goToScreen("intro");
+
+    // Lancer intro plume
+    initPlumeAnimations().then(() => {
+      hud.style.display = "block";
+      startNextMiniGame();
     });
-  }
-
-  // boutons reset
-  document.querySelectorAll(".btn-reset").forEach(btn =>
-    btn.addEventListener("click", () => resetGame())
-  );
+  });
 });
