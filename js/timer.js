@@ -1,48 +1,32 @@
-// === timer.js ===
-import { endGame } from "./router.js";
+// timer.js
+import { dlog } from "./debug.js";
 
-let timeLeft = 0;
 let timerInterval = null;
+let remaining = 0;
 
-export function startTimer(seconds) {
-  timeLeft = seconds;
-  console.log("[DBG] Timer démarré", timeLeft, "s");
-
-  updateTimerDisplay();
-
+export function startTimer(totalSeconds) {
+  remaining = totalSeconds;
   timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimerDisplay();
-
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      endGame(false); // défaite
-    }
+    remaining--;
+    updateTimerDisplay(remaining);
+    if (remaining <= 0) clearInterval(timerInterval);
   }, 1000);
+  dlog(`Timer démarré (${totalSeconds}s)`);
 }
 
-export function resetTimer() {
-  if (timerInterval) clearInterval(timerInterval);
-  timeLeft = 0;
-  document.getElementById("timer").textContent = "00:00";
+export function stopTimer() {
+  clearInterval(timerInterval);
+  dlog("Timer stoppé");
 }
 
-function updateTimerDisplay() {
-  const timerEl = document.getElementById("timer");
-  if (!timerEl) return;
+export function updateTimerDisplay(seconds) {
+  const el = document.getElementById("timer");
+  if (!el) return;
+  const min = Math.floor(seconds/60);
+  const sec = seconds%60;
+  el.textContent = `⏳ ${min}:${sec.toString().padStart(2,'0')}`;
 
-  const min = String(Math.floor(timeLeft / 60)).padStart(2, "0");
-  const sec = String(timeLeft % 60).padStart(2, "0");
-  timerEl.textContent = `${min}:${sec}`;
-
-  // mise en forme visuelle
-  if (timeLeft <= 60) {
-    timerEl.classList.add("critical");
-    timerEl.classList.remove("warning");
-  } else if (timeLeft <= 300) {
-    timerEl.classList.add("warning");
-    timerEl.classList.remove("critical");
-  } else {
-    timerEl.classList.remove("warning", "critical");
-  }
+  if (seconds <= 60) el.style.color = (seconds%2===0) ? "red" : "white"; // clignotant dernière minute
+  else if (seconds <= 300) el.style.color = "orange"; // dernière 5 min
+  else el.style.color = "white";
 }
