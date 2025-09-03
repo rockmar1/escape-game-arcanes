@@ -1,13 +1,83 @@
-// js/timer.js
 import { dlog } from "./debug.js";
+import { endGame } from "./router.js";
 import { switchToStressAmbience } from "./audio.js";
 
-let interval=null, remaining=600, onEnd=()=>{}, onTick=()=>{};
-export function startTimer(totalSeconds=600, onEndCb=()=>{}, onTickCb=()=>{}) {
-  stopTimer(); remaining=totalSeconds; onEnd=onEndCb; onTick=onTickCb; update(); interval=setInterval(()=>{ remaining = Math.max(0, remaining-1); update(); onTick(remaining); if(remaining===300){ switchToStressAmbience(); dlog("5min reached -> stress"); } if(remaining===60){ dlog("1min left"); } if(remaining===0){ stopTimer(); onEnd(); } },1000);
+let timerInterval = null;
+let remainingTime = 0;
+
+/**
+ * Démarre le timer global
+ * @param {number} duration - en secondes (ex: 600 = 10 min)
+ */
+export function startTimer(duration = 600) {
+  remainingTime = duration;
+  updateTimerDisplay();
+
+  if (timerInterval) clearInterval(timerInterval);
+
+  timerInterval = setInterval(() => {
+    remainingTime--;
+    updateTimerDisplay();
+
+    // Passage en mode stress (<= 5 min)
+    if (remainingTime === 300) {
+      switchToStressAmbience();
+      dlog("⏰ Passage en musique stress (moins de 5 min)");
+    }
+
+    // Fin du timer
+    if (remainingTime <= 0) {
+      clearInterval(timerInterval);
+      endGame(false); // défaite
+      dlog("💀 Timer écoulé -> défaite");
+    }
+  }, 1000);
+
+  dlog(`⏳ Timer démarré (${duration}s)`);
 }
-export function addSeconds(s){ remaining = Math.max(0, remaining + s); update(); }
-export function halveRemaining(){ remaining = Math.ceil(remaining/2); update(); }
-export function getRemaining(){ return remaining; }
-export function stopTimer(){ if(interval){ clearInterval(interval); interval=null; } }
-function update(){ const el=document.getElementById("timer"); if(!el) return; const m=Math.floor(remaining/60), s=remaining%60; el.textContent = `⏳ ${m}:${String(s).padStart(2,"0")}`; el.classList.remove("warning","danger"); if(remaining<=60) el.classList.add("danger"); else if(remaining<=300) el.classList.add("warning"); }
+
+/**
+ * Met à jour l’affichage du timer
+ */
+function updateTimerDisplay() {
+  const hudTimer = document.getElementById("hud-timer");
+  if (!hudTimer) return;
+
+  const minutes = Math.floor(remainingTime / 60);
+  const seconds = remainingTime % 60;
+  hudTimer.textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+
+  // Effets visuels
+  if (remainingTime <= 60) {
+    hudTimer.classList.add("timer-critical");
+    hudTimer.classList.remove("timer-warning");
+  } else if (remainingTime <= 300) {
+    hudTimer.classList.add("timer-warning");
+    hudTimer.classList.remove("timer-critical");
+  } else {
+    hudTimer.classList.remove("timer-warning", "timer-critical");
+  }
+}
+
+/**
+ * Arrête le timer
+ */
+export function stopTimer() {
+  if (timerInterval) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    dlog("⏹️ Timer arrêté");
+  }
+  remainingTime = 0;
+  updateTimerDisplay();
+}
+
+/**
+ * Remet à zéro le timer
+ */
+export function resetTimer() {
+  stopTimer();
+  remainingTime = 0;
+  updateTimerDisplay();
+  dlog("🔄 Timer réinitialisé");
+}
