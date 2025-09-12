@@ -1,38 +1,51 @@
-import { dlog, dwarn } from './debug.js';
+// audio.js
+import { dlog } from "./debug.js";
 
-let currentMusic = null;
-const audios = {
-  intro: 'assets/audio/intro.mp3',
-  game: 'assets/audio/game.mp3',
-  victory: 'assets/audio/victory.mp3',
-  defeat: 'assets/audio/defeat.mp3',
-  sfx_quill: 'assets/audio/sfx-quill.mp3',
-  sfx_correct: 'assets/audio/sfx-correct.mp3',
-  sfx_error: 'assets/audio/sfx-error.mp3',
-  sfx_portal: 'assets/audio/sfx-portal.mp3'
+const musics = {
+  intro: new Audio("./assets/audio/intro.mp3"),
+  victory: new Audio("./assets/audio/victory.mp3"),
+  defeat: new Audio("./assets/audio/defeat.mp3"),
+  ambience: new Audio("./assets/audio/ambience.mp3"),
+  stress: new Audio("./assets/audio/stress.mp3"),
 };
 
-export function playMusic(key) {
-  stopAllMusic();
-  if (!audios[key]) return dwarn(`Aucune musique pour ${key}`);
-  currentMusic = new Audio(audios[key]);
-  currentMusic.loop = true;
-  currentMusic.play().catch(()=>{});
-  dlog(`playMusic ${key}`);
-}
+const sfx = {
+  quill: new Audio("./assets/audio/quill.mp3"),
+  click: new Audio("./assets/audio/click.mp3"),
+};
 
-export function playSfx(key) {
-  if (!audios[key]) return dwarn(`Aucun sfx pour ${key}`);
-  const sfx = new Audio(audios[key]);
-  sfx.play().catch(()=>{});
-  dlog(`playSfx ${key}`);
+let currentMusic = null;
+
+function stop(audio) {
+  audio.pause();
+  audio.currentTime = 0;
 }
 
 export function stopAllMusic() {
-  if (currentMusic) {
-    currentMusic.pause();
-    currentMusic.currentTime = 0;
-    currentMusic = null;
-    dlog('stopAllMusic');
+  Object.values(musics).forEach(a => stop(a));
+  currentMusic = null;
+  dlog("stopAllMusic");
+}
+
+export function playMusic(name, loop = true) {
+  stopAllMusic();
+  if (musics[name]) {
+    musics[name].loop = loop;
+    musics[name].play().catch(err => dlog("Audio error", err));
+    currentMusic = musics[name];
+    dlog("playMusic", name);
   }
+}
+
+export function playSfx(name) {
+  if (sfx[name]) {
+    sfx[name].cloneNode().play();
+    dlog("playSfx", name);
+  }
+}
+
+export function switchToStressAmbience() {
+  stopAllMusic();
+  playMusic("stress", true);
+  dlog("switchToStressAmbience");
 }
