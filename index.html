@@ -2,47 +2,83 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escape Game Arcanes</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Les Gardiens du Royaume Oublié</title>
   <link rel="icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 </head>
 <body>
-  <!-- HUD -->
-  <div id="hud" class="hud">
-    <span id="hud-player">👤</span>
-    <span id="hud-score">0 pts</span>
-    <span id="hud-timer">⏳ 10:00</span>
-  </div>
-
-  <!-- Screens -->
+  <!-- écran pseudo -->
   <div id="screen-pseudo" class="screen">
-    <input type="text" id="pseudo-input" placeholder="Entrez votre pseudo">
-    <button id="start-btn">Commencer</button>
+    <h1>Entrez votre nom</h1>
+    <form id="pseudo-form">
+      <input id="pseudo-input" type="text" placeholder="Votre nom..." required>
+      <button type="submit">Commencer</button>
+    </form>
   </div>
 
-  <div id="screen-intro" class="screen screen-intro">
-    <div class="plume-text" data-text=""></div>
+  <!-- écran intro -->
+  <div id="screen-intro" class="screen hidden">
+    <div id="intro-container">
+      <div class="plume-text" data-text="Dans un grimoire poussiéreux, une prophétie renaît de l’oubli..."></div>
+    </div>
   </div>
 
-  <div id="screen-game" class="screen">
-    <div id="puzzle-container"></div>
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="timer">60</div>
+    <div id="player-name"></div>
   </div>
 
-  <div id="screen-victory" class="screen">
-    <img src="assets/images/victory.jpg" alt="Victoire">
+  <!-- écran victoire -->
+  <div id="screen-victory" class="screen hidden">
+    <h1>Victoire 🎉</h1>
+    <img src="./assets/images/victory.jpg" alt="Victoire">
   </div>
 
-  <div id="screen-defeat" class="screen">
-    <img src="assets/images/defeat.jpg" alt="Défaite">
+  <!-- écran défaite -->
+  <div id="screen-defeat" class="screen hidden">
+    <h1>Défaite ❌</h1>
+    <img src="./assets/images/defeat.jpg" alt="Défaite">
   </div>
 
-  <div id="screen-scoreboard" class="screen">
-    <div id="scoreboard"></div>
+  <!-- écran scores -->
+  <div id="screen-scoreboard" class="screen hidden">
+    <h2>Tableau des scores</h2>
+    <ul id="score-list"></ul>
   </div>
 
-  <!-- JS -->
-  <script type="module" src="js/main.js"></script>
+  <!-- Panel admin -->
+  <div id="admin-panel" class="hidden">
+    <h3>Panel Admin</h3>
+    <button id="btn-stop-music">Stop Music</button>
+    <button id="btn-force-victory">Forcer Victoire</button>
+    <button id="btn-force-defeat">Forcer Défaite</button>
+    <button id="btn-reset">Reset Game</button>
+  </div>
+
+  <!-- scripts -->
+  <script type="module" src="./js/debug.js"></script>
+  <script type="module" src="./js/audio.js"></script>
+  <script type="module" src="./js/state.js"></script>
+  <script type="module" src="./js/router.js"></script>
+  <script type="module" src="./js/plume.js"></script>
+  <script type="module" src="./js/intro.js"></script>
+  <script type="module" src="./js/timer.js"></script>
+  <script type="module" src="./js/admin.js"></script>
+  <script type="module" src="./js/scoreboard.js"></script>
+  <script type="module" src="./js/main.js"></script>
+
+  <script type="module">
+    import { initMain } from "./js/main.js";
+    import { initRouter } from "./js/router.js";
+    import { initPlumeAnimations } from "./js/plume.js";
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initMain();
+      initRouter();
+      initPlumeAnimations();
+    });
+  </script>
 </body>
 </html>
