@@ -1,23 +1,28 @@
-import { initRouter, goToScreen, startNextMiniGame } from './router.js';
-import { initPlumeAnimations } from './plume.js';
-import { startTimer } from './timer.js';
+// main.js
+import { dlog } from "./debug.js";
+import { gameState } from "./state.js";
+import { startGame } from "./router.js";
 
-document.addEventListener('DOMContentLoaded', () => {
-  initRouter();
+export function initMain() {
+  dlog("App start");
 
-  const startBtn = document.getElementById('start-btn');
-  startBtn.addEventListener('click', () => {
-    const pseudo = document.getElementById('pseudo-input').value.trim();
-    if (!pseudo) return alert('Entrez un pseudo !');
-    dlog('player name', pseudo);
-
-    goToScreen('intro');
-
-    initPlumeAnimations(() => {
-      const hud = document.getElementById('hud');
-      if (hud) hud.style.display = 'flex';
-      startTimer();
-      startNextMiniGame();
+  // formulaire pseudo
+  const form = document.getElementById("pseudo-form");
+  if (form) {
+    form.addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("pseudo-input").value.trim();
+      if (name) {
+        gameState.playerName = name;
+        dlog("player name", name);
+        startGame();
+      }
     });
-  });
-});
+  }
+}
+
+export function startNextMiniGame() {
+  dlog("startNextMiniGame appelé");
+  gameState.currentMiniGame++;
+  // Ici : logique de chargement du mini-jeu
+}
