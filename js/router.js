@@ -1,50 +1,49 @@
-import { dlog, dwarn } from './debug.js';
-import { playMusic, stopAllMusic } from './audio.js';
-import { startTimer } from './timer.js';
-import { initPlumeAnimations } from './plume.js';
+// router.js
+import { dlog } from "./debug.js";
+import { gameState } from "./state.js";
+import { playIntro } from "./intro.js";
+import { startNextMiniGame } from "./main.js";
 
-let currentPuzzleIndex = 0;
-let puzzles = []; // à remplir avec vos modules puzzles.
-let hud = null;
+export function showScreen(id) {
+  document.querySelectorAll(".screen").forEach(s => s.classList.add("hidden"));
+  const el = document.querySelector(id);
+  if (el) el.classList.remove("hidden");
+  dlog("Écran affiché :", id);
+}
 
 export function initRouter() {
-  hud = document.getElementById('hud');
-  if (hud) hud.style.display = 'none';
-  goToScreen('pseudo');
-  dlog('router.js chargé');
+  dlog("initRouter -> affichage écran pseudo");
+  showScreen("#screen-pseudo");
 }
 
-export function goToScreen(screenName) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  const el = document.getElementById('screen-' + screenName);
-  if (!el) return dwarn('Écran introuvable', screenName);
-  el.classList.add('active');
-  dlog('Écran affiché:', `#screen-${screenName}`);
+export function startGame() {
+  dlog("startGame lancé");
+  showScreen("#screen-intro");
+  playIntro(0);
 
-  stopAllMusic();
-
-  if (screenName === 'intro') {
-    playMusic('intro');
-    if (hud) hud.style.display = 'none';
-  } else if (screenName === 'game') {
-    playMusic('game');
-    if (hud) hud.style.display = 'flex';
-  } else if (screenName === 'victory') playMusic('victory');
-  else if (screenName === 'defeat') playMusic('defeat');
+  // après 3s → mini-jeu
+  setTimeout(() => {
+    startNextMiniGame();
+  }, 3000);
 }
 
-export function startNextMiniGame() {
-  if (currentPuzzleIndex >= puzzles.length) return endGame(true);
-  const puzzle = puzzles[currentPuzzleIndex];
-  currentPuzzleIndex++;
-  dlog('Mount puzzle:', puzzle.meta?.title || `#${currentPuzzleIndex}`);
-  goToScreen('game');
-  puzzle.mount({
-    onSolved: () => startNextMiniGame(),
-    onFail: () => startNextMiniGame()
-  });
+export function endGame(victory) {
+  dlog("endGame appelé — victory:", victory);
+  gameState.victory = victory;
+  if (victory) {
+    showScreen("#screen-victory");
+  } else {
+    showScreen("#screen-defeat");
+  }
+
+  setTimeout(() => {
+    showScreen("#screen-scoreboard");
+  }, 2000);
 }
 
-export function endGame(victory=true) {
-  goToScreen(victory?'victory':'defeat');
+export function resetGame() {
+  dlog("resetGame appelé");
+  gameState.currentMiniGame = 0;
+  gameState.victory = null;
+  showScreen("#screen-pseudo");
 }
