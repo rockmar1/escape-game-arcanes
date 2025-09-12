@@ -1,62 +1,177 @@
-body {
+/* ===== Reset & Base ===== */
+* {
   margin: 0;
-  font-family: "Cinzel", serif;
-  background: url('assets/images/background-castle.jpg') no-repeat center center fixed;
-  background-size: cover;
-  color: #fff;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.screen { display: none; padding: 20px; }
-.screen.active { display: block; }
+body {
+  font-family: 'Cinzel', serif;
+  color: #fff;
+  background: url('./assets/images/background-castle.jpg') no-repeat center center/cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+/* ===== Screens ===== */
+.screen {
+  display: none;
+  text-align: center;
+  padding: 20px;
+}
+
+.screen.active {
+  display: block;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ===== Intro plume ===== */
+#intro-container {
+  background: url('./assets/images/parchment.png') no-repeat center center/contain;
+  padding: 40px;
+  border-radius: 10px;
+  color: #000;
+  max-width: 800px;
+  margin: auto;
+  position: relative;
+}
+
+.plume-text {
+  font-family: 'Cedarville Cursive', cursive;
+  font-size: 1.5em;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow: hidden;
+  border-right: .15em solid rgba(0, 0, 0, 0.5);
+}
+
+@keyframes plume-cursor {
+  from { border-color: rgba(0,0,0,0.5); }
+  to { border-color: transparent; }
+}
+
+.plume-text {
+  animation: plume-cursor .7s steps(1) infinite;
+}
+
+/* ===== HUD ===== */
 #hud {
   position: fixed;
   top: 10px;
   left: 10px;
   display: flex;
-  gap: 15px;
-  background: rgba(0,0,0,0.6);
-  padding: 5px 10px;
-  border-radius: 5px;
-  z-index: 1000;
+  gap: 20px;
+  font-size: 1.2em;
+  font-weight: bold;
+  z-index: 100;
+  background: rgba(0,0,0,0.5);
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
-.plume-text {
-  font-family: 'Cursive', serif;
-  font-size: 24px;
-  line-height: 1.5;
-  background: url('assets/images/parchment.png') no-repeat center;
-  background-size: cover;
+#timer {
+  color: #0f0;
+  transition: color 0.5s;
+}
+
+#timer.warning {
+  color: #f00;
+}
+
+#timer.critical {
+  color: #f00;
+  animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+/* ===== Victoire / Défaite ===== */
+#screen-victory img,
+#screen-defeat img {
+  max-width: 80%;
+  margin-top: 20px;
+  border: 5px solid #fff;
+  border-radius: 15px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.7);
+}
+
+/* ===== Scoreboard ===== */
+#screen-scoreboard {
+  background: rgba(0, 0, 0, 0.6);
   padding: 20px;
-  border-radius: 8px;
-  color: #fff;
+  border-radius: 15px;
 }
 
-.plume-cursor {
-  width: 32px;
-  height: 32px;
-  background: url('assets/images/plume-cursor.png') no-repeat center;
-  position: absolute;
-  pointer-events: none;
+#score-list {
+  list-style: none;
+  margin-top: 10px;
 }
 
+#score-list li {
+  background: rgba(255,255,255,0.1);
+  margin: 5px 0;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 1.1em;
+}
+
+/* ===== Admin Panel ===== */
 #admin-panel {
   position: fixed;
-  bottom: 50px;
+  bottom: 10px;
   right: 10px;
+  background: rgba(0,0,0,0.8);
   padding: 15px;
-  background: rgba(0,0,0,0.9);
-  color: white;
-  z-index: 1000;
-  border-radius: 8px;
-  max-width: 250px;
+  border-radius: 10px;
+  z-index: 200;
 }
 
 #admin-panel button {
   display: block;
   margin: 5px 0;
+  padding: 8px 12px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background .3s;
 }
 
-.timer-warning { color: orange; }
-.timer-critical { color: red; animation: blink 1s infinite; }
-@keyframes blink { 0%,100% {opacity:1;} 50% {opacity:0;} }
+#admin-panel button:hover {
+  background: #444;
+}
+
+/* ===== Pseudo screen ===== */
+#screen-pseudo form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#screen-pseudo input {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #aaa;
+  font-size: 1em;
+}
+
+#screen-pseudo button {
+  padding: 8px 12px;
+  background: #444;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#screen-pseudo button:hover {
+  background: #666;
+}
